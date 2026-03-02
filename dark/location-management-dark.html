@@ -3,33 +3,31 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Yard App â€” Location Management</title>
+<title>Yard App — Location Management</title>
 <style>
   :root{
-    --bg: #123729;
-    --ink: #E3C87A;
-    --muted: #5F9A75;
-    --accent: #5F9A75;
-    --ok: #5F9A75;
-    --warn: #E3C87A;
-    --bad: #E3C87A;
+    --bg: #10281E;
+    --ink: #E7DFC3;
+    --muted: #92AA98;
+    --accent:#4A8F68;
+    --ok:#5AA874;
+    --warn:#C7A45A;
+    --bad:#8F6A3A;
     --radius:16px;
     --shadow: 0 10px 30px rgba(0,0,0,.35);
     --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
     --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;background:
-    radial-gradient(1200px 800px at 20% 10%,  #123729 0%, var(--bg) 55%), var(--bg);
+  html,body{height:100%;margin:0;background: var(--bg);
     color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
   .app{max-width:520px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column}
 
-  header{position:sticky;top:0;z-index:10;background:rgba(18,55,41,.72);
+  header{position:sticky;top:0;z-index:10;background:rgba(16,40,30,.72);
     border-bottom:1px solid rgba(255,255,255,.06);backdrop-filter:blur(6px)}
   .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;gap:12px}
   .brand{display:flex;gap:10px;align-items:center;min-width:0}
-  .badge{width:36px;height:36px;border-radius:10px;background:
-    linear-gradient(135deg,var(--accent), rgba(95,154,117,.2));box-shadow:var(--shadow)}
+  .badge{width:36px;height:36px;border-radius:10px;background: rgba(74,143,104,.22);box-shadow:var(--shadow)}
   .title{font-weight:900;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .sub{font-size:12px;color:var(--muted)}
 
@@ -51,7 +49,7 @@
   .select{cursor:pointer;user-select:none}
   .small{flex:0 0 120px}
 
-  .btn{border:1px solid rgba(95,154,117,.65);background:rgba(95,154,117,.20);color:var(--ink);
+  .btn{border:1px solid rgba(74,143,104,.65);background:rgba(74,143,104,.20);color:var(--ink);
     padding:10px 12px;border-radius:14px;font-size:13px;font-weight:800;cursor:pointer}
   .btn.secondary{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);font-weight:700}
   .btn.danger{border:1px solid rgba(255,92,122,.65);background:rgba(255,92,122,.12);font-weight:800}
@@ -75,24 +73,24 @@
   .locTitle{font-weight:900;font-size:13px;display:flex;gap:8px;align-items:center}
   .locSub{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .statePill{font-family:var(--mono);font-size:11px;padding:6px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.08)}
-  .statePill.active{border-color:rgba(95,154,117,.6);background:rgba(95,154,117,.08);color:var(--ink)}
-  .statePill.inactive{border-color:rgba(227,200,122,.7);background:rgba(227,200,122,.06);color:var(--muted)}
+  .statePill.active{border-color:rgba(74,143,104,.6);background:rgba(74,143,104,.08);color:var(--ink)}
+  .statePill.inactive{border-color:rgba(199,164,90,.7);background:rgba(199,164,90,.06);color:var(--muted)}
 
   .itemControls{display:flex;gap:8px;align-items:center}
 
   /* modal */
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:60}
   .overlay.show{display:flex}
-  .modal{width:min(520px,94%);background:linear-gradient(180deg,rgba(18,20,27,.98),rgba(12,14,18,.98));border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow)}
+  .modal{width:min(520px,94%);background: rgba(74,143,104,.22);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow)}
   .modal h3{margin:0 0 8px 0;font-size:16px}
   .modal p{font-size:13px;color:var(--muted);margin:0 0 12px 0}
 
   .hint{margin-top:6px;color:var(--muted);font-size:13px}
 
-  footer{position:sticky;bottom:0;background:rgba(18,55,41,.72);border-top:1px solid rgba(255,255,255,.06);padding:8px}
+  footer{position:sticky;bottom:0;background:rgba(16,40,30,.72);border-top:1px solid rgba(255,255,255,.06);padding:8px}
   .bottomnav{display:flex;gap:8px;justify-content:space-around}
   .navbtn{flex:1;text-align:center;padding:10px 8px;border-radius:12px;font-size:13px;color:var(--muted);border:1px solid rgba(255,255,255,.04);background:rgba(255,255,255,.02);cursor:pointer}
-  .navbtn.active{color:var(--ink);border-color:rgba(95,154,117,.45);background:rgba(95,154,117,.10)}
+  .navbtn.active{color:var(--ink);border-color:rgba(74,143,104,.45);background:rgba(74,143,104,.10)}
 </style>
 </head>
 <body>
@@ -252,7 +250,7 @@
   }
 
   function notify(msg){
-    // simple wireframe notification â€” use alert for now
+    // simple wireframe notification — use alert for now
     console.log("NOTIFY:", msg);
   }
 
@@ -317,7 +315,7 @@
     containerType.value = loc.type;
     capacityInput.value = loc.capacity || '';
     // show a small hint
-    notify(`Editing "${loc.container}" â€” hit Create to save changes (wireframe will replace existing).`);
+    notify(`Editing "${loc.container}" — hit Create to save changes (wireframe will replace existing).`);
     // store a hidden flag that this is an edit by using createAndOpen click; simpler: set a temp attr
     createBtn.dataset.editId = id;
     createBtn.textContent = "Save changes";
@@ -361,7 +359,7 @@
         notify(`Created ${container}`);
       }
     } else {
-      // new create â€” check duplicates
+      // new create — check duplicates
       const exists = locations.some(l=>l.id===id);
       if (exists) return alert('Location already exists (wireframe)');
       locations.push({ id, area, row, lane, container, type, capacity, occupied:0, active:true });
@@ -443,4 +441,5 @@
 </script>
 </body>
 </html>
+
 

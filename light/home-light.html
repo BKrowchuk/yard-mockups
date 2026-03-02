@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Yard App Wireframes â€” Home + Locations (Split)</title>
+  <title>Yard App Wireframes — Home + Locations (Split)</title>
   <style>
     :root{
-      --bg: #FFF4D6;
-      --panel: #FFF4D6;
-      --card: #FFF4D6;
-      --ink: #1E4A36;
-      --muted: #5E8B6E;
-      --line: #5E8B6E;
-      --accent: #5E8B6E;
-      --ok: #5E8B6E;
-      --warn: #FFF4D6;
-      --bad: #1E4A36;
+      --bg: #F6F5F0;
+      --panel:#FFFFFF;
+      --card:#FFFFFF;
+      --ink: #15382A;
+      --muted: #5D7D6A;
+      --line:#C9D6CB;
+      --accent:#2F8F57;
+      --ok:#2F8F57;
+      --warn:#D6A63A;
+      --bad:#A46F2A;
       --radius: 16px;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -24,7 +24,7 @@
     *{ box-sizing:border-box; }
     body{
       margin:0;
-      background: radial-gradient(1200px 800px at 20% 10%,  #5E8B6E 0%, var(--bg) 55%), var(--bg);
+      background: var(--bg);
       color:var(--ink);
       font-family:var(--sans);
     }
@@ -41,7 +41,7 @@
     header{
       position:sticky; top:0; z-index:10;
       backdrop-filter: blur(10px);
-      background: rgba(255,244,214,.7);
+      background: rgba(214,166,58,.7);
       border-bottom:1px solid rgba(255,255,255,.08);
     }
     .topbar{
@@ -54,7 +54,7 @@
     }
     .badge{
       width:34px; height:34px; border-radius:10px;
-      background: linear-gradient(135deg, rgba(94,139,110,.9), rgba(94,139,110,.2));
+      background: rgba(47,143,87,.18);
       box-shadow: var(--shadow);
       flex: 0 0 auto;
     }
@@ -78,7 +78,7 @@
     .status{
       font-family: var(--mono);
       font-size:11px;
-      color: rgba(94,139,110,.9);
+      color: rgba(47,143,87,.9);
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.04);
       padding:6px 8px;
@@ -105,7 +105,7 @@
       font-size:12px;
       line-height:1.35;
     }
-    .hint b{ color: rgba(30,74,54,.9); }
+    .hint b{ color: rgba(21,56,42,.9); }
 
     /* Home action cards (FIXED layout: no overlap) */
     .homeStack{
@@ -126,8 +126,8 @@
       gap: 12px;
     }
     .actionCard.primary{
-      border-color: rgba(94,139,110,.55);
-      background: rgba(94,139,110,.12);
+      border-color: rgba(47,143,87,.55);
+      background: rgba(47,143,87,.12);
     }
     .actionText{
       min-width:0;
@@ -147,8 +147,8 @@
     }
     .goBtn{
       flex: 0 0 auto;
-      border:1px solid rgba(94,139,110,.65);
-      background: rgba(94,139,110,.22);
+      border:1px solid rgba(47,143,87,.65);
+      background: rgba(47,143,87,.22);
       color: var(--ink);
       padding: 10px 14px;
       border-radius: 14px;
@@ -161,15 +161,15 @@
     .goBtn.secondary{
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.05);
-      color: rgba(30,74,54,.9);
+      color: rgba(21,56,42,.9);
       font-weight:700;
     }
     .goBtn:active{ transform: translateY(1px); }
 
     .queueBox{
       margin-top: 14px;
-      background: rgba(255,244,214,.10);
-      border:1px solid rgba(255,244,214,.55);
+      background: rgba(214,166,58,.10);
+      border:1px solid rgba(214,166,58,.55);
       border-radius: var(--radius);
       padding: 12px 14px;
     }
@@ -181,7 +181,7 @@
     .queueMeta{
       font-family: var(--mono);
       font-size:12px;
-      color: rgba(30,74,54,.92);
+      color: rgba(21,56,42,.92);
       margin:0;
     }
     .queueSub{
@@ -192,8 +192,8 @@
 
     /* Locations: minimal buttons to enter the hierarchical picker page */
     .btn{
-      border:1px solid rgba(94,139,110,.65);
-      background: rgba(94,139,110,.20);
+      border:1px solid rgba(47,143,87,.65);
+      background: rgba(47,143,87,.20);
       color: var(--ink);
       padding: 10px 12px;
       border-radius: 14px;
@@ -206,14 +206,14 @@
     .btn.secondary{
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.05);
-      color: rgba(30,74,54,.9);
+      color: rgba(21,56,42,.9);
       font-weight:700;
     }
 
     /* Bottom nav */
     footer{
       position:sticky; bottom:0;
-      background: rgba(255,244,214,.72);
+      background: rgba(214,166,58,.72);
       border-top:1px solid rgba(255,255,255,.08);
       backdrop-filter: blur(10px);
     }
@@ -229,16 +229,16 @@
       padding: 10px 8px;
       border-radius: 14px;
       font-size:12px;
-      color: rgba(94,139,110,.95);
+      color: rgba(47,143,87,.95);
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.03);
       cursor:pointer;
       user-select:none;
     }
     .navbtn.active{
-      color: rgba(30,74,54,.95);
-      border-color: rgba(94,139,110,.55);
-      background: rgba(94,139,110,.12);
+      color: rgba(21,56,42,.95);
+      border-color: rgba(47,143,87,.55);
+      background: rgba(47,143,87,.12);
     }
 
     /* Simple Locations page stub (button to open the picker) */
@@ -308,7 +308,7 @@
     .pill{
       font-family: var(--mono);
       font-size:11px;
-      color: rgba(94,139,110,.9);
+      color: rgba(47,143,87,.9);
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.04);
       padding:6px 8px;
@@ -342,7 +342,7 @@
     .chip{
       font-family: var(--mono);
       font-size:11px;
-      color: rgba(30,74,54,.9);
+      color: rgba(21,56,42,.9);
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.16);
       padding:4px 8px;
@@ -413,13 +413,13 @@
       <!-- HOME PAGE (split out + fixed GO button layout) -->
       <section class="screen active" id="home">
         <div class="pageTitle">What do you want to do?</div>
-        <div class="pageSub">Fast actions â€¢ designed for forklifts â€¢ works offline (queues changes)</div>
+        <div class="pageSub">Fast actions • designed for forklifts • works offline (queues changes)</div>
 
         <div class="homeStack">
           <div class="actionCard primary" data-nav="search">
             <div class="actionText">
               <p class="actionTitle">Search Inventory</p>
-              <div class="actionSub">Elements + racks â€¢ scan barcode/QR â€¢ filter by project/location</div>
+              <div class="actionSub">Elements + racks • scan barcode/QR • filter by project/location</div>
             </div>
             <button class="goBtn" type="button">GO</button>
           </div>
@@ -427,7 +427,7 @@
           <div class="actionCard" data-nav="moves">
             <div class="actionText">
               <p class="actionTitle">Move / Rebook</p>
-              <div class="actionSub">Update element location (batch supported) â€¢ show success message</div>
+              <div class="actionSub">Update element location (batch supported) • show success message</div>
             </div>
             <button class="goBtn secondary" type="button">GO</button>
           </div>
@@ -435,7 +435,7 @@
           <div class="actionCard" data-nav="locations">
             <div class="actionText">
               <p class="actionTitle">Locations</p>
-              <div class="actionSub">Browse areas â†’ rows â†’ lanes â†’ racks/pre-stacks â€¢ phone-friendly</div>
+              <div class="actionSub">Browse areas → rows → lanes → racks/pre-stacks • phone-friendly</div>
             </div>
             <button class="goBtn secondary" type="button">GO</button>
           </div>
@@ -460,7 +460,7 @@
         <div class="card">
           <div style="font-weight:900; font-size:14px;">Browse hierarchy</div>
           <div style="color:var(--muted); font-size:12px; margin-top:6px; line-height:1.35;">
-            Area â†’ Row â†’ Lane â†’ Container (Rack / Staging / Pre-stack) â†’ Elements
+            Area → Row → Lane → Container (Rack / Staging / Pre-stack) → Elements
           </div>
           <div class="row">
             <button class="btn" id="openPicker" type="button">Open location picker</button>
@@ -476,7 +476,7 @@
       <!-- SEARCH PAGE STUB -->
       <section class="screen" id="search">
         <div class="pageTitle">Search</div>
-        <div class="pageSub">Wireframe stub â€” navigate back to Home or open Locations picker.</div>
+        <div class="pageSub">Wireframe stub — navigate back to Home or open Locations picker.</div>
         <div class="card">
           <div style="color:var(--muted); font-size:12px; line-height:1.35;">
             Search UI goes here (elements/racks, filters, scan).
@@ -487,7 +487,7 @@
       <!-- MOVES PAGE STUB -->
       <section class="screen" id="moves">
         <div class="pageTitle">Moves / Rebook</div>
-        <div class="pageSub">Wireframe stub â€” select items â†’ verify initial â†’ choose new â†’ submit.</div>
+        <div class="pageSub">Wireframe stub — select items → verify initial → choose new → submit.</div>
         <div class="card">
           <div style="color:var(--muted); font-size:12px; line-height:1.35;">
             Move/Rebook flow UI goes here.
@@ -528,7 +528,7 @@
       <div class="list" id="pickerList"></div>
 
       <div class="hint" style="margin-bottom: 6px;">
-        <b>Hierarchy:</b> Area â†’ Row â†’ Lane â†’ Container â†’ Elements<br/>
+        <b>Hierarchy:</b> Area → Row → Lane → Container → Elements<br/>
         Tap an item to drill down. This replaces the â€œbig gridâ€ on phones.
       </div>
     </div>
@@ -772,7 +772,7 @@
       return p.lane.containers.map(c=>({
         title: c.name,
         chip: c.type,
-        sub: `Occ ${c.occupied}/${c.capacity} â€¢ updated ${c.lastUpdated}`,
+        sub: `Occ ${c.occupied}/${c.capacity} • updated ${c.lastUpdated}`,
         onClick: ()=>{ p.container=c; pickerState.level="elements"; renderPicker(); }
       }));
     }
@@ -781,7 +781,7 @@
     return p.container.elements.map(e=>({
       title: e.id,
       chip: "Element",
-      sub: `Project: ${e.project} â€¢ tap for detail`,
+      sub: `Project: ${e.project} • tap for detail`,
       onClick: ()=>alert(`Wireframe: open Element Detail for ${e.id}`)
     }));
   }
@@ -797,4 +797,5 @@
 </script>
 </body>
 </html>
+
 
