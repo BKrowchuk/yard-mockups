@@ -1,0 +1,800 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Yard App Wireframes â€” Home + Locations (Split)</title>
+  <style>
+    :root{
+      --bg: #123729;
+      --panel: #123729;
+      --card: #123729;
+      --ink: #E3C87A;
+      --muted: #5F9A75;
+      --line: #5F9A75;
+      --accent: #5F9A75;
+      --ok: #5F9A75;
+      --warn: #E3C87A;
+      --bad: #E3C87A;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background: radial-gradient(1200px 800px at 20% 10%,  #123729 0%, var(--bg) 55%), var(--bg);
+      color:var(--ink);
+      font-family:var(--sans);
+    }
+
+    /* Phone-friendly app frame */
+    .app{
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(10px);
+      background: rgba(18,55,41,.7);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .topbar{
+      padding: 14px 14px 10px 14px;
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+    }
+    .left{
+      display:flex; gap:10px; align-items:center;
+      min-width: 0;
+    }
+    .badge{
+      width:34px; height:34px; border-radius:10px;
+      background: linear-gradient(135deg, rgba(95,154,117,.9), rgba(95,154,117,.2));
+      box-shadow: var(--shadow);
+      flex: 0 0 auto;
+    }
+    .titles{ min-width:0; }
+    .h1{
+      font-weight:900;
+      letter-spacing:.2px;
+      font-size:14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .crumb{
+      margin-top:2px;
+      color: var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .status{
+      font-family: var(--mono);
+      font-size:11px;
+      color: rgba(95,154,117,.9);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      padding:6px 8px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    main{
+      flex:1;
+      padding: 14px;
+      display:block;
+    }
+    .screen{ display:none; }
+    .screen.active{ display:block; }
+
+    /* Shared UI bits */
+    .hint{
+      margin-top:10px;
+      padding: 12px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
+    .hint b{ color: rgba(227,200,122,.9); }
+
+    /* Home action cards (FIXED layout: no overlap) */
+    .homeStack{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top: 10px;
+    }
+    .actionCard{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between; /* keeps button to the right */
+      gap: 12px;
+    }
+    .actionCard.primary{
+      border-color: rgba(95,154,117,.55);
+      background: rgba(95,154,117,.12);
+    }
+    .actionText{
+      min-width:0;
+      flex: 1 1 auto;
+    }
+    .actionTitle{
+      font-weight:900;
+      letter-spacing:.2px;
+      font-size:14px;
+      margin:0;
+    }
+    .actionSub{
+      margin-top:4px;
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.35;
+    }
+    .goBtn{
+      flex: 0 0 auto;
+      border:1px solid rgba(95,154,117,.65);
+      background: rgba(95,154,117,.22);
+      color: var(--ink);
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .goBtn.secondary{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      color: rgba(227,200,122,.9);
+      font-weight:700;
+    }
+    .goBtn:active{ transform: translateY(1px); }
+
+    .queueBox{
+      margin-top: 14px;
+      background: rgba(227,200,122,.10);
+      border:1px solid rgba(227,200,122,.55);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+    .queueTitle{
+      font-weight:900;
+      font-size:13px;
+      margin:0 0 6px 0;
+    }
+    .queueMeta{
+      font-family: var(--mono);
+      font-size:12px;
+      color: rgba(227,200,122,.92);
+      margin:0;
+    }
+    .queueSub{
+      font-size:12px;
+      color: var(--muted);
+      margin:6px 0 0 0;
+    }
+
+    /* Locations: minimal buttons to enter the hierarchical picker page */
+    .btn{
+      border:1px solid rgba(95,154,117,.65);
+      background: rgba(95,154,117,.20);
+      color: var(--ink);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn.secondary{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      color: rgba(227,200,122,.9);
+      font-weight:700;
+    }
+
+    /* Bottom nav */
+    footer{
+      position:sticky; bottom:0;
+      background: rgba(18,55,41,.72);
+      border-top:1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(10px);
+    }
+    .bottomnav{
+      display:flex;
+      justify-content:space-around;
+      padding: 10px 8px;
+      gap:8px;
+    }
+    .navbtn{
+      flex:1;
+      text-align:center;
+      padding: 10px 8px;
+      border-radius: 14px;
+      font-size:12px;
+      color: rgba(95,154,117,.95);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      cursor:pointer;
+      user-select:none;
+    }
+    .navbtn.active{
+      color: rgba(227,200,122,.95);
+      border-color: rgba(95,154,117,.55);
+      background: rgba(95,154,117,.12);
+    }
+
+    /* Simple Locations page stub (button to open the picker) */
+    .pageTitle{
+      font-weight: 950;
+      letter-spacing: .2px;
+      font-size: 16px;
+      margin: 6px 2px 4px 2px;
+    }
+    .pageSub{
+      color: var(--muted);
+      font-size: 12px;
+      margin: 0 2px 12px 2px;
+      line-height: 1.35;
+    }
+    .card{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:10px;
+    }
+
+    /* Modal-ish â€œpickerâ€ overlay (optional, wireframe-friendly) */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      z-index:50;
+    }
+    .overlay.show{ display:flex; }
+    .sheet{
+      width: min(520px, 100%);
+      background: rgba(18,20,27,.98);
+      border:1px solid rgba(255,255,255,.10);
+      border-bottom:none;
+      border-top-left-radius: 22px;
+      border-top-right-radius: 22px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      max-height: 78dvh;
+      overflow:auto;
+    }
+    .sheetTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .sheetTitle{
+      font-weight:950;
+      letter-spacing:.2px;
+      font-size:14px;
+      margin:0;
+    }
+    .pill{
+      font-family: var(--mono);
+      font-size:11px;
+      color: rgba(95,154,117,.9);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      padding:6px 8px;
+      border-radius: 999px;
+      white-space:nowrap;
+    }
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .item{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      padding: 12px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      cursor:pointer;
+    }
+    .item .meta{ min-width:0; }
+    .item .title{
+      font-weight:900;
+      font-size:14px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .chip{
+      font-family: var(--mono);
+      font-size:11px;
+      color: rgba(227,200,122,.9);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      padding:4px 8px;
+      border-radius: 999px;
+    }
+    .sub{
+      margin-top:4px;
+      font-size:12px;
+      color: var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .arrow{
+      width:28px; height:28px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      font-weight:900;
+    }
+    .searchRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin: 10px 0 12px 0;
+    }
+    .search{
+      flex:1;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      min-width: 0;
+    }
+    .search input{
+      width:100%;
+      background:transparent;
+      border:none;
+      outline:none;
+      color: var(--ink);
+      font-size:13px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <div class="topbar">
+        <div class="left">
+          <div class="badge" aria-hidden="true"></div>
+          <div class="titles">
+            <div class="h1" id="headerTitle">Yard App</div>
+            <div class="crumb" id="headerSub">Home</div>
+          </div>
+        </div>
+        <div class="status" id="statusPill">ONLINE</div>
+      </div>
+    </header>
+
+    <main>
+      <!-- HOME PAGE (split out + fixed GO button layout) -->
+      <section class="screen active" id="home">
+        <div class="pageTitle">What do you want to do?</div>
+        <div class="pageSub">Fast actions â€¢ designed for forklifts â€¢ works offline (queues changes)</div>
+
+        <div class="homeStack">
+          <div class="actionCard primary" data-nav="search">
+            <div class="actionText">
+              <p class="actionTitle">Search Inventory</p>
+              <div class="actionSub">Elements + racks â€¢ scan barcode/QR â€¢ filter by project/location</div>
+            </div>
+            <button class="goBtn" type="button">GO</button>
+          </div>
+
+          <div class="actionCard" data-nav="moves">
+            <div class="actionText">
+              <p class="actionTitle">Move / Rebook</p>
+              <div class="actionSub">Update element location (batch supported) â€¢ show success message</div>
+            </div>
+            <button class="goBtn secondary" type="button">GO</button>
+          </div>
+
+          <div class="actionCard" data-nav="locations">
+            <div class="actionText">
+              <p class="actionTitle">Locations</p>
+              <div class="actionSub">Browse areas â†’ rows â†’ lanes â†’ racks/pre-stacks â€¢ phone-friendly</div>
+            </div>
+            <button class="goBtn secondary" type="button">GO</button>
+          </div>
+        </div>
+
+        <div class="queueBox">
+          <p class="queueTitle">Queued (offline-safe)</p>
+          <p class="queueMeta">2 ops queued</p>
+          <p class="queueSub">Will sync automatically when the device reconnects.</p>
+        </div>
+
+        <!-- <div class="hint">
+          <b>Home layout fix:</b> â€œGOâ€ is now in a right-side column using flexbox, so it canâ€™t overlap the title/description text.
+        </div> -->
+      </section>
+
+      <!-- LOCATIONS LANDING PAGE (separate page from Home) -->
+      <section class="screen" id="locations">
+        <div class="pageTitle">Locations</div>
+        <div class="pageSub">Browse by hierarchy instead of showing a huge grid.</div>
+
+        <div class="card">
+          <div style="font-weight:900; font-size:14px;">Browse hierarchy</div>
+          <div style="color:var(--muted); font-size:12px; margin-top:6px; line-height:1.35;">
+            Area â†’ Row â†’ Lane â†’ Container (Rack / Staging / Pre-stack) â†’ Elements
+          </div>
+          <div class="row">
+            <button class="btn" id="openPicker" type="button">Open location picker</button>
+            <button class="btn secondary" id="scanLocation" type="button">SCAN location tag</button>
+          </div>
+        </div>
+
+        <div class="hint">
+          This page is intentionally simple: in a real app, you might show <b>recent locations</b>, <b>favorites</b>, and <b>last scanned</b> here.
+        </div>
+      </section>
+
+      <!-- SEARCH PAGE STUB -->
+      <section class="screen" id="search">
+        <div class="pageTitle">Search</div>
+        <div class="pageSub">Wireframe stub â€” navigate back to Home or open Locations picker.</div>
+        <div class="card">
+          <div style="color:var(--muted); font-size:12px; line-height:1.35;">
+            Search UI goes here (elements/racks, filters, scan).
+          </div>
+        </div>
+      </section>
+
+      <!-- MOVES PAGE STUB -->
+      <section class="screen" id="moves">
+        <div class="pageTitle">Moves / Rebook</div>
+        <div class="pageSub">Wireframe stub â€” select items â†’ verify initial â†’ choose new â†’ submit.</div>
+        <div class="card">
+          <div style="color:var(--muted); font-size:12px; line-height:1.35;">
+            Move/Rebook flow UI goes here.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="bottomnav">
+        <div class="navbtn active" id="navHome">Home</div>
+        <div class="navbtn" id="navLocations">Locations</div>
+        <div class="navbtn" id="navSearch">Search</div>
+        <div class="navbtn" id="navMoves">Moves</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Location picker overlay (hierarchical scroll list) -->
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-label="Location picker">
+      <div class="sheetTop">
+        <div>
+          <p class="sheetTitle" id="sheetTitle">Select Area</p>
+          <div class="pill" id="sheetCrumb">Area</div>
+        </div>
+        <button class="btn secondary" id="closePicker" type="button">Close</button>
+      </div>
+
+      <div class="searchRow">
+        <div class="search">
+          <span style="opacity:.8;font-family:var(--mono);font-size:12px;">âŒ•</span>
+          <input id="pickerFilter" type="text" placeholder="Filter current list..." />
+        </div>
+        <button class="btn secondary" id="pickerBack" type="button" style="display:none;">Back</button>
+      </div>
+
+      <div class="list" id="pickerList"></div>
+
+      <div class="hint" style="margin-bottom: 6px;">
+        <b>Hierarchy:</b> Area â†’ Row â†’ Lane â†’ Container â†’ Elements<br/>
+        Tap an item to drill down. This replaces the â€œbig gridâ€ on phones.
+      </div>
+    </div>
+  </div>
+
+<script>
+  /**
+   * SIMPLE NAV BETWEEN PAGES
+   */
+  const screens = ["home","locations","search","moves"];
+  const headerTitle = document.getElementById("headerTitle");
+  const headerSub = document.getElementById("headerSub");
+
+  function showScreen(id){
+    screens.forEach(s => document.getElementById(s).classList.toggle("active", s === id));
+    // header label
+    headerTitle.textContent = (id === "home") ? "Yard App" : (id.charAt(0).toUpperCase() + id.slice(1));
+    headerSub.textContent = (id === "home") ? "Home" : "Page: /" + id;
+
+    // bottom nav active state
+    document.getElementById("navHome").classList.toggle("active", id === "home");
+    document.getElementById("navLocations").classList.toggle("active", id === "locations");
+    document.getElementById("navSearch").classList.toggle("active", id === "search");
+    document.getElementById("navMoves").classList.toggle("active", id === "moves");
+  }
+
+  document.getElementById("navHome").addEventListener("click", ()=>showScreen("home"));
+  document.getElementById("navLocations").addEventListener("click", ()=>showScreen("locations"));
+  document.getElementById("navSearch").addEventListener("click", ()=>showScreen("search"));
+  document.getElementById("navMoves").addEventListener("click", ()=>showScreen("moves"));
+
+  // Home cards route
+  document.querySelectorAll(".actionCard").forEach(card=>{
+    card.addEventListener("click", (e)=>{
+      // Allow clicking anywhere, but don't double-trigger if button clicked
+      const target = card.getAttribute("data-nav");
+      if (!target) return;
+      showScreen(target);
+    });
+  });
+
+  /**
+   * LOCATION PICKER (hierarchical scrolling lists)
+   * Same concept as your hierarchical grid replacement, but as an overlay from Locations page.
+   */
+  const DATA = [
+    {
+      id: "yard-west",
+      name: "Yard West",
+      type: "Area",
+      rows: ["A","B","C","D"].map(r => ({
+        id:r,
+        lanes: ["1","2","3","4"].map(l => ({
+          id:l,
+          containers: [
+            mkContainer(`Rack R-${r}${l}`,"Rack"),
+            mkContainer(`Pre-stack P${l}`,"Pre-stack"),
+          ]
+        }))
+      }))
+    },
+    {
+      id: "yard-east",
+      name: "Yard East",
+      type: "Area",
+      rows: ["A","B","C"].map(r => ({
+        id:r,
+        lanes: ["1","2","3"].map(l => ({
+          id:l,
+          containers: [
+            mkContainer(`Rack R-${r}${l}`,"Rack"),
+            mkContainer(`Pre-stack P${l}`,"Pre-stack"),
+          ]
+        }))
+      }))
+    },
+    {
+      id: "staging-west",
+      name: "Staging West",
+      type: "Area",
+      rows: [{
+        id:"Staging",
+        lanes: [{
+          id:"Main",
+          containers: [
+            mkContainer("Slot 01","Staging Slot"),
+            mkContainer("Slot 08","Staging Slot"),
+            mkContainer("Slot 12","Staging Slot"),
+          ]
+        }]
+      }]
+    }
+  ];
+
+  function mkContainer(name, type){
+    return {
+      id: `${type}-${name}`.toLowerCase().replace(/\s+/g,"-"),
+      name,
+      type,
+      capacity: 12,
+      occupied: Math.floor(Math.random()*13),
+      lastUpdated: "09:12",
+      elements: Array.from({length: 6}, (_,i)=>({
+        id: `24-10345-${String(i+1).padStart(3,"0")}`,
+        project: "ABC Tower",
+      }))
+    }
+  }
+
+  const overlay = document.getElementById("overlay");
+  const pickerList = document.getElementById("pickerList");
+  const pickerFilter = document.getElementById("pickerFilter");
+  const pickerBack = document.getElementById("pickerBack");
+  const sheetTitle = document.getElementById("sheetTitle");
+  const sheetCrumb = document.getElementById("sheetCrumb");
+
+  const pickerState = {
+    level: "area",
+    path: { area:null, row:null, lane:null, container:null }
+  };
+
+  document.getElementById("openPicker").addEventListener("click", openPicker);
+  document.getElementById("closePicker").addEventListener("click", closePicker);
+  overlay.addEventListener("click", (e)=>{ if (e.target === overlay) closePicker(); });
+
+  document.getElementById("scanLocation").addEventListener("click", ()=>alert("Wireframe: scan a location tag to jump to a destination."));
+  // "GO" button also uses card click; optional extra here:
+  document.querySelectorAll(".goBtn").forEach(b=>b.addEventListener("click",(e)=>e.stopPropagation()));
+
+  function openPicker(){
+    overlay.classList.add("show");
+    overlay.setAttribute("aria-hidden","false");
+    pickerState.level = "area";
+    pickerState.path = { area:null, row:null, lane:null, container:null };
+    pickerFilter.value = "";
+    renderPicker();
+  }
+  function closePicker(){
+    overlay.classList.remove("show");
+    overlay.setAttribute("aria-hidden","true");
+  }
+
+  pickerBack.addEventListener("click", ()=>{
+    const lvl = pickerState.level;
+    if (lvl === "row"){ pickerState.path.area=null; pickerState.level="area"; }
+    else if (lvl === "lane"){ pickerState.path.row=null; pickerState.level="row"; }
+    else if (lvl === "container"){ pickerState.path.lane=null; pickerState.level="lane"; }
+    else if (lvl === "elements"){ pickerState.path.container=null; pickerState.level="container"; }
+    pickerFilter.value = "";
+    renderPicker();
+  });
+
+  pickerFilter.addEventListener("input", renderPicker);
+
+  function renderPicker(){
+    // back button visibility
+    pickerBack.style.display = (pickerState.level === "area") ? "none" : "inline-block";
+
+    // titles
+    const titleMap = {
+      area: "Select Area",
+      row: "Select Row",
+      lane: "Select Lane",
+      container: "Select Container",
+      elements: "Elements"
+    };
+    sheetTitle.textContent = titleMap[pickerState.level] || "Picker";
+    sheetCrumb.textContent = crumbText();
+
+    const items = getItemsForLevel(pickerState.level);
+    const filter = pickerFilter.value.trim().toLowerCase();
+    const filtered = filter
+      ? items.filter(it => (it.title + " " + it.sub + " " + it.chip).toLowerCase().includes(filter))
+      : items;
+
+    pickerList.innerHTML = "";
+    if (!filtered.length){
+      pickerList.innerHTML = `<div class="hint">No matches for <b>${escapeHtml(pickerFilter.value)}</b>.</div>`;
+      return;
+    }
+
+    filtered.forEach(it=>{
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerHTML = `
+        <div class="meta">
+          <div class="title">
+            <span>${escapeHtml(it.title)}</span>
+            <span class="chip">${escapeHtml(it.chip)}</span>
+          </div>
+          <div class="sub">${escapeHtml(it.sub)}</div>
+        </div>
+        <div class="arrow">â€º</div>
+      `;
+      el.addEventListener("click", it.onClick);
+      pickerList.appendChild(el);
+    });
+  }
+
+  function crumbText(){
+    const p = pickerState.path;
+    const parts = [];
+    if (p.area) parts.push(p.area.name);
+    if (p.row) parts.push("Row " + p.row.id);
+    if (p.lane) parts.push("Lane " + p.lane.id);
+    if (p.container) parts.push(p.container.name);
+    return parts.length ? parts.join("  â€º  ") : "Area";
+  }
+
+  function getItemsForLevel(level){
+    const p = pickerState.path;
+
+    if (level === "area"){
+      return DATA.map(a=>({
+        title: a.name,
+        chip: "Area",
+        sub: `${a.rows.length} rows`,
+        onClick: ()=>{ p.area=a; pickerState.level="row"; renderPicker(); }
+      }));
+    }
+
+    if (level === "row"){
+      return p.area.rows.map(r=>({
+        title: `Row ${r.id}`,
+        chip: "Row",
+        sub: `${r.lanes.length} lanes`,
+        onClick: ()=>{ p.row=r; pickerState.level="lane"; renderPicker(); }
+      }));
+    }
+
+    if (level === "lane"){
+      return p.row.lanes.map(l=>({
+        title: `Lane ${l.id}`,
+        chip: "Lane",
+        sub: `${l.containers.length} containers`,
+        onClick: ()=>{ p.lane=l; pickerState.level="container"; renderPicker(); }
+      }));
+    }
+
+    if (level === "container"){
+      return p.lane.containers.map(c=>({
+        title: c.name,
+        chip: c.type,
+        sub: `Occ ${c.occupied}/${c.capacity} â€¢ updated ${c.lastUpdated}`,
+        onClick: ()=>{ p.container=c; pickerState.level="elements"; renderPicker(); }
+      }));
+    }
+
+    // elements
+    return p.container.elements.map(e=>({
+      title: e.id,
+      chip: "Element",
+      sub: `Project: ${e.project} â€¢ tap for detail`,
+      onClick: ()=>alert(`Wireframe: open Element Detail for ${e.id}`)
+    }));
+  }
+
+  function escapeHtml(s){
+    return String(s)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+</script>
+</body>
+</html>
+

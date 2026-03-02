@@ -1,0 +1,446 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Yard App â€” Location Management</title>
+<style>
+  :root{
+    --bg: #123729;
+    --ink: #E3C87A;
+    --muted: #5F9A75;
+    --accent: #5F9A75;
+    --ok: #5F9A75;
+    --warn: #E3C87A;
+    --bad: #E3C87A;
+    --radius:16px;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:
+    radial-gradient(1200px 800px at 20% 10%,  #123729 0%, var(--bg) 55%), var(--bg);
+    color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .app{max-width:520px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column}
+
+  header{position:sticky;top:0;z-index:10;background:rgba(18,55,41,.72);
+    border-bottom:1px solid rgba(255,255,255,.06);backdrop-filter:blur(6px)}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;gap:12px}
+  .brand{display:flex;gap:10px;align-items:center;min-width:0}
+  .badge{width:36px;height:36px;border-radius:10px;background:
+    linear-gradient(135deg,var(--accent), rgba(95,154,117,.2));box-shadow:var(--shadow)}
+  .title{font-weight:900;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sub{font-size:12px;color:var(--muted)}
+
+  main{flex:1;padding:14px;overflow:auto}
+
+  .card{background: rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+    border-radius:18px;padding:12px;box-shadow:var(--shadow);margin-bottom:12px}
+
+  .pageTitle{font-weight:900;font-size:16px;margin-bottom:4px}
+  .pageSub{font-size:12px;color:var(--muted);margin-bottom:12px}
+
+  .fieldLabel{font-size:12px;color:var(--muted);margin:6px 0 6px 2px}
+  .inputRow{display:flex;gap:10px;align-items:center}
+  .input, .select {
+    flex:1;display:flex;align-items:center;padding:10px 12px;border-radius:14px;
+    border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.12);min-width:0;
+  }
+  .input input, .select input {background:transparent;border:0;outline:0;color:var(--ink);width:100%}
+  .select{cursor:pointer;user-select:none}
+  .small{flex:0 0 120px}
+
+  .btn{border:1px solid rgba(95,154,117,.65);background:rgba(95,154,117,.20);color:var(--ink);
+    padding:10px 12px;border-radius:14px;font-size:13px;font-weight:800;cursor:pointer}
+  .btn.secondary{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);font-weight:700}
+  .btn.danger{border:1px solid rgba(255,92,122,.65);background:rgba(255,92,122,.12);font-weight:800}
+  .btn:active{transform:translateY(1px)}
+
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+  /* list */
+  .listHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .searchBox{display:flex;gap:8px;align-items:center;flex:1;margin-right:8px}
+  .searchBox .input{padding:8px 10px;border-radius:12px}
+  .tags{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+  .locList{display:flex;flex-direction:column;gap:8px}
+  .locItem{
+    background: rgba(255,255,255,.02);
+    border:1px solid rgba(255,255,255,.04);
+    border-radius:12px;padding:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  }
+  .locMeta{min-width:0}
+  .locTitle{font-weight:900;font-size:13px;display:flex;gap:8px;align-items:center}
+  .locSub{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .statePill{font-family:var(--mono);font-size:11px;padding:6px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.08)}
+  .statePill.active{border-color:rgba(95,154,117,.6);background:rgba(95,154,117,.08);color:var(--ink)}
+  .statePill.inactive{border-color:rgba(227,200,122,.7);background:rgba(227,200,122,.06);color:var(--muted)}
+
+  .itemControls{display:flex;gap:8px;align-items:center}
+
+  /* modal */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:60}
+  .overlay.show{display:flex}
+  .modal{width:min(520px,94%);background:linear-gradient(180deg,rgba(18,20,27,.98),rgba(12,14,18,.98));border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow)}
+  .modal h3{margin:0 0 8px 0;font-size:16px}
+  .modal p{font-size:13px;color:var(--muted);margin:0 0 12px 0}
+
+  .hint{margin-top:6px;color:var(--muted);font-size:13px}
+
+  footer{position:sticky;bottom:0;background:rgba(18,55,41,.72);border-top:1px solid rgba(255,255,255,.06);padding:8px}
+  .bottomnav{display:flex;gap:8px;justify-content:space-around}
+  .navbtn{flex:1;text-align:center;padding:10px 8px;border-radius:12px;font-size:13px;color:var(--muted);border:1px solid rgba(255,255,255,.04);background:rgba(255,255,255,.02);cursor:pointer}
+  .navbtn.active{color:var(--ink);border-color:rgba(95,154,117,.45);background:rgba(95,154,117,.10)}
+</style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="Location Management">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <div class="badge" aria-hidden="true"></div>
+          <div style="min-width:0">
+            <div class="title">Location Management</div>
+            <div class="sub">Create, edit, deactivate locations</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="sub" id="statusPill" aria-hidden="true">ONLINE</div>
+          <button id="closeBtn" class="navbtn" style="padding:6px 10px;border-radius:10px">Close</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- CREATE CARD -->
+      <section class="card" aria-labelledby="createTitle">
+        <div id="createTitle" class="pageTitle">Create new location</div>
+        <div class="pageSub">Add an area/row/lane/container. Keep hierarchy consistent.</div>
+
+        <div class="fieldLabel">Hierarchy</div>
+        <div class="row" style="margin-bottom:8px">
+          <div class="select" id="selArea" title="Area">
+            <input id="areaInput" placeholder="Area (e.g. Yard West)" />
+          </div>
+          <div class="select small" id="selRow" title="Row">
+            <input id="rowInput" placeholder="Row (e.g. A)" />
+          </div>
+          <div class="select small" id="selLane" title="Lane">
+            <input id="laneInput" placeholder="Lane (e.g. 3)" />
+          </div>
+        </div>
+
+        <div class="fieldLabel">Container</div>
+        <div class="row">
+          <div class="select" style="flex:2">
+            <input id="containerName" placeholder="Container name (e.g. Rack R-12 or Pre-stack P2)" />
+          </div>
+          <div class="select small">
+            <input id="containerType" placeholder="Type (Rack / Pre-stack / Staging)" />
+          </div>
+        </div>
+
+        <div class="fieldLabel">Optional capacity</div>
+        <div class="row" style="margin-bottom:8px">
+          <div class="input small">
+            <input id="capacity" type="number" min="0" placeholder="capacity" />
+          </div>
+          <div style="flex:1"></div>
+        </div>
+
+        <div style="display:flex;gap:8px">
+          <button id="createBtn" class="btn">Create</button>
+          <button id="createAndOpen" class="btn secondary">Create & Open</button>
+          <button id="resetCreate" class="btn secondary">Reset</button>
+        </div>
+
+        <div class="hint">If Area/Row/Lane don't exist yet they will be created as part of the location. You can deactivate locations below.</div>
+      </section>
+
+      <!-- EXISTING LOCATIONS LIST -->
+      <section class="card" aria-labelledby="manageTitle">
+        <div class="listHeader">
+          <div style="min-width:0">
+            <div id="manageTitle" class="pageTitle">Manage locations</div>
+            <div class="pageSub">Search, edit names, activate/deactivate locations</div>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="searchBox" style="max-width:220px">
+              <div class="input" style="padding:8px 10px">
+                <input id="filter" placeholder="Filter (area / row / rack)" />
+              </div>
+            </div>
+            <div class="tags" id="countTag">0 locations</div>
+          </div>
+        </div>
+
+        <div class="locList" id="locList" aria-live="polite">
+          <!-- generated -->
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="exportLocations" class="btn secondary">Export</button>
+          <button id="bulkReactivate" class="btn secondary">Reactivate all</button>
+        </div>
+
+        <div class="hint">Deactivated locations remain in the system but are excluded from quick-pickers by default. Reactivate whenever needed.</div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="bottomnav" role="navigation" aria-label="Main navigation">
+        <button class="navbtn" id="navHome">Home</button>
+        <button class="navbtn" id="navSearch">Search</button>
+        <button class="navbtn" id="navLocations">Locations</button>
+        <button class="navbtn active" id="navManage">Manage</button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Confirm modal for deactivate/reactivate -->
+  <div class="overlay" id="confirmOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" id="confirmModal">
+      <h3 id="confirmTitle">Confirm</h3>
+      <p id="confirmText">Are you sure?</p>
+      <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+        <button id="cancelConfirm" class="btn secondary">Cancel</button>
+        <button id="okConfirm" class="btn danger">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Simple in-memory datastore for the wireframe
+  const initialLocations = [
+    { id: "yard-west|A|1|rack-r-a1", area:"Yard West", row:"A", lane:"1", container:"Rack R-A1", type:"Rack", capacity:12, occupied:5, active:true },
+    { id: "yard-west|B|3|rack-r-b3", area:"Yard West", row:"B", lane:"3", container:"Rack R-B3", type:"Rack", capacity:12, occupied:8, active:true },
+    { id: "staging-west|Staging|Main|slot-08", area:"Staging West", row:"Staging", lane:"Main", container:"Slot 08", type:"Staging Slot", capacity:6, occupied:2, active:false },
+  ];
+
+  let locations = structuredClone(initialLocations); // clone for editing in wireframe
+  const locList = document.getElementById('locList');
+  const countTag = document.getElementById('countTag');
+  const filterInput = document.getElementById('filter');
+
+  // Create controls
+  const areaInput = document.getElementById('areaInput');
+  const rowInput = document.getElementById('rowInput');
+  const laneInput = document.getElementById('laneInput');
+  const containerName = document.getElementById('containerName');
+  const containerType = document.getElementById('containerType');
+  const capacityInput = document.getElementById('capacity');
+  const createBtn = document.getElementById('createBtn');
+  const createAndOpen = document.getElementById('createAndOpen');
+  const resetCreate = document.getElementById('resetCreate');
+
+  // Modal
+  const confirmOverlay = document.getElementById('confirmOverlay');
+  const confirmTitle = document.getElementById('confirmTitle');
+  const confirmText = document.getElementById('confirmText');
+  const cancelConfirm = document.getElementById('cancelConfirm');
+  const okConfirm = document.getElementById('okConfirm');
+
+  let pendingConfirm = null; // {action:'deactivate'|'reactivate', id:...}
+
+  // Utility
+  function makeId(area,row,lane,container){
+    const slug = (s)=>String(s||'').toLowerCase().replace(/[^\w\-]+/g,'-').replace(/-+/g,'-').replace(/(^-|-$)/g,'');
+    return [slug(area), slug(row), slug(lane), slug(container)].join('|');
+  }
+
+  function notify(msg){
+    // simple wireframe notification â€” use alert for now
+    console.log("NOTIFY:", msg);
+  }
+
+  // Render list based on filter
+  function renderList(){
+    const q = filterInput.value.trim().toLowerCase();
+    const filtered = locations.filter(loc => {
+      if (!q) return true;
+      return (
+        loc.area.toLowerCase().includes(q) ||
+        loc.row.toLowerCase().includes(q) ||
+        loc.lane.toLowerCase().includes(q) ||
+        loc.container.toLowerCase().includes(q) ||
+        loc.type.toLowerCase().includes(q)
+      );
+    });
+
+    locList.innerHTML = '';
+    filtered.forEach(loc => {
+      const div = document.createElement('div');
+      div.className = 'locItem';
+      div.innerHTML = `
+        <div class="locMeta">
+          <div class="locTitle">
+            <div style="min-width:0">
+              <div style="display:flex;gap:8px;align-items:center">
+                <div style="font-family:var(--mono);font-size:12px;color:var(--muted)">${loc.area}</div>
+                <div style="font-weight:800">${loc.container}</div>
+              </div>
+              <div class="locSub">${loc.row} â€¢ Lane ${loc.lane} â€¢ ${loc.type} â€¢ ${loc.occupied || 0}/${loc.capacity || '-' } occupied</div>
+            </div>
+          </div>
+        </div>
+        <div class="itemControls">
+          <button class="btn secondary editBtn" data-id="${loc.id}">Edit</button>
+          <button class="btn ${loc.active ? 'secondary' : ''} toggleBtn" data-id="${loc.id}">${loc.active ? 'Deactivate' : 'Reactivate'}</button>
+        </div>
+      `;
+      // Edit
+      div.querySelector('.editBtn').addEventListener('click', ()=>{
+        openEdit(loc.id);
+      });
+      // Toggle
+      div.querySelector('.toggleBtn').addEventListener('click', (e)=>{
+        e.stopPropagation();
+        requestToggle(loc.id);
+      });
+      locList.appendChild(div);
+    });
+
+    countTag.textContent = `${locations.length} locations (${filtered.length} shown)`;
+  }
+
+  function openEdit(id){
+    const loc = locations.find(l=>l.id===id);
+    if (!loc) return alert("Not found (wireframe)");
+    // populate create form for quick edit
+    areaInput.value = loc.area;
+    rowInput.value = loc.row;
+    laneInput.value = loc.lane;
+    containerName.value = loc.container;
+    containerType.value = loc.type;
+    capacityInput.value = loc.capacity || '';
+    // show a small hint
+    notify(`Editing "${loc.container}" â€” hit Create to save changes (wireframe will replace existing).`);
+    // store a hidden flag that this is an edit by using createAndOpen click; simpler: set a temp attr
+    createBtn.dataset.editId = id;
+    createBtn.textContent = "Save changes";
+  }
+
+  function clearCreateForm(){
+    areaInput.value = '';
+    rowInput.value = '';
+    laneInput.value = '';
+    containerName.value = '';
+    containerType.value = '';
+    capacityInput.value = '';
+    createBtn.textContent = "Create";
+    delete createBtn.dataset.editId;
+  }
+
+  // Create or Save
+  createBtn.addEventListener('click', ()=>{
+    const area = areaInput.value.trim();
+    const row = rowInput.value.trim();
+    const lane = laneInput.value.trim();
+    const container = containerName.value.trim();
+    const type = containerType.value.trim() || 'Rack';
+    const capacity = capacityInput.value ? Number(capacityInput.value) : null;
+
+    if (!area || !container || !row || !lane){
+      return alert('Please fill Area, Row, Lane and Container name (wireframe validation).');
+    }
+
+    const id = makeId(area,row,lane,container);
+    const editId = createBtn.dataset.editId;
+
+    if (editId){
+      // replace existing
+      const idx = locations.findIndex(l=>l.id===editId);
+      if (idx >= 0){
+        locations[idx] = { id, area, row, lane, container, type, capacity, occupied: locations[idx].occupied || 0, active: locations[idx].active };
+        notify(`Saved changes to ${container}`);
+      } else {
+        locations.push({ id, area, row, lane, container, type, capacity, occupied:0, active:true });
+        notify(`Created ${container}`);
+      }
+    } else {
+      // new create â€” check duplicates
+      const exists = locations.some(l=>l.id===id);
+      if (exists) return alert('Location already exists (wireframe)');
+      locations.push({ id, area, row, lane, container, type, capacity, occupied:0, active:true });
+      notify(`Created ${container}`);
+    }
+
+    clearCreateForm();
+    renderList();
+  });
+
+  // Create & Open (wireframe: same as create, then open detail)
+  createAndOpen.addEventListener('click', ()=>{
+    createBtn.click();
+    // in a real app, this would navigate to the location details page
+    alert('Wireframe: Created and opening location details (not implemented).');
+  });
+
+  resetCreate.addEventListener('click', clearCreateForm);
+
+  // filter
+  filterInput.addEventListener('input', renderList);
+
+  // request toggle (open confirm)
+  function requestToggle(id){
+    const loc = locations.find(l=>l.id===id);
+    if (!loc) return;
+    pendingConfirm = { id: id, action: loc.active ? 'deactivate' : 'reactivate' };
+    confirmTitle.textContent = loc.active ? 'Deactivate location' : 'Reactivate location';
+    confirmText.textContent = loc.active
+      ? `Are you sure you want to deactivate ${loc.container} in ${loc.area} â€¢ ${loc.row} â€º ${loc.lane}? Deactivated locations will be hidden from quick pickers but remain in the system.`
+      : `Reactivate ${loc.container}? It will be available in pickers again.`;
+    okConfirm.textContent = loc.active ? 'Deactivate' : 'Reactivate';
+    okConfirm.classList.toggle('danger', loc.active);
+    confirmOverlay.classList.add('show');
+    confirmOverlay.setAttribute('aria-hidden','false');
+  }
+
+  cancelConfirm.addEventListener('click', ()=>{
+    pendingConfirm = null;
+    confirmOverlay.classList.remove('show');
+    confirmOverlay.setAttribute('aria-hidden','true');
+  });
+
+  okConfirm.addEventListener('click', ()=>{
+    if (!pendingConfirm) return;
+    const item = locations.find(l=>l.id===pendingConfirm.id);
+    if (!item) return;
+    item.active = (pendingConfirm.action === 'reactivate') ? true : false;
+    // small simulation: if deactivating, also set occupied to 0? (no)
+    notify(`${item.active ? 'Reactivated' : 'Deactivated'} ${item.container}`);
+    pendingConfirm = null;
+    confirmOverlay.classList.remove('show');
+    confirmOverlay.setAttribute('aria-hidden','true');
+    renderList();
+  });
+
+  // Export (wireframe)
+  document.getElementById('exportLocations').addEventListener('click', ()=>{
+    const csv = locations.map(l => [l.area,l.row,l.lane,l.container,l.type,l.capacity || '', l.active?'active':'inactive'].join(',')).join('\n');
+    navigator.clipboard?.writeText(csv).then(()=> alert('Wireframe: locations copied as CSV to clipboard')).catch(()=> alert('Wireframe: CSV\n\n' + csv));
+  });
+
+  // Bulk reactivate
+  document.getElementById('bulkReactivate').addEventListener('click', ()=>{
+    locations.forEach(l=> l.active = true);
+    renderList();
+    alert('Wireframe: all locations reactivated');
+  });
+
+  // Navigation placeholders
+  document.getElementById('navHome').addEventListener('click', ()=> alert('Wireframe: go to Home'));
+  document.getElementById('navSearch').addEventListener('click', ()=> alert('Wireframe: go to Search'));
+  document.getElementById('navLocations').addEventListener('click', ()=> alert('Wireframe: open Locations picker'));
+  document.getElementById('closeBtn').addEventListener('click', ()=> alert('Wireframe: close / go back'));
+
+  // Init
+  renderList();
+  clearCreateForm();
+</script>
+</body>
+</html>
+

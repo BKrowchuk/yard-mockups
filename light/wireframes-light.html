@@ -1,0 +1,1024 @@
+﻿<!-- TODO:
+ - contraints
+ - criteria
+ - engineering design matrix
+ - options for solutions
+ - ticket put in with coty
+
+
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Yard App Wireframes (HTML + SVG)</title>
+  <style>
+    :root{
+      --bg: #FFF4D6;
+      --panel: #FFF4D6;
+      --card: #FFF4D6;
+      --ink: #1E4A36;
+      --muted: #5E8B6E;
+      --line: #5E8B6E;
+      --accent: #5E8B6E;
+      --ok: #5E8B6E;
+      --warn: #FFF4D6;
+      --bad: #1E4A36;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background: radial-gradient(1200px 800px at 20% 10%,  #5E8B6E 0%, var(--bg) 55%), var(--bg);
+      color:var(--ink);
+      font-family:var(--sans);
+    }
+    header{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(10px);
+      background: rgba(255,244,214,.6);
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .topbar{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      padding:14px 18px;
+      max-width:1200px; margin:0 auto;
+    }
+    .brand{
+      display:flex; gap:10px; align-items:center;
+    }
+    .badge{
+      width:34px; height:34px; border-radius:10px;
+      background: linear-gradient(135deg, rgba(94,139,110,.9), rgba(94,139,110,.2));
+      box-shadow: var(--shadow);
+    }
+    .titleblock .h1{ font-weight:800; letter-spacing:.2px; }
+    .titleblock .sub{ color:var(--muted); font-size:12px; margin-top:2px; }
+    .controls{
+      display:flex; gap:10px; align-items:center;
+    }
+    .pill{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:var(--ink);
+      padding:8px 10px;
+      border-radius: 999px;
+      font-size:12px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .pill select{
+      background:transparent; border:none; color:var(--ink);
+      outline:none;
+      font-size:12px;
+    }
+
+    main{ max-width:1200px; margin:0 auto; padding:18px; }
+    .grid{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:16px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .nav{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .nav h2{
+      font-size:13px;
+      margin:0;
+      padding:14px 14px 10px 14px;
+      color: var(--muted);
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .nav a{
+      display:flex;
+      gap:10px;
+      padding:11px 14px;
+      text-decoration:none;
+      color:var(--ink);
+      border-bottom:1px solid rgba(255,255,255,.06);
+      font-size:13px;
+    }
+    .nav a:hover{ background: rgba(94,139,110,.08); }
+    .nav a small{ color:var(--muted); display:block; margin-top:2px; }
+    .nav a .dot{
+      width:8px; height:8px; border-radius:50%;
+      background: rgba(94,139,110,.9);
+      margin-top:4px;
+      box-shadow: 0 0 0 3px rgba(94,139,110,.12);
+      flex: 0 0 auto;
+    }
+
+    .stage{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(320px, 1fr));
+      gap:16px;
+    }
+    @media (max-width: 980px){
+      .stage{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card .meta{
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .card .meta .name{
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .card .meta .desc{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:3px;
+      line-height:1.35;
+    }
+    .tag{
+      font-family:var(--mono);
+      font-size:11px;
+      color: rgba(30,74,54,.85);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      padding:6px 8px;
+      border-radius: 999px;
+      white-space:nowrap;
+    }
+    .svgwrap{ padding:14px; }
+
+    /* tiny legend */
+    .legend{
+      margin-top:12px;
+      padding:12px 14px;
+      color:var(--muted);
+      font-size:12px;
+      border-top:1px solid rgba(255,255,255,.06);
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .key{
+      display:flex; gap:8px; align-items:center;
+    }
+    .sw{ width:10px; height:10px; border-radius:3px; background: rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.2); }
+    .sw.ac{ background: rgba(94,139,110,.35); border-color: rgba(94,139,110,.7); }
+    .sw.ok{ background: rgba(94,139,110,.25); border-color: rgba(94,139,110,.7); }
+    .sw.wa{ background: rgba(255,244,214,.22); border-color: rgba(255,244,214,.7); }
+    .sw.bd{ background: rgba(255,92,122,.22); border-color: rgba(255,92,122,.7); }
+  </style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="badge" aria-hidden="true"></div>
+      <div class="titleblock">
+        <div class="h1">Yard App Wireframes</div>
+        <div class="sub">PWA â€¢ offline queue â€¢ barcode/QR scanning â€¢ element + rack flows</div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="pill">
+        <span style="opacity:.85">Jump</span>
+        <select id="jump">
+          <option value="#home">Home</option>
+          <option value="#search">Search</option>
+          <option value="#searchResults">Search Results</option>
+          <option value="#scanMulti">Multi-Scan (Loadsheet)</option>
+          <option value="#grid">Element Grid</option>
+          <option value="#elementDetail">Element Detail</option>
+          <option value="#move1">Move Flow: Select</option>
+          <option value="#move2">Move Flow: Verify Initial</option>
+          <option value="#move3">Move Flow: Choose New</option>
+          <option value="#move4">Move Flow: Review + Submit</option>
+          <option value="#move5">Move Flow: Success / Offline Queue</option>
+          <option value="#rackSearch">Rack Search</option>
+          <option value="#rackDetail">Rack Detail</option>
+          <option value="#rackSort">Rack Sort: Last to Leave</option>
+        </select>
+      </div>
+      <div class="pill" title="wireframe conventions">
+        <span class="sw ac"></span><span>Primary action</span>
+        <span class="sw ok"></span><span>Success</span>
+        <span class="sw wa"></span><span>Offline queued</span>
+        <span class="sw bd"></span><span>Error</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <aside class="nav">
+      <h2>Pages & Flows</h2>
+      <a href="#home"><span class="dot"></span><div><div>Home</div><small>Choose action: search / move / racks</small></div></a>
+      <a href="#search"><span class="dot"></span><div><div>Search</div><small>Elements + racks, filters, scan</small></div></a>
+      <a href="#searchResults"><span class="dot"></span><div><div>Search Results</div><small>List, batch select, quick actions</small></div></a>
+      <a href="#scanMulti"><span class="dot"></span><div><div>Multi-Scan (Loadsheet)</div><small>Scan barcode â†’ load multiple elements</small></div></a>
+      <a href="#grid"><span class="dot"></span><div><div>Element Grid</div><small>Yard/rack grid + location chips</small></div></a>
+      <a href="#elementDetail"><span class="dot"></span><div><div>Element Detail</div><small>Location, status, history, actions</small></div></a>
+      <a href="#move1"><span class="dot"></span><div><div>Move Flow</div><small>Select â†’ verify initial â†’ choose new â†’ submit</small></div></a>
+      <a href="#rackSearch"><span class="dot"></span><div><div>Rack Search</div><small>Find rack locations</small></div></a>
+      <a href="#rackDetail"><span class="dot"></span><div><div>Rack Detail</div><small>Rack status + elements + location</small></div></a>
+      <a href="#rackSort"><span class="dot"></span><div><div>Rack Sort</div><small>Sort racks by â€œlast to leaveâ€</small></div></a>
+    </aside>
+
+    <section class="stage">
+
+      <!-- Helper: SVG "phone" template is duplicated per card for simplicity -->
+      <!-- 1. HOME -->
+      <article class="card" id="home">
+        <div class="meta">
+          <div>
+            <div class="name">Home</div>
+            <div class="desc">Primary action chooser. Shows offline state + queued operations.</div>
+          </div>
+          <div class="tag">page: /</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Home wireframe">
+            <!-- phone -->
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <!-- top status -->
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">YARD APP</text>
+            <text x="300" y="48" font-size="12" text-anchor="end" fill="rgba(94,139,110,.85)" font-family="ui-monospace">ONLINE</text>
+            <!-- header -->
+            <text x="52" y="108" font-size="18" fill="rgba(30,74,54,.95)" font-weight="800">What do you want to do?</text>
+            <text x="52" y="130" font-size="12" fill="rgba(94,139,110,.9)">Fast actions â€¢ works offline (queues changes)</text>
+
+            <!-- cards -->
+            <rect x="52" y="154" width="256" height="92" rx="16" fill="rgba(94,139,110,.16)" stroke="rgba(94,139,110,.55)"/>
+            <text x="70" y="188" font-size="14" fill="rgba(30,74,54,.95)" font-weight="700">Search Inventory</text>
+            <text x="70" y="210" font-size="12" fill="rgba(30,74,54,.75)">Elements + racks â€¢ scan barcode/QR</text>
+            <rect x="238" y="182" width="56" height="28" rx="10" fill="rgba(94,139,110,.35)" stroke="rgba(94,139,110,.7)"/>
+            <text x="266" y="201" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">GO</text>
+
+            <rect x="52" y="258" width="256" height="92" rx="16" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.16)"/>
+            <text x="70" y="292" font-size="14" fill="rgba(30,74,54,.95)" font-weight="700">Move / Rebook</text>
+            <text x="70" y="314" font-size="12" fill="rgba(94,139,110,.9)">Update element location (batch supported)</text>
+            <rect x="238" y="286" width="56" height="28" rx="10" fill="rgba(94,139,110,.18)" stroke="rgba(94,139,110,.45)"/>
+            <text x="266" y="305" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">GO</text>
+
+            <rect x="52" y="362" width="256" height="92" rx="16" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.16)"/>
+            <text x="70" y="396" font-size="14" fill="rgba(30,74,54,.95)" font-weight="700">Racks</text>
+            <text x="70" y="418" font-size="12" fill="rgba(94,139,110,.9)">Find rack locations â€¢ sort by ship date</text>
+            <rect x="238" y="390" width="56" height="28" rx="10" fill="rgba(94,139,110,.18)" stroke="rgba(94,139,110,.45)"/>
+            <text x="266" y="409" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">GO</text>
+
+            <!-- queued ops -->
+            <text x="52" y="486" font-size="13" fill="rgba(30,74,54,.9)" font-weight="700">Queued (offline-safe)</text>
+            <rect x="52" y="500" width="256" height="70" rx="14" fill="rgba(255,244,214,.10)" stroke="rgba(255,244,214,.55)"/>
+            <text x="70" y="530" font-size="12" fill="rgba(30,74,54,.9)" font-family="ui-monospace">2 ops queued</text>
+            <text x="70" y="550" font-size="12" fill="rgba(94,139,110,.9)">Will sync automatically when online</text>
+
+            <!-- bottom nav -->
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(30,74,54,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(94,139,110,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(94,139,110,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- 2. SEARCH -->
+      <article class="card" id="search">
+        <div class="meta">
+          <div>
+            <div class="name">Search</div>
+            <div class="desc">Search elements or racks. Filter by project/location first for performance. Scan input supported.</div>
+          </div>
+          <div class="tag">page: /search</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Search wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">SEARCH</text>
+            <text x="300" y="48" font-size="12" text-anchor="end" fill="rgba(94,139,110,.85)" font-family="ui-monospace">ONLINE</text>
+
+            <text x="52" y="110" font-size="18" fill="rgba(30,74,54,.95)" font-weight="800">Search inventory</text>
+
+            <!-- tabs -->
+            <rect x="52" y="124" width="124" height="30" rx="12" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.6)"/>
+            <text x="114" y="144" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">Elements</text>
+            <rect x="184" y="124" width="124" height="30" rx="12" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.16)"/>
+            <text x="246" y="144" font-size="12" text-anchor="middle" fill="rgba(94,139,110,.95)">Racks</text>
+
+            <!-- filters -->
+            <text x="52" y="176" font-size="12" fill="rgba(94,139,110,.95)">Filters (recommended before full search)</text>
+            <rect x="52" y="188" width="256" height="36" rx="12" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="64" y="211" font-size="12" fill="rgba(94,139,110,.9)">Project: [ dropdown ]</text>
+
+            <rect x="52" y="232" width="256" height="36" rx="12" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="64" y="255" font-size="12" fill="rgba(94,139,110,.9)">Location Area: [ dropdown ]</text>
+
+            <!-- query -->
+            <text x="52" y="292" font-size="12" fill="rgba(94,139,110,.95)">Search by element ID / barcode / description</text>
+            <rect x="52" y="304" width="210" height="42" rx="14" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+            <text x="66" y="330" font-size="12" fill="rgba(30,74,54,.75)" font-family="ui-monospace">E.g. 24-10345-001</text>
+
+            <rect x="268" y="304" width="40" height="42" rx="14" fill="rgba(94,139,110,.20)" stroke="rgba(94,139,110,.6)"/>
+            <text x="288" y="330" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">SCAN</text>
+
+            <!-- actions -->
+            <rect x="52" y="358" width="256" height="44" rx="14" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="180" y="386" font-size="13" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="700">Search</text>
+
+            <rect x="52" y="412" width="256" height="64" rx="14" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <text x="68" y="440" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">Batch search (loadsheet)</text>
+            <text x="68" y="460" font-size="12" fill="rgba(94,139,110,.9)">Scan loadsheet barcode â†’ select multiple elements</text>
+
+            <rect x="240" y="432" width="56" height="28" rx="10" fill="rgba(94,139,110,.18)" stroke="rgba(94,139,110,.55)"/>
+            <text x="268" y="451" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">OPEN</text>
+
+            <!-- bottom nav -->
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(30,74,54,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(94,139,110,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- 3. SEARCH RESULTS -->
+      <article class="card" id="searchResults">
+        <div class="meta">
+          <div>
+            <div class="name">Search Results</div>
+            <div class="desc">List results with quick actions. Supports selecting multiple elements for move/rebook.</div>
+          </div>
+          <div class="tag">page: /search/results</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Search results wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">RESULTS</text>
+            <text x="300" y="48" font-size="12" text-anchor="end" fill="rgba(94,139,110,.85)" font-family="ui-monospace">ONLINE</text>
+
+            <text x="52" y="110" font-size="16" fill="rgba(30,74,54,.95)" font-weight="800">Results</text>
+            <text x="310" y="110" font-size="12" text-anchor="end" fill="rgba(94,139,110,.9)">36 found</text>
+
+            <!-- search bar -->
+            <rect x="52" y="126" width="256" height="40" rx="14" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="66" y="151" font-size="12" fill="rgba(94,139,110,.9)" font-family="ui-monospace">query + filters summary</text>
+
+            <!-- batch bar -->
+            <rect x="52" y="176" width="256" height="46" rx="14" fill="rgba(94,139,110,.14)" stroke="rgba(94,139,110,.55)"/>
+            <text x="68" y="205" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">Selected: 3</text>
+            <rect x="218" y="186" width="78" height="26" rx="10" fill="rgba(94,139,110,.25)" stroke="rgba(94,139,110,.75)"/>
+            <text x="257" y="204" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">MOVE</text>
+
+            <!-- list items -->
+            <!-- item 1 -->
+            <rect x="52" y="236" width="256" height="74" rx="14" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <rect x="62" y="256" width="18" height="18" rx="5" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.65)"/>
+            <text x="90" y="262" font-size="12" fill="rgba(30,74,54,.95)" font-weight="700" font-family="ui-monospace">24-10345-001</text>
+            <text x="90" y="280" font-size="12" fill="rgba(94,139,110,.9)">Row B â€¢ Lane 3 â€¢ Rack R-12</text>
+            <rect x="240" y="260" width="56" height="22" rx="9" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.18)"/>
+            <text x="268" y="275" font-size="11" text-anchor="middle" fill="rgba(94,139,110,.95)">DETAILS</text>
+
+            <!-- item 2 -->
+            <rect x="52" y="318" width="256" height="74" rx="14" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <rect x="62" y="338" width="18" height="18" rx="5" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.65)"/>
+            <text x="90" y="344" font-size="12" fill="rgba(30,74,54,.95)" font-weight="700" font-family="ui-monospace">24-10345-002</text>
+            <text x="90" y="362" font-size="12" fill="rgba(94,139,110,.9)">Staging â€¢ West â€¢ Slot 08</text>
+            <rect x="240" y="342" width="56" height="22" rx="9" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.18)"/>
+            <text x="268" y="357" font-size="11" text-anchor="middle" fill="rgba(94,139,110,.95)">DETAILS</text>
+
+            <!-- item 3 -->
+            <rect x="52" y="400" width="256" height="74" rx="14" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <rect x="62" y="420" width="18" height="18" rx="5" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.65)"/>
+            <text x="90" y="426" font-size="12" fill="rgba(30,74,54,.95)" font-weight="700" font-family="ui-monospace">24-10345-003</text>
+            <text x="90" y="444" font-size="12" fill="rgba(94,139,110,.9)">Row C â€¢ Lane 1 â€¢ Pre-stack P2</text>
+            <rect x="240" y="424" width="56" height="22" rx="9" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.18)"/>
+            <text x="268" y="439" font-size="11" text-anchor="middle" fill="rgba(94,139,110,.95)">DETAILS</text>
+
+            <!-- pagination/footer -->
+            <rect x="52" y="500" width="256" height="38" rx="14" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.12)"/>
+            <text x="180" y="524" font-size="12" text-anchor="middle" fill="rgba(94,139,110,.9)">Load more</text>
+
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(30,74,54,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(94,139,110,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- 4. MULTI-SCAN (LOADSHEET) -->
+      <article class="card" id="scanMulti">
+        <div class="meta">
+          <div>
+            <div class="name">Multi-Scan (Loadsheet Barcode)</div>
+            <div class="desc">Scan a loadsheet barcode to fetch multiple elements; then review + select actions.</div>
+          </div>
+          <div class="tag">page: /scan/loadsheet</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Multi-scan loadsheet wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">LOADSHEET SCAN</text>
+
+            <text x="52" y="110" font-size="16" fill="rgba(30,74,54,.95)" font-weight="800">Scan loadsheet</text>
+            <text x="52" y="130" font-size="12" fill="rgba(94,139,110,.9)">Add multiple elements at once</text>
+
+            <!-- scanner area -->
+            <rect x="52" y="152" width="256" height="180" rx="18" fill="rgba(0,0,0,.18)" stroke="rgba(94,139,110,.55)"/>
+            <rect x="80" y="190" width="200" height="104" rx="12" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <line x1="80" y1="242" x2="280" y2="242" stroke="rgba(94,139,110,.75)" stroke-width="2"/>
+            <text x="180" y="176" font-size="12" text-anchor="middle" fill="rgba(94,139,110,.9)">Camera view</text>
+
+            <rect x="52" y="344" width="256" height="44" rx="14" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="180" y="372" font-size="13" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="700">Scan barcode</text>
+
+            <!-- parsed loadsheet -->
+            <text x="52" y="420" font-size="12" fill="rgba(94,139,110,.95)">Loadsheet detected</text>
+            <rect x="52" y="432" width="256" height="52" rx="14" fill="rgba(94,139,110,.10)" stroke="rgba(94,139,110,.6)"/>
+            <text x="70" y="460" font-size="12" fill="rgba(30,74,54,.9)" font-family="ui-monospace">LS-2026-0301-014</text>
+            <text x="70" y="478" font-size="12" fill="rgba(94,139,110,.9)">18 elements found</text>
+
+            <rect x="52" y="496" width="256" height="44" rx="14" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.14)"/>
+            <text x="180" y="524" font-size="13" text-anchor="middle" fill="rgba(30,74,54,.95)">Review elements</text>
+
+            <!-- action row -->
+            <rect x="52" y="552" width="124" height="44" rx="14" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="114" y="580" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="700">Move selected</text>
+            <rect x="184" y="552" width="124" height="44" rx="14" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="246" y="580" font-size="12" text-anchor="middle" fill="rgba(94,139,110,.95)">Export list</text>
+
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(30,74,54,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(94,139,110,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- 5. ELEMENT GRID -->
+      <article class="card" id="grid">
+        <div class="meta">
+          <div>
+            <div class="name">Element Grid (Yard Map / Location Grid)</div>
+            <div class="desc">Grid visualization of lanes/rows/racks. Tap a cell to view elements; supports filters.</div>
+          </div>
+          <div class="tag">page: /grid</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Element grid wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">GRID</text>
+
+            <text x="52" y="110" font-size="16" fill="rgba(30,74,54,.95)" font-weight="800">Yard grid</text>
+            <rect x="52" y="122" width="256" height="36" rx="12" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="66" y="145" font-size="12" fill="rgba(94,139,110,.9)">Filter: Row / Lane / Rack / Status</text>
+
+            <!-- grid -->
+            <rect x="52" y="170" width="256" height="320" rx="18" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <!-- columns labels -->
+            <text x="72" y="196" font-size="11" fill="rgba(94,139,110,.9)">Lane 1</text>
+            <text x="140" y="196" font-size="11" fill="rgba(94,139,110,.9)">Lane 2</text>
+            <text x="208" y="196" font-size="11" fill="rgba(94,139,110,.9)">Lane 3</text>
+            <text x="276" y="196" font-size="11" fill="rgba(94,139,110,.9)">Lane 4</text>
+
+            <!-- cells -->
+            <!-- draw 4x4 -->
+            <!-- row labels -->
+            <text x="58" y="226" font-size="11" fill="rgba(94,139,110,.9)">Row A</text>
+            <text x="58" y="292" font-size="11" fill="rgba(94,139,110,.9)">Row B</text>
+            <text x="58" y="358" font-size="11" fill="rgba(94,139,110,.9)">Row C</text>
+            <text x="58" y="424" font-size="11" fill="rgba(94,139,110,.9)">Row D</text>
+
+            <!-- cells rectangles -->
+            <!-- Row A -->
+            <rect x="88" y="212" width="56" height="50" rx="10" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
+            <rect x="156" y="212" width="56" height="50" rx="10" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
+            <rect x="224" y="212" width="56" height="50" rx="10" fill="rgba(94,139,110,.18)" stroke="rgba(94,139,110,.65)"/>
+            <rect x="292" y="212" width="0" height="0" fill="none"/>
+
+            <rect x="292" y="212" width="0" height="0" fill="none"/>
+            <rect x="292" y="212" width="0" height="0" fill="none"/>
+
+            <rect x="292" y="212" width="56" height="50" rx="10" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
+
+            <!-- Row B -->
+            <rect x="88" y="278" width="56" height="50" rx="10" fill="rgba(255,244,214,.16)" stroke="rgba(255,244,214,.6)"/>
+            <rect x="156" y="278" width="56" height="50" rx="10" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
+            <rect x="224" y="278" width="56" height="50" rx="10" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
+            <rect x="292" y="278" width="56" height="50" rx="10" fill="rgba(94,139,110,.12)" stroke="rgba(94,139,110,.6)"/>
+
+            <!-- Row C -->
+            <rect x="88" y="344" width="56" height="50" rx="10" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
+            <rect x="156" y="344" width="56" height="50" rx="10" fill="rgba(94,139,110,.14)" stroke="rgba(94,139,110,.55)"/>
+            <rect x="224" y="344" width="56" height="50" rx="10" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
+            <rect x="292" y="344" width="56" height="50" rx="10" fill="rgba(255,92,122,.12)" stroke="rgba(255,92,122,.6)"/>
+
+            <!-- Row D -->
+            <rect x="88" y="410" width="56" height="50" rx="10" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
+            <rect x="156" y="410" width="56" height="50" rx="10" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
+            <rect x="224" y="410" width="56" height="50" rx="10" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
+            <rect x="292" y="410" width="56" height="50" rx="10" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)"/>
+
+            <!-- legend -->
+            <rect x="52" y="504" width="256" height="92" rx="16" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <text x="70" y="532" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">Legend</text>
+            <rect x="70" y="542" width="12" height="12" rx="3" fill="rgba(94,139,110,.35)" stroke="rgba(94,139,110,.8)"/>
+            <text x="90" y="552" font-size="12" fill="rgba(94,139,110,.9)">Selected / focus</text>
+            <rect x="70" y="560" width="12" height="12" rx="3" fill="rgba(94,139,110,.25)" stroke="rgba(94,139,110,.8)"/>
+            <text x="90" y="570" font-size="12" fill="rgba(94,139,110,.9)">Ready / confirmed</text>
+            <rect x="190" y="542" width="12" height="12" rx="3" fill="rgba(255,244,214,.22)" stroke="rgba(255,244,214,.8)"/>
+            <text x="210" y="552" font-size="12" fill="rgba(94,139,110,.9)">Offline queued</text>
+            <rect x="190" y="560" width="12" height="12" rx="3" fill="rgba(255,92,122,.22)" stroke="rgba(255,92,122,.8)"/>
+            <text x="210" y="570" font-size="12" fill="rgba(94,139,110,.9)">Conflict</text>
+
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(94,139,110,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(30,74,54,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- 6. ELEMENT DETAIL -->
+      <article class="card" id="elementDetail">
+        <div class="meta">
+          <div>
+            <div class="name">Element Detail</div>
+            <div class="desc">Single element view: IDs, current location hierarchy, history, and quick move/rebook.</div>
+          </div>
+          <div class="tag">page: /element/:id</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Element detail wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">ELEMENT</text>
+            <text x="300" y="48" font-size="12" text-anchor="end" fill="rgba(94,139,110,.85)" font-family="ui-monospace">ONLINE</text>
+
+            <text x="52" y="110" font-size="16" fill="rgba(30,74,54,.95)" font-weight="800" font-family="ui-monospace">24-10345-001</text>
+            <text x="52" y="132" font-size="12" fill="rgba(94,139,110,.9)">Project: ABC Tower â€¢ Type: Panel</text>
+
+            <!-- location card -->
+            <rect x="52" y="150" width="256" height="92" rx="16" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <text x="70" y="176" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">Current location</text>
+            <text x="70" y="198" font-size="12" fill="rgba(94,139,110,.95)">Row B â†’ Lane 3 â†’ Rack R-12</text>
+            <rect x="70" y="208" width="90" height="22" rx="9" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="115" y="223" font-size="11" text-anchor="middle" fill="rgba(94,139,110,.95)">Open rack</text>
+
+            <rect x="214" y="206" width="84" height="28" rx="10" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="256" y="225" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="700">Move</text>
+
+            <!-- status -->
+            <rect x="52" y="254" width="256" height="60" rx="16" fill="rgba(94,139,110,.08)" stroke="rgba(94,139,110,.55)"/>
+            <text x="70" y="282" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">Status</text>
+            <text x="70" y="302" font-size="12" fill="rgba(94,139,110,.95)">Confirmed in yard â€¢ last scan 09:12</text>
+
+            <!-- history -->
+            <text x="52" y="338" font-size="12" fill="rgba(94,139,110,.95)">Movement history</text>
+            <rect x="52" y="350" width="256" height="150" rx="16" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.12)"/>
+            <text x="70" y="378" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">2026-03-01  09:12  Row B/L3/R-12</text>
+            <text x="70" y="398" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">2026-02-28  16:05  Staging West/08</text>
+            <text x="70" y="418" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">2026-02-27  11:20  Pre-stack P2</text>
+
+            <!-- bottom actions -->
+            <rect x="52" y="518" width="256" height="44" rx="14" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="180" y="546" font-size="13" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="700">Start move / rebook</text>
+
+            <rect x="52" y="572" width="256" height="44" rx="14" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="180" y="600" font-size="13" text-anchor="middle" fill="rgba(94,139,110,.95)">Report issue</text>
+
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(94,139,110,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(30,74,54,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- MOVE FLOW 1 -->
+      <article class="card" id="move1">
+        <div class="meta">
+          <div>
+            <div class="name">Move / Rebook Flow â€” Step 1: Select element(s)</div>
+            <div class="desc">Select by list or scan; supports batch. Shows selection count and next step.</div>
+          </div>
+          <div class="tag">flow: /move</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Move flow step 1 wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">MOVE â€¢ STEP 1/4</text>
+
+            <text x="52" y="110" font-size="16" fill="rgba(30,74,54,.95)" font-weight="800">Select items to move</text>
+
+            <rect x="52" y="126" width="210" height="42" rx="14" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+            <text x="66" y="152" font-size="12" fill="rgba(94,139,110,.9)" font-family="ui-monospace">Scan or type element ID</text>
+            <rect x="268" y="126" width="40" height="42" rx="14" fill="rgba(94,139,110,.20)" stroke="rgba(94,139,110,.6)"/>
+            <text x="288" y="152" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">SCAN</text>
+
+            <rect x="52" y="178" width="256" height="44" rx="14" fill="rgba(94,139,110,.14)" stroke="rgba(94,139,110,.55)"/>
+            <text x="68" y="206" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">Selected: 3</text>
+            <text x="236" y="206" font-size="12" fill="rgba(94,139,110,.9)">Clear</text>
+
+            <!-- selected list -->
+            <rect x="52" y="232" width="256" height="210" rx="16" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.12)"/>
+            <text x="70" y="262" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">â˜‘ 24-10345-001   Row B/L3/R-12</text>
+            <text x="70" y="286" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">â˜‘ 24-10345-002   Staging West/08</text>
+            <text x="70" y="310" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">â˜‘ 24-10345-003   Row C/L1/P2</text>
+
+            <text x="52" y="468" font-size="12" fill="rgba(94,139,110,.95)">Choose move type</text>
+            <rect x="52" y="480" width="124" height="44" rx="14" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="114" y="508" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="700">Rebook</text>
+            <rect x="184" y="480" width="124" height="44" rx="14" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.14)"/>
+            <text x="246" y="508" font-size="12" text-anchor="middle" fill="rgba(94,139,110,.95)">Store</text>
+
+            <rect x="52" y="536" width="256" height="48" rx="16" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="180" y="566" font-size="13" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="800">Next: verify initial</text>
+
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(94,139,110,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(30,74,54,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- MOVE FLOW 2 -->
+      <article class="card" id="move2">
+        <div class="meta">
+          <div>
+            <div class="name">Move / Rebook Flow â€” Step 2: Verify initial location</div>
+            <div class="desc">Verify current location (scan location tag if needed). Handles mismatch/conflict.</div>
+          </div>
+          <div class="tag">flow: /move/verify</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Move flow step 2 wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">MOVE â€¢ STEP 2/4</text>
+
+            <text x="52" y="110" font-size="16" fill="rgba(30,74,54,.95)" font-weight="800">Verify initial location</text>
+            <text x="52" y="130" font-size="12" fill="rgba(94,139,110,.9)">Prevents conflicts when multiple users move items</text>
+
+            <rect x="52" y="150" width="256" height="90" rx="16" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <text x="70" y="176" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">Expected location</text>
+            <text x="70" y="198" font-size="12" fill="rgba(94,139,110,.95)">Row B â†’ Lane 3 â†’ Rack R-12</text>
+            <text x="70" y="220" font-size="12" fill="rgba(94,139,110,.9)">3 items selected (must all match or split)</text>
+
+            <rect x="52" y="254" width="210" height="42" rx="14" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="66" y="280" font-size="12" fill="rgba(94,139,110,.9)" font-family="ui-monospace">Scan current location tag</text>
+            <rect x="268" y="254" width="40" height="42" rx="14" fill="rgba(94,139,110,.20)" stroke="rgba(94,139,110,.6)"/>
+            <text x="288" y="280" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">SCAN</text>
+
+            <!-- conflict example -->
+            <rect x="52" y="308" width="256" height="82" rx="16" fill="rgba(255,92,122,.10)" stroke="rgba(255,92,122,.6)"/>
+            <text x="70" y="336" font-size="12" fill="rgba(30,74,54,.95)" font-weight="800">Mismatch detected</text>
+            <text x="70" y="356" font-size="12" fill="rgba(94,139,110,.95)">1 item is at: Staging West / 08</text>
+            <text x="70" y="374" font-size="12" fill="rgba(94,139,110,.95)">Action: split move or refresh data</text>
+
+            <rect x="52" y="402" width="124" height="44" rx="14" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="114" y="430" font-size="12" text-anchor="middle" fill="rgba(94,139,110,.95)">Split</text>
+            <rect x="184" y="402" width="124" height="44" rx="14" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="246" y="430" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="700">Refresh</text>
+
+            <rect x="52" y="464" width="256" height="48" rx="16" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="180" y="494" font-size="13" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="800">Next: choose new location</text>
+
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(94,139,110,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(30,74,54,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- MOVE FLOW 3 -->
+      <article class="card" id="move3">
+        <div class="meta">
+          <div>
+            <div class="name">Move / Rebook Flow â€” Step 3: Choose new location</div>
+            <div class="desc">Pick hierarchy: area â†’ row â†’ lane â†’ rack/slot/pre-stack. Supports scanning destination tag.</div>
+          </div>
+          <div class="tag">flow: /move/new-location</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Move flow step 3 wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">MOVE â€¢ STEP 3/4</text>
+
+            <text x="52" y="110" font-size="16" fill="rgba(30,74,54,.95)" font-weight="800">Choose new location</text>
+
+            <rect x="52" y="126" width="210" height="42" rx="14" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="66" y="152" font-size="12" fill="rgba(94,139,110,.9)" font-family="ui-monospace">Scan destination tag (optional)</text>
+            <rect x="268" y="126" width="40" height="42" rx="14" fill="rgba(94,139,110,.20)" stroke="rgba(94,139,110,.6)"/>
+            <text x="288" y="152" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">SCAN</text>
+
+            <text x="52" y="186" font-size="12" fill="rgba(94,139,110,.95)">Or select manually</text>
+
+            <rect x="52" y="200" width="256" height="36" rx="12" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.14)"/>
+            <text x="66" y="223" font-size="12" fill="rgba(94,139,110,.9)">Area: [ Yard West ]</text>
+
+            <rect x="52" y="244" width="256" height="36" rx="12" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.14)"/>
+            <text x="66" y="267" font-size="12" fill="rgba(94,139,110,.9)">Row: [ C ]</text>
+
+            <rect x="52" y="288" width="256" height="36" rx="12" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.14)"/>
+            <text x="66" y="311" font-size="12" fill="rgba(94,139,110,.9)">Lane: [ 1 ]</text>
+
+            <rect x="52" y="332" width="256" height="36" rx="12" fill="rgba(94,139,110,.14)" stroke="rgba(94,139,110,.55)"/>
+            <text x="66" y="355" font-size="12" fill="rgba(30,74,54,.9)">Container: [ Pre-stack P2 ]</text>
+
+            <!-- occupancy hints -->
+            <rect x="52" y="384" width="256" height="84" rx="16" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.12)"/>
+            <text x="70" y="412" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">Destination details</text>
+            <text x="70" y="434" font-size="12" fill="rgba(94,139,110,.95)">Capacity: 12 â€¢ Occupied: 7</text>
+            <text x="70" y="454" font-size="12" fill="rgba(94,139,110,.95)">Last updated: 08:55</text>
+
+            <rect x="52" y="488" width="256" height="48" rx="16" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="180" y="518" font-size="13" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="800">Next: review</text>
+
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(94,139,110,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(30,74,54,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- MOVE FLOW 4 -->
+      <article class="card" id="move4">
+        <div class="meta">
+          <div>
+            <div class="name">Move / Rebook Flow â€” Step 4: Review + submit</div>
+            <div class="desc">Summarize before committing. Includes offline queue messaging and success message expectation.</div>
+          </div>
+          <div class="tag">flow: /move/review</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Move flow step 4 wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">MOVE â€¢ REVIEW</text>
+
+            <text x="52" y="110" font-size="16" fill="rgba(30,74,54,.95)" font-weight="800">Review changes</text>
+
+            <rect x="52" y="128" width="256" height="104" rx="16" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <text x="70" y="154" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">From</text>
+            <text x="70" y="174" font-size="12" fill="rgba(94,139,110,.95)">Row B â†’ Lane 3 â†’ Rack R-12</text>
+            <text x="70" y="198" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">To</text>
+            <text x="70" y="218" font-size="12" fill="rgba(94,139,110,.95)">Row C â†’ Lane 1 â†’ Pre-stack P2</text>
+
+            <rect x="52" y="244" width="256" height="140" rx="16" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.12)"/>
+            <text x="70" y="272" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">Items (3)</text>
+            <text x="70" y="298" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">24-10345-001</text>
+            <text x="70" y="320" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">24-10345-002</text>
+            <text x="70" y="342" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">24-10345-003</text>
+
+            <rect x="52" y="396" width="256" height="66" rx="16" fill="rgba(255,244,214,.10)" stroke="rgba(255,244,214,.55)"/>
+            <text x="70" y="424" font-size="12" fill="rgba(30,74,54,.95)" font-weight="800">Offline-safe</text>
+            <text x="70" y="446" font-size="12" fill="rgba(94,139,110,.95)">If no connection, this will queue and sync later.</text>
+
+            <rect x="52" y="476" width="256" height="52" rx="16" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="180" y="508" font-size="13" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="800">Submit move</text>
+
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(94,139,110,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(30,74,54,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- MOVE FLOW 5: SUCCESS / OFFLINE QUEUED -->
+      <article class="card" id="move5">
+        <div class="meta">
+          <div>
+            <div class="name">Move Result States</div>
+            <div class="desc">Success message (required by your doc) + offline queued state + retry/error patterns.</div>
+          </div>
+          <div class="tag">component: /move/result</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Move result states wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">MOVE â€¢ RESULT</text>
+
+            <!-- Success -->
+            <rect x="52" y="110" width="256" height="120" rx="18" fill="rgba(94,139,110,.12)" stroke="rgba(94,139,110,.7)"/>
+            <text x="180" y="148" font-size="18" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="900">Success</text>
+            <text x="180" y="174" font-size="12" text-anchor="middle" fill="rgba(94,139,110,.95)">3 items moved to Row C / Lane 1 / P2</text>
+            <rect x="92" y="188" width="176" height="28" rx="12" fill="rgba(94,139,110,.18)" stroke="rgba(94,139,110,.8)"/>
+            <text x="180" y="207" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">View updated items</text>
+
+            <!-- Offline queued -->
+            <rect x="52" y="250" width="256" height="120" rx="18" fill="rgba(255,244,214,.12)" stroke="rgba(255,244,214,.75)"/>
+            <text x="180" y="288" font-size="16" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="900">Queued (offline)</text>
+            <text x="180" y="314" font-size="12" text-anchor="middle" fill="rgba(94,139,110,.95)">No connection. Move saved and will sync.</text>
+            <rect x="92" y="328" width="176" height="28" rx="12" fill="rgba(255,244,214,.18)" stroke="rgba(255,244,214,.85)"/>
+            <text x="180" y="347" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">See queue</text>
+
+            <!-- Error -->
+            <rect x="52" y="390" width="256" height="140" rx="18" fill="rgba(255,92,122,.10)" stroke="rgba(255,92,122,.75)"/>
+            <text x="180" y="428" font-size="16" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="900">Couldnâ€™t submit</text>
+            <text x="180" y="454" font-size="12" text-anchor="middle" fill="rgba(94,139,110,.95)">Conflict: 1 item moved by someone else</text>
+            <rect x="64" y="470" width="112" height="34" rx="12" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="120" y="492" font-size="12" text-anchor="middle" fill="rgba(94,139,110,.95)">Refresh</text>
+            <rect x="196" y="470" width="112" height="34" rx="12" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="252" y="492" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="700">Retry</text>
+
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(94,139,110,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(30,74,54,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- RACK SEARCH -->
+      <article class="card" id="rackSearch">
+        <div class="meta">
+          <div>
+            <div class="name">Rack Search</div>
+            <div class="desc">Find rack locations (not just elements). Scan rack tag, search by rack ID, filter by ship/leave date.</div>
+          </div>
+          <div class="tag">page: /racks/search</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Rack search wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">RACKS</text>
+
+            <text x="52" y="110" font-size="16" fill="rgba(30,74,54,.95)" font-weight="800">Find a rack</text>
+
+            <!-- tabs -->
+            <rect x="52" y="124" width="124" height="30" rx="12" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.16)"/>
+            <text x="114" y="144" font-size="12" text-anchor="middle" fill="rgba(94,139,110,.95)">Elements</text>
+            <rect x="184" y="124" width="124" height="30" rx="12" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.6)"/>
+            <text x="246" y="144" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">Racks</text>
+
+            <rect x="52" y="170" width="210" height="42" rx="14" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+            <text x="66" y="196" font-size="12" fill="rgba(94,139,110,.9)" font-family="ui-monospace">Rack ID (e.g. R-12)</text>
+            <rect x="268" y="170" width="40" height="42" rx="14" fill="rgba(94,139,110,.20)" stroke="rgba(94,139,110,.6)"/>
+            <text x="288" y="196" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)">SCAN</text>
+
+            <text x="52" y="232" font-size="12" fill="rgba(94,139,110,.95)">Filters</text>
+            <rect x="52" y="244" width="256" height="36" rx="12" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="66" y="267" font-size="12" fill="rgba(94,139,110,.9)">Sort: [ Last to leave yard ]</text>
+
+            <rect x="52" y="288" width="256" height="44" rx="14" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="180" y="316" font-size="13" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="700">Search racks</text>
+
+            <!-- results preview -->
+            <rect x="52" y="344" width="256" height="152" rx="16" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.12)"/>
+            <text x="70" y="372" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">Results</text>
+            <text x="70" y="396" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">R-12   Row B/L3   Leaves: 2026-03-03</text>
+            <text x="70" y="418" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">R-07   Staging W  Leaves: 2026-03-02</text>
+            <text x="70" y="440" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">R-19   Row D/L2   Leaves: 2026-03-05</text>
+
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(94,139,110,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(30,74,54,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- RACK DETAIL -->
+      <article class="card" id="rackDetail">
+        <div class="meta">
+          <div>
+            <div class="name">Rack Detail</div>
+            <div class="desc">Rack view shows rack location + leave date + list of elements currently on rack.</div>
+          </div>
+          <div class="tag">page: /rack/:id</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Rack detail wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">RACK</text>
+
+            <text x="52" y="110" font-size="18" fill="rgba(30,74,54,.95)" font-weight="900" font-family="ui-monospace">R-12</text>
+            <text x="52" y="132" font-size="12" fill="rgba(94,139,110,.9)">Leaves yard: 2026-03-03 â€¢ Status: Loaded</text>
+
+            <rect x="52" y="150" width="256" height="86" rx="16" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <text x="70" y="176" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">Current location</text>
+            <text x="70" y="198" font-size="12" fill="rgba(94,139,110,.95)">Row B â†’ Lane 3 â†’ Slot 2</text>
+            <rect x="214" y="182" width="84" height="34" rx="12" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="256" y="204" font-size="12" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="700">Locate</text>
+
+            <text x="52" y="258" font-size="12" fill="rgba(94,139,110,.95)">Elements on rack (12)</text>
+            <rect x="52" y="270" width="256" height="226" rx="16" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.12)"/>
+            <text x="70" y="298" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">24-10345-001</text>
+            <text x="70" y="320" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">24-10345-004</text>
+            <text x="70" y="342" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">24-10345-006</text>
+            <text x="70" y="364" font-size="11" fill="rgba(94,139,110,.95)" font-family="ui-monospace">â€¦</text>
+
+            <rect x="52" y="510" width="256" height="48" rx="16" fill="rgba(94,139,110,.22)" stroke="rgba(94,139,110,.75)"/>
+            <text x="180" y="540" font-size="13" text-anchor="middle" fill="rgba(30,74,54,.95)" font-weight="800">Move rack (optional)</text>
+
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(94,139,110,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(30,74,54,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- RACK SORT -->
+      <article class="card" id="rackSort">
+        <div class="meta">
+          <div>
+            <div class="name">Rack List â€” Sort by â€œLast to Leave Yardâ€</div>
+            <div class="desc">Operational view to prioritize racks: those leaving last appear first (or toggle). Includes filters + quick locate.</div>
+          </div>
+          <div class="tag">page: /racks</div>
+        </div>
+        <div class="svgwrap">
+          <svg width="100%" viewBox="0 0 360 720" role="img" aria-label="Rack sorting wireframe">
+            <rect x="12" y="12" width="336" height="696" rx="28" fill="rgba(0,0,0,.18)" stroke="rgba(255,255,255,.16)"/>
+            <rect x="30" y="68" width="300" height="620" rx="22" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+            <text x="44" y="48" font-size="12" fill="rgba(30,74,54,.85)" font-family="ui-monospace">RACKS â€¢ LIST</text>
+
+            <text x="52" y="110" font-size="16" fill="rgba(30,74,54,.95)" font-weight="800">Racks</text>
+            <rect x="52" y="124" width="256" height="40" rx="14" fill="rgba(0,0,0,.12)" stroke="rgba(255,255,255,.14)"/>
+            <text x="66" y="149" font-size="12" fill="rgba(94,139,110,.9)">Sort: Last to leave yard â–¾  |  Filter â–¾</text>
+
+            <!-- list -->
+            <rect x="52" y="176" width="256" height="68" rx="14" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <text x="70" y="204" font-size="12" fill="rgba(30,74,54,.95)" font-weight="800" font-family="ui-monospace">R-19</text>
+            <text x="70" y="224" font-size="12" fill="rgba(94,139,110,.95)">Row D/L2 â€¢ Leaves: 2026-03-05</text>
+            <rect x="240" y="198" width="56" height="22" rx="9" fill="rgba(94,139,110,.18)" stroke="rgba(94,139,110,.55)"/>
+            <text x="268" y="213" font-size="11" text-anchor="middle" fill="rgba(30,74,54,.95)">LOCATE</text>
+
+            <rect x="52" y="254" width="256" height="68" rx="14" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <text x="70" y="282" font-size="12" fill="rgba(30,74,54,.95)" font-weight="800" font-family="ui-monospace">R-12</text>
+            <text x="70" y="302" font-size="12" fill="rgba(94,139,110,.95)">Row B/L3 â€¢ Leaves: 2026-03-03</text>
+            <rect x="240" y="276" width="56" height="22" rx="9" fill="rgba(94,139,110,.18)" stroke="rgba(94,139,110,.55)"/>
+            <text x="268" y="291" font-size="11" text-anchor="middle" fill="rgba(30,74,54,.95)">LOCATE</text>
+
+            <rect x="52" y="332" width="256" height="68" rx="14" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <text x="70" y="360" font-size="12" fill="rgba(30,74,54,.95)" font-weight="800" font-family="ui-monospace">R-07</text>
+            <text x="70" y="380" font-size="12" fill="rgba(94,139,110,.95)">Staging West â€¢ Leaves: 2026-03-02</text>
+            <rect x="240" y="354" width="56" height="22" rx="9" fill="rgba(94,139,110,.18)" stroke="rgba(94,139,110,.55)"/>
+            <text x="268" y="369" font-size="11" text-anchor="middle" fill="rgba(30,74,54,.95)">LOCATE</text>
+
+            <!-- toggle hint -->
+            <rect x="52" y="420" width="256" height="62" rx="16" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.14)"/>
+            <text x="70" y="448" font-size="12" fill="rgba(30,74,54,.9)" font-weight="700">Sort options</text>
+            <text x="70" y="468" font-size="12" fill="rgba(94,139,110,.95)">Last-to-leave first â€¢ Earliest-to-leave first</text>
+
+            <rect x="44" y="632" width="272" height="44" rx="14" fill="rgba(0,0,0,.14)" stroke="rgba(255,255,255,.12)"/>
+            <text x="78" y="659" font-size="11" fill="rgba(94,139,110,.85)">Home</text>
+            <text x="170" y="659" font-size="11" fill="rgba(30,74,54,.85)">Search</text>
+            <text x="258" y="659" font-size="11" fill="rgba(94,139,110,.85)">Moves</text>
+          </svg>
+        </div>
+      </article>
+
+    </section>
+  </div>
+</main>
+
+<script>
+  // simple jump-to selector
+  const sel = document.getElementById('jump');
+  sel.addEventListener('change', () => {
+    const v = sel.value;
+    if (!v) return;
+    location.hash = v;
+  });
+</script>
+</body>
+</html>
+

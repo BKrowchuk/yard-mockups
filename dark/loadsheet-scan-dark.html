@@ -1,0 +1,347 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Yard App â€” Loadsheet (Standalone)</title>
+<style>
+  :root{
+    --bg: #123729;
+    --card: #123729;
+    --ink: #E3C87A;
+    --muted: #5F9A75;
+    --accent: #5F9A75;
+    --ok: #5F9A75;
+    --warn: #E3C87A;
+    --bad: #E3C87A;
+    --radius:16px;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:
+    radial-gradient(1200px 800px at 20% 10%,  #123729 0%, var(--bg) 55%), var(--bg);
+    color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  .app{max-width:520px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column}
+  header{position:sticky;top:0;z-index:10;background:rgba(18,55,41,.72);
+    border-bottom:1px solid rgba(255,255,255,.06);backdrop-filter:blur(6px)}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;gap:12px}
+  .brand{display:flex;gap:10px;align-items:center;min-width:0}
+  .badge{width:36px;height:36px;border-radius:10px;background:
+    linear-gradient(135deg,var(--accent), rgba(95,154,117,.2));box-shadow:var(--shadow)}
+  .title{font-weight:900;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sub{font-size:12px;color:var(--muted)}
+  main{flex:1;padding:14px;overflow:auto}
+  .card{background: rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+    border-radius:18px;padding:12px;box-shadow:var(--shadow);margin-bottom:12px}
+  .meta{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+  .meta .name{font-weight:900;font-size:14px}
+  .meta .desc{font-size:12px;color:var(--muted);margin-top:4px}
+  .meta .tag{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  /* Scan area */
+  .scanArea{display:flex;flex-direction:column;gap:10px;align-items:center}
+  .cameraFrame{width:100%;max-width:340px;height:180px;border-radius:16px;
+    background:linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.22));
+    border:2px solid rgba(95,154,117,.35);display:flex;align-items:center;justify-content:center}
+  .cameraInner{width:82%;height:64%;border-radius:10px;background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted)}
+  .btnRow{display:flex;gap:10px;width:100%;justify-content:center;margin-top:6px}
+  .btn{border:1px solid rgba(95,154,117,.65);background:rgba(95,154,117,.20);color:var(--ink);
+    padding:10px 12px;border-radius:14px;font-size:13px;font-weight:800;cursor:pointer}
+  .btn.secondary{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);font-weight:700}
+  .btn:active{transform:translateY(1px)}
+  /* Parsed loadsheet card */
+  .lsCard{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:12px}
+  .lsId{font-family:var(--mono);font-size:13px;font-weight:800}
+  .lsMeta{font-size:12px;color:var(--muted)}
+  .actionsRow{display:flex;gap:10px;margin-top:6px}
+  .actionBtn{flex:1;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);font-weight:800;cursor:pointer}
+  .actionBtn.primary{background:rgba(95,154,117,.12);border-color:rgba(95,154,117,.45)}
+  /* Elements list */
+  .results{border-radius:12px;border:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.12);padding:8px}
+  .resultsTop{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .t{font-weight:900}
+  .n{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .rowItem{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.04);background:rgba(255,255,255,.02);margin-top:8px;cursor:pointer}
+  .rowItem .meta{min-width:0}
+  .rowItem .id{font-family:var(--mono);font-weight:900}
+  .rowItem .sub{font-size:12px;color:var(--muted);margin-top:6px}
+  .pill{font-family:var(--mono);font-size:11px;padding:6px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.08)}
+  .pill.ok{border-color:rgba(95,154,117,.6);background:rgba(95,154,117,.08)}
+  .pill.warn{border-color:rgba(227,200,122,.75);background:rgba(227,200,122,.08)}
+  .pill.bad{border-color:rgba(255,92,122,.75);background:rgba(255,92,122,.08)}
+  /* Bottom nav */
+  footer{position:sticky;bottom:0;background:rgba(18,55,41,.72);border-top:1px solid rgba(255,255,255,.06);padding:8px}
+  .bottomnav{display:flex;gap:8px;justify-content:space-around}
+  .navbtn{flex:1;text-align:center;padding:10px 8px;border-radius:12px;font-size:13px;color:var(--muted);border:1px solid rgba(255,255,255,.04);background:rgba(255,255,255,.02);cursor:pointer}
+  .navbtn.active{color:var(--ink);border-color:rgba(95,154,117,.45);background:rgba(95,154,117,.10)}
+  /* helpers */
+  .hint{margin-top:8px;color:var(--muted);font-size:13px}
+  @media (min-width:560px){ .app{margin-top:18px} }
+</style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="Loadsheet multi-scan page">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <div class="badge" aria-hidden="true"></div>
+          <div style="min-width:0">
+            <div class="title">Loadsheet Multi-Scan</div>
+            <div class="sub">Scan â†’ review â†’ act</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="sub" aria-hidden="true" id="statusPill">ONLINE</div>
+          <button id="closeBtn" class="navbtn" style="padding:6px 10px;border-radius:10px">Close</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- top card (scan UI) -->
+      <article class="card" id="scanMultiCard" aria-labelledby="scanMultiTitle">
+        <div class="meta">
+          <div>
+            <div id="scanMultiTitle" class="name">Multi-Scan (Loadsheet Barcode)</div>
+            <div class="desc">Scan a loadsheet barcode to fetch multiple elements; then review + select actions.</div>
+          </div>
+          <div class="tag">page: /scan/loadsheet</div>
+        </div>
+
+        <div class="scanArea">
+          <div class="cameraFrame" id="cameraFrame" aria-hidden="false">
+            <div class="cameraInner" id="cameraInner">Camera view (placeholder)</div>
+          </div>
+
+          <div class="btnRow" style="width:100%;max-width:360px">
+            <button id="simulateScan" class="btn">Scan barcode</button>
+            <button id="pasteCode" class="btn secondary">Enter code</button>
+          </div>
+
+          <div class="lsCard" style="width:100%;max-width:360px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div class="lsId" id="lsId">â€”</div>
+                <div class="lsMeta" id="lsMeta">No loadsheet scanned</div>
+              </div>
+              <div class="actionsRow" style="flex-shrink:0">
+                <button id="reviewBtn" class="actionBtn" disabled>Review elements</button>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:6px">
+              <button id="moveSelected" class="actionBtn primary" disabled>Move selected</button>
+              <button id="exportList" class="actionBtn" disabled>Export list</button>
+            </div>
+          </div>
+
+          <div class="hint">After scanning, the parsed loadsheet ID and total element count appear. Tap "Review elements" to open the list below.</div>
+        </div>
+      </article>
+
+      <!-- results / review card (full page) -->
+      <article class="card" id="reviewCard" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px">
+          <div>
+            <div class="t">Elements referenced by loadsheet</div>
+            <div class="n" id="foundCount">0 found</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button id="selectAll" class="btn secondary">Select all</button>
+            <button id="clearSel" class="btn secondary">Clear</button>
+          </div>
+        </div>
+
+        <div class="results" id="foundList" aria-live="polite">
+          <!-- list items inserted by JS -->
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button id="backToScan" class="btn secondary">Back</button>
+          <button id="nextAction" class="btn" disabled>Next</button>
+        </div>
+      </article>
+    </main>
+
+    <footer>
+      <div class="bottomnav" role="navigation" aria-label="Main navigation">
+        <button class="navbtn" id="navHome">Home</button>
+        <button class="navbtn" id="navSearch">Search</button>
+        <button class="navbtn active" id="navScan">Loadsheet</button>
+        <button class="navbtn" id="navMoves">Moves</button>
+      </div>
+    </footer>
+  </div>
+
+<script>
+  // Wireframe: interactive placeholders
+  const simulateScan = document.getElementById('simulateScan');
+  const pasteCode = document.getElementById('pasteCode');
+  const lsId = document.getElementById('lsId');
+  const lsMeta = document.getElementById('lsMeta');
+  const reviewBtn = document.getElementById('reviewBtn');
+  const reviewCard = document.getElementById('reviewCard');
+  const foundList = document.getElementById('foundList');
+  const foundCount = document.getElementById('foundCount');
+  const moveSelected = document.getElementById('moveSelected');
+  const exportList = document.getElementById('exportList');
+  const selectAll = document.getElementById('selectAll');
+  const clearSel = document.getElementById('clearSel');
+  const nextAction = document.getElementById('nextAction');
+  const backToScan = document.getElementById('backToScan');
+
+  // Example parsed elements (wireframe)
+  const sampleElements = [
+    { id: "24-10345-001", loc: "Row B â€¢ Lane 3 â€¢ Rack R-12", status: "OK" },
+    { id: "24-10345-002", loc: "Staging West â€¢ Slot 08", status: "OK" },
+    { id: "24-10345-003", loc: "Row C â€¢ Lane 1 â€¢ Pre-stack P2", status: "MISSING" },
+    { id: "24-10345-004", loc: "â€”", status: "NOT IN YARD" },
+    { id: "24-10345-005", loc: "Row A â€¢ Lane 2 â€¢ Rack R-07", status: "OK" },
+    { id: "24-10345-006", loc: "Row D â€¢ Lane 4 â€¢ Rack R-19", status: "OK" }
+  ];
+
+  let currentSheet = null;
+  let found = [];
+  let selected = new Set();
+
+  function enableControls(enable){
+    reviewBtn.disabled = !enable;
+    moveSelected.disabled = !enable;
+    exportList.disabled = !enable;
+  }
+
+  function renderFound(){
+    foundList.innerHTML = '';
+    found.forEach(item=>{
+      const on = selected.has(item.id);
+      const div = document.createElement('div');
+      div.className = 'rowItem';
+      div.innerHTML = `
+        <div class="meta" style="min-width:0">
+          <div class="id">${item.id}</div>
+          <div class="sub">${item.loc}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="pill ${item.status === 'OK' ? 'ok' : (item.status === 'MISSING' ? 'warn' : 'bad')}">${item.status}</div>
+          <button class="btn ${on ? '' : 'secondary'}" data-id="${item.id}">${on ? 'Selected' : 'Select'}</button>
+        </div>
+      `;
+      // click on whole row toggles selection
+      div.addEventListener('click', (e)=>{
+        // ignore if button triggers separately
+        if (e.target && e.target.tagName === 'BUTTON') return;
+        toggleSelect(item.id);
+      });
+      // button toggles selection
+      div.querySelector('button').addEventListener('click', (ev)=>{
+        ev.stopPropagation();
+        toggleSelect(item.id);
+      });
+      foundList.appendChild(div);
+    });
+    foundCount.textContent = `${found.length} found`;
+    updateActionState();
+  }
+
+  function toggleSelect(id){
+    if (selected.has(id)) selected.delete(id);
+    else selected.add(id);
+    renderFound();
+  }
+
+  function updateActionState(){
+    const any = selected.size > 0;
+    nextAction.disabled = !any;
+  }
+
+  // Simulate a successful camera scan
+  simulateScan.addEventListener('click', ()=>{
+    currentSheet = "LS-2026-0301-014";
+    lsId.textContent = currentSheet;
+    lsMeta.textContent = `${sampleElements.length} elements found â€¢ parsed at ${new Date().toLocaleTimeString()}`;
+    found = [...sampleElements];
+    selected = new Set(found.filter((_,i)=>i<3).map(f=>f.id)); // pre-select first 3 as example
+    enableControls(true);
+    reviewBtn.disabled = false;
+    renderFound();
+    // scroll to review hint visually (wireframe nicety)
+    reviewBtn.focus();
+  });
+
+  // Allow typing a loadsheet code (simple prompt for wireframe)
+  pasteCode.addEventListener('click', ()=>{
+    const code = prompt("Enter loadsheet code (wireframe):","LS-2026-000184");
+    if (!code) return;
+    currentSheet = code.trim();
+    lsId.textContent = currentSheet;
+    lsMeta.textContent = `manual entry â€¢ will fetch when online`;
+    // keep list empty until user "fetches" (for wireframe show small sample)
+    found = [...sampleElements];
+    selected = new Set();
+    enableControls(true);
+    reviewBtn.disabled = false;
+    renderFound();
+  });
+
+  // Open review section
+  reviewBtn.addEventListener('click', ()=>{
+    reviewCard.style.display = 'block';
+    // scroll reviewCard into view
+    reviewCard.scrollIntoView({behavior:'smooth', block:'center'});
+  });
+
+  // selection helpers
+  selectAll.addEventListener('click', ()=>{
+    selected = new Set(found.map(f=>f.id));
+    renderFound();
+  });
+  clearSel.addEventListener('click', ()=>{
+    selected.clear();
+    renderFound();
+  });
+
+  // Next => act on selection (wireframe routes to move or search)
+  nextAction.addEventListener('click', ()=>{
+    if (!selected.size) { alert('Select at least one element to continue'); return; }
+    const ids = Array.from(selected).join(', ');
+    // wireframe: offer a simple choice
+    const action = prompt(`Selected ${selected.size} ids:\n${ids}\n\nType "move" to open Move flow or "search" to open Search view.`, "move");
+    if (!action) return;
+    if (action.toLowerCase() === 'move') alert('Wireframe: opening Move/Rebook flow with selected IDs.');
+    else alert('Wireframe: opening Search/Results with selected IDs.');
+  });
+
+  // Back to scan view
+  backToScan.addEventListener('click', ()=>{
+    reviewCard.style.display = 'none';
+    document.getElementById('scanMultiCard').scrollIntoView({behavior:'smooth', block:'center'});
+  });
+
+  // Move selected / Export list from top
+  moveSelected.addEventListener('click', ()=>{
+    if (!found.length) { alert('No loadsheet loaded'); return; }
+    if (!selected.size){ alert('No items selected â€” review first'); return; }
+    alert(`Wireframe: Move ${selected.size} items â†’ open Move flow.`);
+  });
+  exportList.addEventListener('click', ()=>{
+    if (!found.length) { alert('No loadsheet loaded'); return; }
+    const ids = Array.from(selected).join(', ');
+    navigator.clipboard?.writeText(ids || '')
+      .then(()=> alert('Wireframe: IDs copied to clipboard:\n' + (ids || '(none)')))
+      .catch(()=> alert('Wireframe: copy to clipboard (fallback):\n' + (ids || '(none)')));
+  });
+
+  // Close / nav placeholders
+  document.getElementById('closeBtn').addEventListener('click', ()=> alert('Wireframe: close page'));
+  document.getElementById('navHome').addEventListener('click', ()=> alert('Wireframe: go to Home'));
+  document.getElementById('navSearch').addEventListener('click', ()=> alert('Wireframe: go to Search'));
+  document.getElementById('navMoves').addEventListener('click', ()=> alert('Wireframe: go to Moves'));
+
+  // initially disabled until scan
+  enableControls(false);
+</script>
+</body>
+</html>
+

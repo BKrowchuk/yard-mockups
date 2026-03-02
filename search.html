@@ -1,0 +1,770 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Yard App Wireframes â€” Home + Search (Split)</title>
+  <style>
+    :root{
+      --bg:#F6F5F0;
+      --ink:#15382A;
+      --muted:#5D7D6A;
+      --accent:#2F8F57;
+      --ok:#2F8F57;
+      --warn:#D6A63A;
+      --bad:#A46F2A;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(21,56,42,.12);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background: var(--bg);
+      color:var(--ink);
+      font-family:var(--sans);
+    }
+
+    /* Phone-friendly app frame */
+    .app{
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,.7);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .topbar{
+      padding: 14px 14px 10px 14px;
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+    }
+    .left{
+      display:flex; gap:10px; align-items:center;
+      min-width: 0;
+    }
+    .badge{
+      width:34px; height:34px; border-radius:10px;
+      background: rgba(47,143,87,.18);
+      box-shadow: var(--shadow);
+      flex: 0 0 auto;
+    }
+    .titles{ min-width:0; }
+    .h1{
+      font-weight:900;
+      letter-spacing:.2px;
+      font-size:14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .crumb{
+      margin-top:2px;
+      color: var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .status{
+      font-family: var(--mono);
+      font-size:11px;
+      color: rgba(93,125,106,.9);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      padding:6px 8px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    main{
+      flex:1;
+      padding: 14px;
+      display:block;
+    }
+    .screen{ display:none; }
+    .screen.active{ display:block; }
+
+    /* Shared blocks */
+    .pageTitle{
+      font-weight: 950;
+      letter-spacing: .2px;
+      font-size: 16px;
+      margin: 6px 2px 4px 2px;
+    }
+    .pageSub{
+      color: var(--muted);
+      font-size: 12px;
+      margin: 0 2px 12px 2px;
+      line-height: 1.35;
+    }
+    .hint{
+      margin-top:10px;
+      padding: 12px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
+    .hint b{ color: rgba(21,56,42,.9); }
+
+    .card{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    /* Buttons */
+    .btn{
+      border:1px solid rgba(47,143,87,.65);
+      background: rgba(47,143,87,.20);
+      color: var(--ink);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn.secondary{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      color: rgba(21,56,42,.9);
+      font-weight:700;
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    /* HOME action cards (no overlap) */
+    .homeStack{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top: 10px;
+    }
+    .actionCard{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between; /* ensures button never overlaps text */
+      gap: 12px;
+      cursor:pointer;
+    }
+    .actionCard.primary{
+      border-color: rgba(47,143,87,.55);
+      background: rgba(47,143,87,.12);
+    }
+    .actionText{
+      min-width:0;
+      flex: 1 1 auto;
+    }
+    .actionTitle{
+      font-weight:900;
+      letter-spacing:.2px;
+      font-size:14px;
+      margin:0;
+    }
+    .actionSub{
+      margin-top:4px;
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.35;
+    }
+    .goBtn{
+      flex: 0 0 auto;
+      border:1px solid rgba(47,143,87,.65);
+      background: rgba(47,143,87,.22);
+      color: var(--ink);
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .goBtn.secondary{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      color: rgba(21,56,42,.9);
+      font-weight:700;
+    }
+
+    .queueBox{
+      margin-top: 14px;
+      background: rgba(214,166,58,.10);
+      border:1px solid rgba(214,166,58,.55);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+    .queueTitle{ font-weight:900; font-size:13px; margin:0 0 6px 0; }
+    .queueMeta{ font-family: var(--mono); font-size:12px; margin:0; color: rgba(21,56,42,.92); }
+    .queueSub{ font-size:12px; color: var(--muted); margin:6px 0 0 0; }
+
+    /* SEARCH PAGE (split + phone-friendly layout) */
+    .segTabs{
+      display:flex;
+      gap:10px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+    }
+    .seg{
+      flex:1;
+      text-align:center;
+      padding: 10px 8px;
+      border-radius: 14px;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: rgba(93,125,106,.95);
+    }
+    .seg.active{
+      border-color: rgba(47,143,87,.55);
+      background: rgba(47,143,87,.12);
+      color: rgba(21,56,42,.95);
+    }
+
+    .stack{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .fieldLabel{
+      font-size:12px;
+      color: var(--muted);
+      margin: 2px 0 6px 2px;
+    }
+    .inputRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .input{
+      flex:1;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      min-width: 0;
+    }
+    .input input{
+      width:100%;
+      background:transparent;
+      border:none;
+      outline:none;
+      color: var(--ink);
+      font-size:13px;
+    }
+
+    .select{
+      width:100%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      cursor:pointer;
+      user-select:none;
+    }
+    .select .leftText{
+      min-width:0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      font-size:13px;
+      color: rgba(21,56,42,.92);
+    }
+    .select .rightText{
+      font-family: var(--mono);
+      font-size:11px;
+      color: rgba(93,125,106,.9);
+      border:1px solid rgba(255,255,255,.14);
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      white-space:nowrap;
+    }
+
+    .inlineActionCard{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between; /* same â€œno overlapâ€ pattern as Home */
+      gap: 12px;
+    }
+    .inlineActionCard.primary{
+      border-color: rgba(47,143,87,.55);
+      background: rgba(47,143,87,.10);
+    }
+    .inlineActionText{ flex:1; min-width:0; }
+    .inlineActionTitle{ margin:0; font-weight:900; font-size:13px; }
+    .inlineActionSub{ margin-top:4px; font-size:12px; color: var(--muted); line-height:1.35; }
+
+    .results{
+      margin-top: 6px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+      padding: 10px;
+    }
+    .resultsTop{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .resultsTop .t{ font-weight:950; font-size:13px; }
+    .resultsTop .n{ font-family: var(--mono); font-size:11px; color: rgba(93,125,106,.95); }
+    .resultsList{
+      display:flex;
+      flex-direction:column;
+    }
+    .resultsEmpty{
+      padding: 12px;
+      border-radius: 12px;
+      border:1px dashed rgba(255,255,255,.16);
+      color: var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+
+    .rowItem{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding: 10px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      margin-top:8px;
+      cursor:pointer;
+    }
+    .rowItem .meta{ min-width:0; }
+    .rowItem .id{
+      font-family: var(--mono);
+      font-size:12px;
+      font-weight:900;
+      color: rgba(21,56,42,.95);
+    }
+    .rowItem .loc{
+      margin-top:4px;
+      font-size:12px;
+      color: var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .pill{
+      font-family: var(--mono);
+      font-size:11px;
+      color: rgba(21,56,42,.9);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      padding:6px 8px;
+      border-radius: 999px;
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+
+    /* Bottom nav */
+    footer{
+      position:sticky; bottom:0;
+      background: rgba(255,255,255,.72);
+      border-top:1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(10px);
+    }
+    .bottomnav{
+      display:flex;
+      justify-content:space-around;
+      padding: 10px 8px;
+      gap:8px;
+    }
+    .navbtn{
+      flex:1;
+      text-align:center;
+      padding: 10px 8px;
+      border-radius: 14px;
+      font-size:12px;
+      color: rgba(93,125,106,.95);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      cursor:pointer;
+      user-select:none;
+    }
+    .navbtn.active{
+      color: rgba(21,56,42,.95);
+      border-color: rgba(47,143,87,.55);
+      background: rgba(47,143,87,.12);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <div class="topbar">
+        <div class="left">
+          <div class="badge" aria-hidden="true"></div>
+          <div class="titles">
+            <div class="h1" id="headerTitle">Yard App</div>
+            <div class="crumb" id="headerSub">Home</div>
+          </div>
+        </div>
+        <div class="status" id="statusPill">ONLINE</div>
+      </div>
+    </header>
+
+    <main>
+      <!-- HOME (split, fixed GO layout) -->
+      <section class="screen active" id="home">
+        <div class="pageTitle">What do you want to do?</div>
+        <div class="pageSub">Fast actions â€¢ designed for forklifts â€¢ works offline (queues changes)</div>
+
+        <div class="homeStack">
+          <div class="actionCard primary" data-nav="search">
+            <div class="actionText">
+              <p class="actionTitle">Search Inventory</p>
+              <div class="actionSub">Elements + racks â€¢ scan barcode/QR â€¢ filter by project/location</div>
+            </div>
+            <button class="goBtn" type="button">GO</button>
+          </div>
+
+          <div class="actionCard" data-nav="moves">
+            <div class="actionText">
+              <p class="actionTitle">Move / Rebook</p>
+              <div class="actionSub">Update element location (batch supported) â€¢ show success message</div>
+            </div>
+            <button class="goBtn secondary" type="button">GO</button>
+          </div>
+
+          <div class="actionCard" data-nav="locations">
+            <div class="actionText">
+              <p class="actionTitle">Locations</p>
+              <div class="actionSub">Browse areas â†’ rows â†’ lanes â†’ racks/pre-stacks â€¢ phone-friendly</div>
+            </div>
+            <button class="goBtn secondary" type="button">GO</button>
+          </div>
+        </div>
+
+        <div class="queueBox">
+          <p class="queueTitle">Queued (offline-safe)</p>
+          <p class="queueMeta">2 ops queued</p>
+          <p class="queueSub">Will sync automatically when the device reconnects.</p>
+        </div>
+
+        <div class="hint">
+          <b>Layout rule:</b> every action card is a flex row with the text block on the left and the GO button on the right, so nothing can overlap.
+        </div>
+      </section>
+
+      <!-- SEARCH (split out like Home; uses same â€œno overlapâ€ right-side button layout) -->
+      <section class="screen" id="search">
+        <div class="pageTitle">Search inventory</div>
+        <div class="pageSub">Search elements or racks â€¢ scan barcodes â€¢ batch via loadsheet</div>
+
+        <!-- Tabs -->
+        <div class="segTabs" role="tablist" aria-label="Search mode">
+          <div class="seg active" id="tabElements" role="tab" aria-selected="true">Elements</div>
+          <div class="seg" id="tabRacks" role="tab" aria-selected="false">Racks</div>
+        </div>
+
+        <div class="stack">
+          <!-- Filters -->
+          <div class="card">
+            <div class="fieldLabel">Filters (recommended before full search)</div>
+            <div class="stack" style="gap:10px;">
+              <div class="select" id="pickProject" role="button" tabindex="0">
+                <div class="leftText">Project: <span style="color:rgba(93,125,106,.95)">[ select ]</span></div>
+                <div class="rightText">dropdown</div>
+              </div>
+              <div class="select" id="pickArea" role="button" tabindex="0">
+                <div class="leftText">Location area: <span style="color:rgba(93,125,106,.95)">[ select ]</span></div>
+                <div class="rightText">dropdown</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Query + Scan -->
+          <div class="card">
+            <div class="fieldLabel" id="queryLabel">Search by element ID / barcode / description</div>
+            <div class="inputRow">
+              <div class="input">
+                <span style="opacity:.8;font-family:var(--mono);font-size:12px;">âŒ•</span>
+                <input id="query" type="text" placeholder="e.g. 24-10345-001" />
+              </div>
+              <button class="btn" id="scanBtn" type="button">SCAN</button>
+            </div>
+
+            <div style="height:10px"></div>
+
+            <!-- Primary search action (same pattern as Home cards: text left, button right) -->
+            <div class="inlineActionCard primary">
+              <div class="inlineActionText">
+                <p class="inlineActionTitle">Run search</p>
+                <div class="inlineActionSub">Shows results list. Supports multi-select for move/rebook.</div>
+              </div>
+              <button class="goBtn" id="searchBtn" type="button">Search</button>
+            </div>
+          </div>
+
+          <!-- Batch via loadsheet -->
+          <div class="inlineActionCard">
+            <div class="inlineActionText">
+              <p class="inlineActionTitle">Batch search (loadsheet)</p>
+              <div class="inlineActionSub">Scan loadsheet barcode â†’ fetch multiple elements at once</div>
+            </div>
+            <button class="goBtn secondary" id="openBatch" type="button">OPEN</button>
+          </div>
+
+          <!-- Results preview -->
+          <div class="results" id="resultsBox">
+            <div class="resultsTop">
+              <div class="t">Results</div>
+              <div class="n" id="resultsCount">0 found</div>
+            </div>
+            <div class="resultsList" id="resultsList">
+              <div class="resultsEmpty">Run a search to view matching results.</div>
+            </div>
+          </div>
+
+          <div class="hint">
+            <b>Search layout fix (same as Home):</b> key actions use a â€œtext-left / button-rightâ€ flex pattern, so the GO/OPEN buttons canâ€™t sit on top of text on small screens.
+          </div>
+        </div>
+      </section>
+
+      <!-- STUBS (optional) -->
+      <section class="screen" id="locations">
+        <div class="pageTitle">Locations</div>
+        <div class="pageSub">Wireframe stub</div>
+        <div class="card" style="color:var(--muted);font-size:12px;line-height:1.35;">
+          Locations hierarchy picker goes here.
+        </div>
+      </section>
+
+      <section class="screen" id="moves">
+        <div class="pageTitle">Moves / Rebook</div>
+        <div class="pageSub">Wireframe stub</div>
+        <div class="card" style="color:var(--muted);font-size:12px;line-height:1.35;">
+          Move/Rebook flow goes here.
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="bottomnav">
+        <div class="navbtn active" id="navHome">Home</div>
+        <div class="navbtn" id="navSearch">Search</div>
+        <div class="navbtn" id="navLocations">Locations</div>
+        <div class="navbtn" id="navMoves">Moves</div>
+      </div>
+    </footer>
+  </div>
+
+<script>
+  /**
+   * NAV BETWEEN PAGES
+   */
+  const screens = ["home","search","locations","moves"];
+  const headerTitle = document.getElementById("headerTitle");
+  const headerSub = document.getElementById("headerSub");
+
+  function showScreen(id){
+    screens.forEach(s => document.getElementById(s).classList.toggle("active", s === id));
+    headerTitle.textContent = (id === "home") ? "Yard App" : (id.charAt(0).toUpperCase() + id.slice(1));
+    headerSub.textContent = (id === "home") ? "Home" : "Page: /" + id;
+
+    document.getElementById("navHome").classList.toggle("active", id === "home");
+    document.getElementById("navSearch").classList.toggle("active", id === "search");
+    document.getElementById("navLocations").classList.toggle("active", id === "locations");
+    document.getElementById("navMoves").classList.toggle("active", id === "moves");
+  }
+
+  document.getElementById("navHome").addEventListener("click", ()=>showScreen("home"));
+  document.getElementById("navSearch").addEventListener("click", ()=>showScreen("search"));
+  document.getElementById("navLocations").addEventListener("click", ()=>showScreen("locations"));
+  document.getElementById("navMoves").addEventListener("click", ()=>showScreen("moves"));
+
+  // Home action cards route (click anywhere on card)
+  document.querySelectorAll(".actionCard").forEach(card=>{
+    card.addEventListener("click", ()=>{
+      const target = card.getAttribute("data-nav");
+      if (target) showScreen(target);
+    });
+  });
+  // Prevent button click from double-triggering card click
+  document.querySelectorAll(".goBtn").forEach(b=>b.addEventListener("click",(e)=>e.stopPropagation()));
+
+  /**
+   * SEARCH TABS (Elements vs Racks)
+   */
+  const tabElements = document.getElementById("tabElements");
+  const tabRacks = document.getElementById("tabRacks");
+  const queryLabel = document.getElementById("queryLabel");
+  const query = document.getElementById("query");
+
+  let mode = "elements";
+  function setMode(m){
+    mode = m;
+    const isEl = mode === "elements";
+    tabElements.classList.toggle("active", isEl);
+    tabElements.setAttribute("aria-selected", String(isEl));
+    tabRacks.classList.toggle("active", !isEl);
+    tabRacks.setAttribute("aria-selected", String(!isEl));
+
+    queryLabel.textContent = isEl
+      ? "Search by element ID / barcode / description"
+      : "Search by rack ID / barcode";
+    query.placeholder = isEl ? "e.g. 24-10345-001" : "e.g. R-12";
+    if (query.value.trim()) runSearch();
+    else renderResults([]);
+  }
+  tabElements.addEventListener("click", ()=>setMode("elements"));
+  tabRacks.addEventListener("click", ()=>setMode("racks"));
+
+  /**
+   * SEARCH ACTIONS (wireframe behavior)
+   */
+  const resultsCount = document.getElementById("resultsCount");
+  const resultsList = document.getElementById("resultsList");
+  const MAX_RESULTS = 24;
+
+  const MOCK_DATA = {
+    elements: [
+      { id:"24-10345-001", barcode:"ELM-001-A7", desc:"Wall panel - north core", project:"ABC Tower", area:"Yard West", loc:"Yard West â€¢ Row B â€¢ Lane 3 â€¢ Rack R-B3-12" },
+      { id:"24-10345-002", barcode:"ELM-002-F1", desc:"Spandrel panel - bronze", project:"ABC Tower", area:"Staging West", loc:"Staging West â€¢ Slot 08" },
+      { id:"24-10345-003", barcode:"ELM-003-C4", desc:"Column cover - east face", project:"ABC Tower", area:"Yard East", loc:"Yard East â€¢ Row C â€¢ Lane 1 â€¢ Pre-stack P1" },
+      { id:"24-10345-004", barcode:"ELM-004-K2", desc:"Canopy beam section", project:"Harbor Point", area:"Yard West", loc:"Yard West â€¢ Row A â€¢ Lane 4 â€¢ Rack R-A4-03" },
+      { id:"24-10345-005", barcode:"ELM-005-M9", desc:"Curtain wall unit - corner", project:"Harbor Point", area:"Yard East", loc:"Yard East â€¢ Row B â€¢ Lane 2 â€¢ Rack R-B2-05" },
+      { id:"24-10345-006", barcode:"ELM-006-P6", desc:"Podium mullion set", project:"River Medical", area:"Staging West", loc:"Staging West â€¢ Slot 12" },
+      { id:"24-10345-007", barcode:"ELM-007-T3", desc:"GFRC coping panel", project:"River Medical", area:"Yard West", loc:"Yard West â€¢ Row D â€¢ Lane 1 â€¢ Pre-stack P1" },
+      { id:"24-10345-008", barcode:"ELM-008-H8", desc:"Mechanical screen frame", project:"Northline Labs", area:"Yard East", loc:"Yard East â€¢ Row A â€¢ Lane 3 â€¢ Rack R-A3-07" },
+      { id:"24-10345-009", barcode:"ELM-009-Q5", desc:"Sunshade blade set", project:"Northline Labs", area:"Yard West", loc:"Yard West â€¢ Row C â€¢ Lane 2 â€¢ Rack R-C2-10" },
+      { id:"24-10345-010", barcode:"ELM-010-W2", desc:"Entry canopy rib", project:"Summit Plaza", area:"Yard East", loc:"Yard East â€¢ Row C â€¢ Lane 3 â€¢ Pre-stack P3" },
+      { id:"24-10345-011", barcode:"ELM-011-D0", desc:"Storefront transom", project:"Summit Plaza", area:"Yard West", loc:"Yard West â€¢ Row B â€¢ Lane 1 â€¢ Rack R-B1-02" },
+      { id:"24-10345-012", barcode:"ELM-012-R4", desc:"Parapet return panel", project:"Summit Plaza", area:"Staging West", loc:"Staging West â€¢ Slot 01" },
+    ],
+    racks: [
+      { id:"R-A4-03", barcode:"RACK-A403", project:"Harbor Point", area:"Yard West", leaves:"2026-03-04", loc:"Yard West â€¢ Row A â€¢ Lane 4 â€¢ Slot 3" },
+      { id:"R-B3-12", barcode:"RACK-B312", project:"ABC Tower", area:"Yard West", leaves:"2026-03-03", loc:"Yard West â€¢ Row B â€¢ Lane 3 â€¢ Slot 12" },
+      { id:"R-B2-05", barcode:"RACK-B205", project:"Harbor Point", area:"Yard East", leaves:"2026-03-06", loc:"Yard East â€¢ Row B â€¢ Lane 2 â€¢ Slot 5" },
+      { id:"R-C2-10", barcode:"RACK-C210", project:"Northline Labs", area:"Yard West", leaves:"2026-03-07", loc:"Yard West â€¢ Row C â€¢ Lane 2 â€¢ Slot 10" },
+      { id:"R-A3-07", barcode:"RACK-A307", project:"Northline Labs", area:"Yard East", leaves:"2026-03-05", loc:"Yard East â€¢ Row A â€¢ Lane 3 â€¢ Slot 7" },
+      { id:"R-B1-02", barcode:"RACK-B102", project:"Summit Plaza", area:"Yard West", leaves:"2026-03-08", loc:"Yard West â€¢ Row B â€¢ Lane 1 â€¢ Slot 2" },
+      { id:"R-D4-11", barcode:"RACK-D411", project:"River Medical", area:"Yard West", leaves:"2026-03-09", loc:"Yard West â€¢ Row D â€¢ Lane 4 â€¢ Slot 11" },
+      { id:"R-C1-04", barcode:"RACK-C104", project:"River Medical", area:"Yard East", leaves:"2026-03-10", loc:"Yard East â€¢ Row C â€¢ Lane 1 â€¢ Slot 4" },
+      { id:"R-A2-09", barcode:"RACK-A209", project:"ABC Tower", area:"Yard East", leaves:"2026-03-11", loc:"Yard East â€¢ Row A â€¢ Lane 2 â€¢ Slot 9" },
+      { id:"R-D2-06", barcode:"RACK-D206", project:"Summit Plaza", area:"Yard West", leaves:"2026-03-12", loc:"Yard West â€¢ Row D â€¢ Lane 2 â€¢ Slot 6" },
+    ],
+  };
+
+  function escapeHtml(text){
+    return String(text)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function renderResults(items){
+    resultsCount.textContent = `${items.length} found`;
+    if (!items.length){
+      const qText = query.value.trim();
+      resultsList.innerHTML = qText
+        ? `<div class="resultsEmpty">No matches for "${escapeHtml(qText)}".</div>`
+        : `<div class="resultsEmpty">Run a search to view matching results.</div>`;
+      return;
+    }
+
+    resultsList.innerHTML = items.map(it => `
+      <div class="rowItem" data-id="${escapeHtml(it.id)}">
+        <div class="meta">
+          <div class="id">${escapeHtml(it.id)}</div>
+          <div class="loc">${escapeHtml(it.loc)}</div>
+        </div>
+        <div class="pill">DETAILS</div>
+      </div>
+    `).join("");
+  }
+
+  function runSearch(){
+    const searchText = query.value.trim().toLowerCase();
+    const source = mode === "elements" ? MOCK_DATA.elements : MOCK_DATA.racks;
+    const results = source.filter(item => {
+      if (!searchText) return true;
+      const haystack = mode === "elements"
+        ? `${item.id} ${item.barcode} ${item.desc} ${item.project} ${item.area} ${item.loc}`.toLowerCase()
+        : `${item.id} ${item.barcode} ${item.project} ${item.area} ${item.loc} ${item.leaves}`.toLowerCase();
+      return haystack.includes(searchText);
+    }).slice(0, MAX_RESULTS);
+
+    renderResults(results);
+  }
+
+  document.getElementById("scanBtn").addEventListener("click", ()=>{
+    alert(`Wireframe: open camera scan for ${mode === "elements" ? "element" : "rack"} barcode.`);
+  });
+
+  document.getElementById("searchBtn").addEventListener("click", ()=>{
+    runSearch();
+  });
+
+  query.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter"){
+      e.preventDefault();
+      runSearch();
+    }
+  });
+  query.addEventListener("input", runSearch);
+
+  document.getElementById("openBatch").addEventListener("click", ()=>{
+    alert("Wireframe: open loadsheet scan â†’ fetch multiple elements â†’ review list.");
+  });
+
+  // wireframe click on dynamic result rows
+  resultsList.addEventListener("click", (e)=>{
+    const row = e.target.closest(".rowItem");
+    if (!row) return;
+    const idText = row.getAttribute("data-id") || "";
+    if (!idText) return;
+    alert(`Wireframe: open ${mode === "elements" ? "Element" : "Rack"} Detail for ${idText}`);
+  });
+
+  // dropdown stubs
+  document.getElementById("pickProject").addEventListener("click", ()=>alert("Wireframe: open Project dropdown"));
+  document.getElementById("pickArea").addEventListener("click", ()=>alert("Wireframe: open Location Area dropdown"));
+</script>
+</body>
+</html>
+
