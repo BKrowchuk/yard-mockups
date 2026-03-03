@@ -245,6 +245,152 @@
       color: rgba(21,56,42,.95);
     }
 
+    .lsScanArea{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+    }
+    .lsCameraFrame{
+      width:100%;
+      max-width:340px;
+      height:180px;
+      border-radius:16px;
+      background: rgba(47,143,87,.18);
+      border:2px solid rgba(47,143,87,.35);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .lsCameraInner{
+      width:82%;
+      height:64%;
+      border-radius:10px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .lsBtnRow{
+      display:flex;
+      gap:10px;
+      width:100%;
+      justify-content:center;
+      margin-top:6px;
+      max-width:360px;
+    }
+    .lsCard{
+      width:100%;
+      max-width:360px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      padding:12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+    .lsId{
+      font-family:var(--mono);
+      font-size:13px;
+      font-weight:800;
+    }
+    .lsMeta{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+    .lsActions{
+      display:flex;
+      gap:8px;
+      margin-top:6px;
+    }
+    .lsActionBtn{
+      flex:1;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      color:var(--ink);
+      font-weight:800;
+      cursor:pointer;
+    }
+    .lsActionBtn.primary{
+      background:rgba(47,143,87,.12);
+      border-color:rgba(47,143,87,.45);
+    }
+    .lsActionBtn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+    .lsReviewCard{
+      display:none;
+    }
+    .lsCollapsed{
+      display:none;
+      justify-content:center;
+      align-items:center;
+      padding: 8px 0 2px 0;
+    }
+    .lsScannerIcon{
+      font-family:var(--mono);
+      font-weight:900;
+      letter-spacing:1px;
+    }
+    .lsReviewTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:6px;
+    }
+    .lsReviewActions{
+      display:flex;
+      gap:8px;
+    }
+    .lsResults{
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.12);
+      padding:8px;
+    }
+    .lsRow{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.06);
+      background:rgba(255,255,255,.02);
+      margin-top:8px;
+      cursor:pointer;
+    }
+    .lsRowId{
+      font-family:var(--mono);
+      font-weight:900;
+      font-size:12px;
+    }
+    .lsRowSub{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:6px;
+    }
+    .lsPill{
+      font-family:var(--mono);
+      font-size:11px;
+      padding:6px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      white-space:nowrap;
+    }
+    .lsPill.ok{ border-color:rgba(47,143,87,.6); background:rgba(47,143,87,.08); }
+    .lsPill.warn{ border-color:rgba(214,166,58,.75); background:rgba(214,166,58,.08); }
+    .lsPill.bad{ border-color:rgba(255,92,122,.75); background:rgba(255,92,122,.08); }
+
     .stack{
       display:flex;
       flex-direction:column;
@@ -556,7 +702,7 @@
           <div class="seg" id="tabLoadSheet" role="tab" aria-selected="false">Loadsheet</div>
         </div>
 
-        <div class="stack">
+        <div class="stack" id="searchClassicUI">
           <div class="card">
             <div class="filterDock">
               <button class="btn secondary filterToggle" id="toggleFiltersBtn" type="button" aria-label="Open filters">
@@ -639,6 +785,66 @@
             <b>Search layout fix (same as Home):</b> key actions use a “text-left / button-right” flex pattern, so the GO/OPEN buttons can't sit on top of text on small screens.
           </div> -->
         </div>
+
+        <div class="stack" id="loadsheetUI" style="display:none;">
+          <article class="card" id="lsScanCard" aria-labelledby="lsScanTitle">
+            <div id="lsScanHeader">
+              <div class="fieldLabel" id="lsScanTitle">Multi-Scan (Loadsheet Barcode)</div>
+              <div class="pageSub" style="margin:0 0 8px 0;">Scan a loadsheet barcode to fetch multiple elements; then review + select actions.</div>
+            </div>
+
+            <div class="lsScanArea" id="lsScanArea">
+              <div class="lsCameraFrame">
+                <div class="lsCameraInner">Camera view (placeholder)</div>
+              </div>
+
+              <div class="lsBtnRow">
+                <button id="lsSimulateScan" class="btn" type="button">Scan barcode</button>
+                <button id="lsPasteCode" class="btn secondary" type="button">Enter code</button>
+              </div>
+
+              <div class="lsCard">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                  <div>
+                    <div class="lsId" id="lsId">-</div>
+                    <div class="lsMeta" id="lsMeta">No loadsheet scanned</div>
+                  </div>
+                  <button id="lsReviewBtn" class="lsActionBtn" type="button" disabled>Review elements</button>
+                </div>
+                <div class="lsActions">
+                  <button id="lsMoveSelected" class="lsActionBtn primary" type="button" disabled>Move selected</button>
+                  <button id="lsExportList" class="lsActionBtn" type="button" disabled>Export list</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="lsCollapsed" id="lsCollapsed">
+              <button id="lsExpandBtn" class="btn secondary" type="button" aria-label="Expand multi-scan card">
+                <span class="lsScannerIcon">||||||||||||</span>
+              </button>
+            </div>
+          </article>
+
+          <article class="card lsReviewCard" id="lsReviewCard">
+            <div class="lsReviewTop">
+              <div>
+                <div class="inlineActionTitle">Elements referenced by loadsheet</div>
+                <div class="n" id="lsFoundCount">0 found</div>
+              </div>
+              <div class="lsReviewActions">
+                <button id="lsSelectAll" class="btn secondary" type="button">Select all</button>
+                <button id="lsClearSel" class="btn secondary" type="button">Clear</button>
+              </div>
+            </div>
+
+            <div class="lsResults" id="lsFoundList"></div>
+
+            <div style="display:flex;gap:10px;margin-top:12px;">
+              <button id="lsBackToScan" class="btn secondary" type="button">Back</button>
+              <button id="lsNextAction" class="btn" type="button" disabled>Next</button>
+            </div>
+          </article>
+        </div>
       </section>
 
       <!-- STUBS (optional) -->
@@ -712,8 +918,11 @@
    */
   const tabElements = document.getElementById("tabElements");
   const tabRacks = document.getElementById("tabRacks");
+  const tabLoadSheet = document.getElementById("tabLoadSheet");
   const queryLabel = document.getElementById("queryLabel");
   const query = document.getElementById("query");
+  const searchClassicUI = document.getElementById("searchClassicUI");
+  const loadsheetUI = document.getElementById("loadsheetUI");
   const toggleFiltersBtn = document.getElementById("toggleFiltersBtn");
   const filterPanel = document.getElementById("filterPanel");
   const filterProject = document.getElementById("filterProject");
@@ -728,21 +937,33 @@
   function setMode(m){
     mode = m;
     const isEl = mode === "elements";
+    const isRack = mode === "racks";
+    const isLoadsheet = mode === "loadsheet";
     tabElements.classList.toggle("active", isEl);
     tabElements.setAttribute("aria-selected", String(isEl));
-    tabRacks.classList.toggle("active", !isEl);
-    tabRacks.setAttribute("aria-selected", String(!isEl));
+    tabRacks.classList.toggle("active", isRack);
+    tabRacks.setAttribute("aria-selected", String(isRack));
+    tabLoadSheet.classList.toggle("active", isLoadsheet);
+    tabLoadSheet.setAttribute("aria-selected", String(isLoadsheet));
+
+    searchClassicUI.style.display = isLoadsheet ? "none" : "flex";
+    loadsheetUI.style.display = isLoadsheet ? "flex" : "none";
 
     queryLabel.textContent = isEl
       ? "Search by element ID / barcode / description"
       : "Search by rack ID / barcode";
     query.placeholder = isEl ? "e.g. 24-10345-001" : "e.g. R-12";
+    if (isLoadsheet){
+      closeFilters();
+      return;
+    }
     populateFilterOptions();
     if (query.value.trim() || activeFilters.project || activeFilters.area) runSearch();
     else renderResults([]);
   }
   tabElements.addEventListener("click", ()=>setMode("elements"));
   tabRacks.addEventListener("click", ()=>setMode("racks"));
+  tabLoadSheet.addEventListener("click", ()=>setMode("loadsheet"));
 
   /**
    * SEARCH ACTIONS (wireframe behavior)
@@ -802,7 +1023,9 @@
   }
 
   function getSourceData(){
-    return mode === "elements" ? MOCK_DATA.elements : MOCK_DATA.racks;
+    if (mode === "elements") return MOCK_DATA.elements;
+    if (mode === "racks") return MOCK_DATA.racks;
+    return [];
   }
 
   function toOptions(values){
@@ -903,6 +1126,7 @@
   }
 
   function runSearch(){
+    if (mode === "loadsheet") return;
     const searchText = query.value.trim().toLowerCase();
     const source = getSourceData();
     const results = source.filter(item => {
@@ -964,9 +1188,12 @@
   });
   query.addEventListener("input", runSearch);
 
-  document.getElementById("openBatch").addEventListener("click", ()=>{
-    alert("Wireframe: open loadsheet scan → fetch multiple elements → review list.");
-  });
+  const openBatchBtn = document.getElementById("openBatch");
+  if (openBatchBtn){
+    openBatchBtn.addEventListener("click", ()=>{
+      setMode("loadsheet");
+    });
+  }
 
   // wireframe click on dynamic result rows
   resultsList.addEventListener("click", (e)=>{
@@ -1006,7 +1233,177 @@
     runSearch();
   });
 
+  /**
+   * LOADSHEET TAB (embedded from loadsheet-scan-light)
+   */
+  const lsSimulateScan = document.getElementById("lsSimulateScan");
+  const lsPasteCode = document.getElementById("lsPasteCode");
+  const lsScanHeader = document.getElementById("lsScanHeader");
+  const lsScanArea = document.getElementById("lsScanArea");
+  const lsCollapsed = document.getElementById("lsCollapsed");
+  const lsExpandBtn = document.getElementById("lsExpandBtn");
+  const lsId = document.getElementById("lsId");
+  const lsMeta = document.getElementById("lsMeta");
+  const lsReviewBtn = document.getElementById("lsReviewBtn");
+  const lsMoveSelected = document.getElementById("lsMoveSelected");
+  const lsExportList = document.getElementById("lsExportList");
+  const lsReviewCard = document.getElementById("lsReviewCard");
+  const lsFoundList = document.getElementById("lsFoundList");
+  const lsFoundCount = document.getElementById("lsFoundCount");
+  const lsSelectAll = document.getElementById("lsSelectAll");
+  const lsClearSel = document.getElementById("lsClearSel");
+  const lsBackToScan = document.getElementById("lsBackToScan");
+  const lsNextAction = document.getElementById("lsNextAction");
+
+  const lsSampleElements = [
+    { id: "24-10345-001", loc: "Row B • Lane 3 • Rack R-B3-12", status: "OK" },
+    { id: "24-10345-002", loc: "Staging West • Slot 08", status: "OK" },
+    { id: "24-10345-003", loc: "Row C • Lane 1 • Pre-stack P1", status: "MISSING" },
+    { id: "24-10345-004", loc: "Yard West • Row A • Lane 4 • Rack R-A4-03", status: "OK" },
+    { id: "24-10345-005", loc: "Yard East • Row B • Lane 2 • Rack R-B2-05", status: "OK" },
+    { id: "24-10345-006", loc: "Not in yard", status: "NOT IN YARD" },
+  ];
+
+  let lsFound = [];
+  let lsSelected = new Set();
+
+  function lsSetCollapsed(collapse){
+    lsScanHeader.style.display = collapse ? "none" : "block";
+    lsScanArea.style.display = collapse ? "none" : "flex";
+    lsCollapsed.style.display = collapse ? "flex" : "none";
+  }
+
+  function lsEnableControls(enable){
+    lsReviewBtn.disabled = !enable;
+    lsMoveSelected.disabled = !enable;
+    lsExportList.disabled = !enable;
+  }
+
+  function lsUpdateActionState(){
+    lsNextAction.disabled = lsSelected.size === 0;
+  }
+
+  function lsToggleSelect(id){
+    if (lsSelected.has(id)) lsSelected.delete(id);
+    else lsSelected.add(id);
+    lsRenderFound();
+  }
+
+  function lsRenderFound(){
+    lsFoundList.innerHTML = "";
+    lsFound.forEach(item => {
+      const isOn = lsSelected.has(item.id);
+      const row = document.createElement("div");
+      row.className = "lsRow";
+      row.innerHTML = `
+        <div style="min-width:0;">
+          <div class="lsRowId">${escapeHtml(item.id)}</div>
+          <div class="lsRowSub">${escapeHtml(item.loc)}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="lsPill ${item.status === "OK" ? "ok" : (item.status === "MISSING" ? "warn" : "bad")}">${escapeHtml(item.status)}</div>
+          <button class="btn ${isOn ? "" : "secondary"}" type="button">${isOn ? "Selected" : "Select"}</button>
+        </div>
+      `;
+      row.addEventListener("click", (e)=>{
+        if (e.target && e.target.tagName === "BUTTON") return;
+        lsToggleSelect(item.id);
+      });
+      row.querySelector("button").addEventListener("click", (e)=>{
+        e.stopPropagation();
+        lsToggleSelect(item.id);
+      });
+      lsFoundList.appendChild(row);
+    });
+    lsFoundCount.textContent = `${lsFound.length} found`;
+    lsUpdateActionState();
+  }
+
+  function lsLoadSample(sheetCode){
+    lsId.textContent = sheetCode;
+    lsMeta.textContent = `${lsSampleElements.length} elements found • parsed from loadsheet`;
+    lsFound = [...lsSampleElements];
+    lsSelected = new Set(lsFound.slice(0, 3).map(x => x.id));
+    lsEnableControls(true);
+    lsRenderFound();
+  }
+
+  lsSimulateScan.addEventListener("click", ()=>{
+    lsLoadSample("LS-2026-0301-014");
+  });
+
+  lsPasteCode.addEventListener("click", ()=>{
+    const code = prompt("Enter loadsheet code (wireframe):", "LS-2026-000184");
+    if (!code) return;
+    lsLoadSample(code.trim());
+  });
+
+  lsReviewBtn.addEventListener("click", ()=>{
+    lsSetCollapsed(true);
+    lsReviewCard.style.display = "block";
+    lsReviewCard.scrollIntoView({ behavior:"smooth", block:"center" });
+  });
+
+  lsSelectAll.addEventListener("click", ()=>{
+    lsSelected = new Set(lsFound.map(x => x.id));
+    lsRenderFound();
+  });
+
+  lsClearSel.addEventListener("click", ()=>{
+    lsSelected.clear();
+    lsRenderFound();
+  });
+
+  lsBackToScan.addEventListener("click", ()=>{
+    lsSetCollapsed(false);
+    lsReviewCard.style.display = "none";
+  });
+
+  lsExpandBtn.addEventListener("click", ()=>{
+    lsSetCollapsed(false);
+    lsReviewCard.style.display = "none";
+  });
+
+  lsMoveSelected.addEventListener("click", ()=>{
+    if (!lsSelected.size){
+      alert("No items selected - review list first.");
+      return;
+    }
+    selectedElementIds.clear();
+    Array.from(lsSelected).forEach(id => selectedElementIds.add(id));
+    pendingRebookItems = MOCK_DATA.elements.filter(item => selectedElementIds.has(item.id));
+    renderRebookSummary();
+    rebookStatus.textContent = "";
+    showScreen("moves");
+  });
+
+  lsNextAction.addEventListener("click", ()=>{
+    if (!lsSelected.size){
+      alert("Select at least one element to continue.");
+      return;
+    }
+    selectedElementIds.clear();
+    Array.from(lsSelected).forEach(id => selectedElementIds.add(id));
+    pendingRebookItems = MOCK_DATA.elements.filter(item => selectedElementIds.has(item.id));
+    renderRebookSummary();
+    rebookStatus.textContent = "";
+    showScreen("moves");
+  });
+
+  lsExportList.addEventListener("click", ()=>{
+    if (!lsFound.length){
+      alert("No loadsheet loaded.");
+      return;
+    }
+    const ids = Array.from(lsSelected).join(", ");
+    navigator.clipboard?.writeText(ids || "")
+      .then(()=>alert(`Copied IDs: ${ids || "(none)"}`))
+      .catch(()=>alert(`Copy failed. IDs: ${ids || "(none)"}`));
+  });
+
   populateFilterOptions();
+  lsEnableControls(false);
+  lsSetCollapsed(false);
   renderRebookSummary();
   updateSelectionControls();
 </script>
