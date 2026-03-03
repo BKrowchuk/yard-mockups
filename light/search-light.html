@@ -811,10 +811,6 @@
                   </div>
                   <button id="lsReviewBtn" class="lsActionBtn" type="button" disabled>Review elements</button>
                 </div>
-                <div class="lsActions">
-                  <button id="lsMoveSelected" class="lsActionBtn primary" type="button" disabled>Move selected</button>
-                  <button id="lsExportList" class="lsActionBtn" type="button" disabled>Export list</button>
-                </div>
               </div>
             </div>
 
@@ -841,7 +837,7 @@
 
             <div style="display:flex;gap:10px;margin-top:12px;">
               <button id="lsBackToScan" class="btn secondary" type="button">Back</button>
-              <button id="lsNextAction" class="btn" type="button" disabled>Next</button>
+              <button id="lsNextAction" class="btn" type="button" disabled>Move selected</button>
             </div>
           </article>
         </div>
@@ -1245,8 +1241,6 @@
   const lsId = document.getElementById("lsId");
   const lsMeta = document.getElementById("lsMeta");
   const lsReviewBtn = document.getElementById("lsReviewBtn");
-  const lsMoveSelected = document.getElementById("lsMoveSelected");
-  const lsExportList = document.getElementById("lsExportList");
   const lsReviewCard = document.getElementById("lsReviewCard");
   const lsFoundList = document.getElementById("lsFoundList");
   const lsFoundCount = document.getElementById("lsFoundCount");
@@ -1275,8 +1269,6 @@
 
   function lsEnableControls(enable){
     lsReviewBtn.disabled = !enable;
-    lsMoveSelected.disabled = !enable;
-    lsExportList.disabled = !enable;
   }
 
   function lsUpdateActionState(){
@@ -1364,19 +1356,6 @@
     lsReviewCard.style.display = "none";
   });
 
-  lsMoveSelected.addEventListener("click", ()=>{
-    if (!lsSelected.size){
-      alert("No items selected - review list first.");
-      return;
-    }
-    selectedElementIds.clear();
-    Array.from(lsSelected).forEach(id => selectedElementIds.add(id));
-    pendingRebookItems = MOCK_DATA.elements.filter(item => selectedElementIds.has(item.id));
-    renderRebookSummary();
-    rebookStatus.textContent = "";
-    showScreen("moves");
-  });
-
   lsNextAction.addEventListener("click", ()=>{
     if (!lsSelected.size){
       alert("Select at least one element to continue.");
@@ -1388,17 +1367,6 @@
     renderRebookSummary();
     rebookStatus.textContent = "";
     showScreen("moves");
-  });
-
-  lsExportList.addEventListener("click", ()=>{
-    if (!lsFound.length){
-      alert("No loadsheet loaded.");
-      return;
-    }
-    const ids = Array.from(lsSelected).join(", ");
-    navigator.clipboard?.writeText(ids || "")
-      .then(()=>alert(`Copied IDs: ${ids || "(none)"}`))
-      .catch(()=>alert(`Copy failed. IDs: ${ids || "(none)"}`));
   });
 
   populateFilterOptions();
