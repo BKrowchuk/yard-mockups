@@ -144,6 +144,10 @@
       font-weight:700;
     }
     .btn:active{ transform: translateY(1px); }
+    .btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
 
     /* HOME action cards (no overlap) */
     .homeStack{
@@ -344,6 +348,13 @@
     }
     .resultsTop .t{ font-weight:950; font-size:13px; }
     .resultsTop .n{ font-family: var(--mono); font-size:11px; color: rgba(47,143,87,.95); }
+    .resultsActions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:8px;
+      flex-wrap:wrap;
+    }
     .resultsList{
       display:flex;
       flex-direction:column;
@@ -368,6 +379,10 @@
       background: rgba(255,255,255,.03);
       margin-top:8px;
       cursor:pointer;
+    }
+    .rowItem.selected{
+      border-color: rgba(47,143,87,.60);
+      background: rgba(47,143,87,.12);
     }
     .rowItem .meta{ min-width:0; }
     .rowItem .id{
@@ -394,6 +409,11 @@
       border-radius: 999px;
       white-space:nowrap;
       flex:0 0 auto;
+    }
+    .pill.selected{
+      border-color: rgba(47,143,87,.60);
+      color: rgba(47,143,87,.98);
+      background: rgba(47,143,87,.15);
     }
 
     /* Bottom nav */
@@ -552,6 +572,11 @@
               <div class="t">Results</div>
               <div class="n" id="resultsCount">0 found</div>
             </div>
+            <div class="resultsActions" id="selectionActions">
+              <div class="pill" id="selectedCount">0 selected</div>
+              <button class="btn secondary" id="clearSelectedBtn" type="button">Clear</button>
+              <button class="btn" id="rebookBtn" type="button" disabled>Rebook selected</button>
+            </div>
             <div class="resultsList" id="resultsList">
               <div class="resultsEmpty">Run a search to view matching results.</div>
             </div>
@@ -574,9 +599,13 @@
 
       <section class="screen" id="moves">
         <div class="pageTitle">Moves / Rebook</div>
-        <div class="pageSub">Wireframe stub</div>
+        <div class="pageSub">Selected search results can be rebooked from here.</div>
         <div class="card" style="color:var(--muted);font-size:12px;line-height:1.35;">
-          Move/Rebook flow goes here.
+          <div style="font-weight:900;color:var(--ink);margin-bottom:8px;">Ready to rebook</div>
+          <div id="rebookSummaryList">No items selected yet. Go to Search and choose elements first.</div>
+          <div style="height:10px"></div>
+          <button class="btn" id="confirmRebookBtn" type="button" disabled>Confirm Rebook</button>
+          <div id="rebookStatus" style="margin-top:10px;color:var(--muted);"></div>
         </div>
       </section>
     </main>
@@ -657,7 +686,17 @@
    */
   const resultsCount = document.getElementById("resultsCount");
   const resultsList = document.getElementById("resultsList");
+  const selectedCount = document.getElementById("selectedCount");
+  const selectionActions = document.getElementById("selectionActions");
+  const clearSelectedBtn = document.getElementById("clearSelectedBtn");
+  const rebookBtn = document.getElementById("rebookBtn");
+  const rebookSummaryList = document.getElementById("rebookSummaryList");
+  const confirmRebookBtn = document.getElementById("confirmRebookBtn");
+  const rebookStatus = document.getElementById("rebookStatus");
   const MAX_RESULTS = 24;
+  const selectedElementIds = new Set();
+  let pendingRebookItems = [];
+  let currentSearchResults = [];
 
   const MOCK_DATA = {
     elements: [
@@ -698,7 +737,9 @@
   }
 
   function renderResults(items){
+    currentSearchResults = items;
     resultsCount.textContent = `${items.length} found`;
+    updateSelectionControls();
     if (!items.length){
       const qText = query.value.trim();
       resultsList.innerHTML = qText
@@ -708,14 +749,42 @@
     }
 
     resultsList.innerHTML = items.map(it => `
-      <div class="rowItem" data-id="${escapeHtml(it.id)}">
+      <div class="rowItem ${selectedElementIds.has(it.id) ? "selected" : ""}" data-id="${escapeHtml(it.id)}">
         <div class="meta">
           <div class="id">${escapeHtml(it.id)}</div>
           <div class="loc">${escapeHtml(it.loc)}</div>
         </div>
-        <div class="pill">DETAILS</div>
+        <div class="pill ${selectedElementIds.has(it.id) ? "selected" : ""}">
+          ${mode === "elements"
+            ? (selectedElementIds.has(it.id) ? "SELECTED" : "SELECT")
+            : "DETAILS"}
+        </div>
       </div>
     `).join("");
+  }
+
+  function updateSelectionControls(){
+    const isElementMode = mode === "elements";
+    const totalSelected = selectedElementIds.size;
+    selectedCount.textContent = `${totalSelected} selected`;
+    rebookBtn.disabled = !totalSelected || !isElementMode;
+    clearSelectedBtn.disabled = !totalSelected || !isElementMode;
+    selectionActions.style.display = isElementMode ? "flex" : "none";
+    if (!isElementMode && totalSelected){
+      selectedElementIds.clear();
+    }
+  }
+
+  function renderRebookSummary(){
+    if (!pendingRebookItems.length){
+      rebookSummaryList.textContent = "No items selected yet. Go to Search and choose elements first.";
+      confirmRebookBtn.disabled = true;
+      return;
+    }
+    rebookSummaryList.innerHTML = pendingRebookItems
+      .map(item => `${escapeHtml(item.id)} - ${escapeHtml(item.loc)}`)
+      .join("<br/>");
+    confirmRebookBtn.disabled = false;
   }
 
   function runSearch(){
@@ -758,12 +827,43 @@
     if (!row) return;
     const idText = row.getAttribute("data-id") || "";
     if (!idText) return;
-    alert(`Wireframe: open ${mode === "elements" ? "Element" : "Rack"} Detail for ${idText}`);
+    if (mode === "elements"){
+      if (selectedElementIds.has(idText)) selectedElementIds.delete(idText);
+      else selectedElementIds.add(idText);
+      renderResults(currentSearchResults);
+      return;
+    }
+    alert(`Wireframe: open Rack Detail for ${idText}`);
+  });
+
+  clearSelectedBtn.addEventListener("click", ()=>{
+    selectedElementIds.clear();
+    renderResults(currentSearchResults);
+  });
+
+  rebookBtn.addEventListener("click", ()=>{
+    if (!selectedElementIds.size) return;
+    pendingRebookItems = MOCK_DATA.elements.filter(item => selectedElementIds.has(item.id));
+    rebookStatus.textContent = "";
+    renderRebookSummary();
+    showScreen("moves");
+  });
+
+  confirmRebookBtn.addEventListener("click", ()=>{
+    if (!pendingRebookItems.length) return;
+    const count = pendingRebookItems.length;
+    rebookStatus.textContent = `Rebook complete: ${count} element${count > 1 ? "s" : ""}.`;
+    pendingRebookItems = [];
+    selectedElementIds.clear();
+    renderRebookSummary();
+    runSearch();
   });
 
   // dropdown stubs
   document.getElementById("pickProject").addEventListener("click", ()=>alert("Wireframe: open Project dropdown"));
   document.getElementById("pickArea").addEventListener("click", ()=>alert("Wireframe: open Location Area dropdown"));
+  renderRebookSummary();
+  updateSelectionControls();
 </script>
 </body>
 </html>
