@@ -312,6 +312,43 @@
       background: rgba(255,255,255,.03);
       white-space:nowrap;
     }
+    .filterDock{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .filterToggle{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .filterSummary{
+      min-width:0;
+      text-align:right;
+      color: var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .filterPanel[hidden]{ display:none; }
+    .nativeSelect{
+      width:100%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      color: var(--ink);
+      font-size:13px;
+      outline:none;
+    }
+    .filterActions{
+      display:flex;
+      gap:8px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
 
     .inlineActionCard{
       background: rgba(255,255,255,.04);
@@ -519,18 +556,30 @@
         </div>
 
         <div class="stack">
-          <!-- Filters -->
-          <div class="card">
-            <div class="fieldLabel">Filters (recommended before full search)</div>
+          <div class="filterDock">
+            <button class="btn secondary filterToggle" id="toggleFiltersBtn" type="button" aria-label="Open filters">
+              <span>⚲</span>
+              <span class="pill" id="filterBadge">none</span>
+            </button>
+            <div class="filterSummary" id="filterSummary">No filters applied</div>
+          </div>
+
+          <div class="card filterPanel" id="filterPanel" hidden>
+            <div class="fieldLabel">Filter results</div>
             <div class="stack" style="gap:10px;">
-              <div class="select" id="pickProject" role="button" tabindex="0">
-                <div class="leftText">Project: <span style="color:rgba(47,143,87,.95)">[ select ]</span></div>
-                <div class="rightText">dropdown</div>
+              <div>
+                <div class="fieldLabel">Project</div>
+                <select class="nativeSelect" id="filterProject"></select>
               </div>
-              <div class="select" id="pickArea" role="button" tabindex="0">
-                <div class="leftText">Location area: <span style="color:rgba(47,143,87,.95)">[ select ]</span></div>
-                <div class="rightText">dropdown</div>
+              <div>
+                <div class="fieldLabel">Location area</div>
+                <select class="nativeSelect" id="filterArea"></select>
               </div>
+            </div>
+            <div class="filterActions">
+              <button class="btn" id="applyFiltersBtn" type="button">Apply filters</button>
+              <button class="btn secondary" id="clearFiltersBtn" type="button">Clear</button>
+              <button class="btn secondary" id="cancelFiltersBtn" type="button">Cancel</button>
             </div>
           </div>
 
@@ -661,6 +710,15 @@
   const tabRacks = document.getElementById("tabRacks");
   const queryLabel = document.getElementById("queryLabel");
   const query = document.getElementById("query");
+  const toggleFiltersBtn = document.getElementById("toggleFiltersBtn");
+  const filterPanel = document.getElementById("filterPanel");
+  const filterProject = document.getElementById("filterProject");
+  const filterArea = document.getElementById("filterArea");
+  const applyFiltersBtn = document.getElementById("applyFiltersBtn");
+  const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+  const cancelFiltersBtn = document.getElementById("cancelFiltersBtn");
+  const filterBadge = document.getElementById("filterBadge");
+  const filterSummary = document.getElementById("filterSummary");
 
   let mode = "elements";
   function setMode(m){
@@ -675,7 +733,8 @@
       ? "Search by element ID / barcode / description"
       : "Search by rack ID / barcode";
     query.placeholder = isEl ? "e.g. 24-10345-001" : "e.g. R-12";
-    if (query.value.trim()) runSearch();
+    populateFilterOptions();
+    if (query.value.trim() || activeFilters.project || activeFilters.area) runSearch();
     else renderResults([]);
   }
   tabElements.addEventListener("click", ()=>setMode("elements"));
@@ -694,6 +753,8 @@
   const confirmRebookBtn = document.getElementById("confirmRebookBtn");
   const rebookStatus = document.getElementById("rebookStatus");
   const MAX_RESULTS = 24;
+  const activeFilters = { project:"", area:"" };
+  const draftFilters = { project:"", area:"" };
   const selectedElementIds = new Set();
   let pendingRebookItems = [];
   let currentSearchResults = [];
@@ -734,6 +795,56 @@
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
+  }
+
+  function getSourceData(){
+    return mode === "elements" ? MOCK_DATA.elements : MOCK_DATA.racks;
+  }
+
+  function toOptions(values){
+    return [`<option value="">Any</option>`].concat(
+      values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`)
+    ).join("");
+  }
+
+  function populateFilterOptions(){
+    const source = getSourceData();
+    const projects = [...new Set(source.map(item => item.project))].sort();
+    const areas = [...new Set(source.map(item => item.area))].sort();
+    filterProject.innerHTML = toOptions(projects);
+    filterArea.innerHTML = toOptions(areas);
+    if (!projects.includes(activeFilters.project)) activeFilters.project = "";
+    if (!areas.includes(activeFilters.area)) activeFilters.area = "";
+    draftFilters.project = activeFilters.project;
+    draftFilters.area = activeFilters.area;
+    filterProject.value = draftFilters.project;
+    filterArea.value = draftFilters.area;
+    updateFilterSummary();
+  }
+
+  function getFilterCount(){
+    return Number(Boolean(activeFilters.project)) + Number(Boolean(activeFilters.area));
+  }
+
+  function updateFilterSummary(){
+    const parts = [];
+    if (activeFilters.project) parts.push(`Project: ${activeFilters.project}`);
+    if (activeFilters.area) parts.push(`Area: ${activeFilters.area}`);
+    filterSummary.textContent = parts.length ? parts.join(" | ") : "No filters applied";
+    const count = getFilterCount();
+    filterBadge.textContent = count ? `${count}` : "none";
+  }
+
+  function openFilters(){
+    draftFilters.project = activeFilters.project;
+    draftFilters.area = activeFilters.area;
+    filterProject.value = draftFilters.project;
+    filterArea.value = draftFilters.area;
+    filterPanel.hidden = false;
+  }
+
+  function closeFilters(){
+    filterPanel.hidden = true;
   }
 
   function renderResults(items){
@@ -789,8 +900,11 @@
 
   function runSearch(){
     const searchText = query.value.trim().toLowerCase();
-    const source = mode === "elements" ? MOCK_DATA.elements : MOCK_DATA.racks;
+    const source = getSourceData();
     const results = source.filter(item => {
+      const projectMatch = !activeFilters.project || item.project === activeFilters.project;
+      const areaMatch = !activeFilters.area || item.area === activeFilters.area;
+      if (!projectMatch || !areaMatch) return false;
       if (!searchText) return true;
       const haystack = mode === "elements"
         ? `${item.id} ${item.barcode} ${item.desc} ${item.project} ${item.area} ${item.loc}`.toLowerCase()
@@ -807,6 +921,35 @@
 
   document.getElementById("searchBtn").addEventListener("click", ()=>{
     runSearch();
+  });
+
+  toggleFiltersBtn.addEventListener("click", ()=>{
+    if (filterPanel.hidden) openFilters();
+    else closeFilters();
+  });
+
+  applyFiltersBtn.addEventListener("click", ()=>{
+    activeFilters.project = filterProject.value;
+    activeFilters.area = filterArea.value;
+    updateFilterSummary();
+    closeFilters();
+    runSearch();
+  });
+
+  clearFiltersBtn.addEventListener("click", ()=>{
+    activeFilters.project = "";
+    activeFilters.area = "";
+    filterProject.value = "";
+    filterArea.value = "";
+    updateFilterSummary();
+    closeFilters();
+    runSearch();
+  });
+
+  cancelFiltersBtn.addEventListener("click", ()=>{
+    filterProject.value = activeFilters.project;
+    filterArea.value = activeFilters.area;
+    closeFilters();
   });
 
   query.addEventListener("keydown", (e)=>{
@@ -859,9 +1002,7 @@
     runSearch();
   });
 
-  // dropdown stubs
-  document.getElementById("pickProject").addEventListener("click", ()=>alert("Wireframe: open Project dropdown"));
-  document.getElementById("pickArea").addEventListener("click", ()=>alert("Wireframe: open Location Area dropdown"));
+  populateFilterOptions();
   renderRebookSummary();
   updateSelectionControls();
 </script>
