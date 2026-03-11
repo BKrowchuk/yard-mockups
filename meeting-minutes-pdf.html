@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1a1a1a; background: #fff; padding: 48px 56px; max-width: 900px; margin: auto; }
+
+  .header { border-bottom: 3px solid #1a56db; padding-bottom: 16px; margin-bottom: 24px; }
+  .header h1 { font-size: 22px; font-weight: 700; color: #1a1a1a; }
+  .header-meta { display: flex; gap: 32px; margin-top: 8px; font-size: 12px; color: #555; }
+  .header-meta span strong { color: #1a1a1a; }
+
+  .tldr { background: #f0f5ff; border-left: 4px solid #1a56db; padding: 12px 16px; margin-bottom: 28px; border-radius: 0 6px 6px 0; }
+  .tldr h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #1a56db; margin-bottom: 8px; }
+  .tldr ul { padding-left: 16px; }
+  .tldr ul li { margin-bottom: 5px; line-height: 1.5; }
+
+  .section { margin-bottom: 28px; }
+  .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+  .section-num { background: #1a56db; color: white; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .section-title h2 { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+
+  ul.content-list { padding-left: 18px; }
+  ul.content-list li { margin-bottom: 7px; line-height: 1.6; }
+  ul.content-list li strong { color: #1a1a1a; }
+
+  .flow-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px 18px; margin: 10px 0; }
+  .flow-box ol { padding-left: 20px; }
+  .flow-box ol li { margin-bottom: 6px; line-height: 1.6; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; }
+  .col-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 14px; }
+  .col-box h4 { font-size: 12px; font-weight: 700; color: #1a56db; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .col-box ul { padding-left: 16px; }
+  .col-box ul li { margin-bottom: 5px; line-height: 1.5; font-size: 12px; }
+
+  /* Hierarchy diagram */
+  .hierarchy { text-align: center; margin: 12px 0 4px; }
+  .h-row { display: flex; justify-content: center; align-items: flex-start; gap: 0; margin-bottom: 0; }
+  .h-node { background: #e8eeff; border: 1px solid #1a56db; border-radius: 5px; padding: 5px 12px; font-size: 11px; font-weight: 600; color: #1a1a1a; white-space: nowrap; position: relative; }
+  .h-node.root { background: #1a56db; color: white; }
+  .h-node.leaf { background: #d1fae5; border-color: #059669; font-size: 10px; }
+  .h-connector { display: flex; flex-direction: column; align-items: center; }
+  .h-line-v { width: 1px; height: 16px; background: #9ca3af; }
+  .h-line-h-wrap { display: flex; align-items: flex-start; }
+  .h-branch { display: flex; flex-direction: column; align-items: center; margin: 0 6px; }
+  .h-line-top { width: 1px; height: 16px; background: #9ca3af; }
+
+  /* Action items table */
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  thead tr { background: #1a56db; color: white; }
+  thead th { padding: 8px 10px; text-align: left; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #f9fafb; }
+  tbody td { padding: 8px 10px; border-bottom: 1px solid #e5e7eb; vertical-align: top; line-height: 1.5; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+  .badge-ben { background: #dbeafe; color: #1e40af; }
+  .badge-it { background: #fef3c7; color: #92400e; }
+  .badge-dev { background: #d1fae5; color: #065f46; }
+  .badge-ops { background: #ede9fe; color: #5b21b6; }
+
+  /* Decisions */
+  .decision-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .check { color: #059669; font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .decision-item p { line-height: 1.6; }
+
+  /* Next steps */
+  .next-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+  .arrow { color: #1a56db; font-size: 14px; flex-shrink: 0; }
+  .next-item p { line-height: 1.6; }
+
+  .footer { margin-top: 40px; padding-top: 12px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; font-size: 11px; color: #9ca3af; }
+
+  @media print {
+    body { padding: 32px 40px; }
+    .footer { position: fixed; bottom: 20px; left: 40px; right: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>Yard App — Swapping Feature Meeting Minutes</h1>
+  <div class="header-meta">
+    <span><strong>Date:</strong> March 10, 2026</span>
+    <span><strong>Prepared by:</strong> Ben K.</span>
+    <span><strong>Source:</strong> Whiteboard notes + Fireflies recording</span>
+  </div>
+</div>
+
+<!-- TL;DR -->
+<div class="tldr">
+  <h3>TL;DR</h3>
+  <ul>
+    <li>A swap is only triggered when a piece is taken from a <strong>different row/location</strong> than assigned — same-row picks are just normal loading</li>
+    <li>Clicking an element on the load sheet will show a <strong>list of all yard locations</strong> where that element exists — operator selects the instance they're grabbing and the swap is recorded automatically</li>
+    <li>Hollow core underscore uniqueness is a known gap; short-term fix is location-based selection, long-term requires an IPBS process change</li>
+    <li>Wi-Fi is a critical dependency — three connectivity tests (Starlink, forklift antenna, new APs) are underway with a recommendation expected by <strong>end of March</strong></li>
+    <li>Follow-up in 2–4 weeks</li>
+  </ul>
+</div>
+
+<!-- SECTION 1: CURRENT STATE -->
+<div class="section">
+  <div class="section-title">
+    <div class="section-num">1</div>
+    <h2>Current State — Pain Points</h2>
+  </div>
+  <ul class="content-list">
+    <li><strong>No swapping workflow</strong> — When a piece is taken from a different location there is no documentation. The next time someone looks for that piece it appears missing with no record of where it went.</li>
+    <li><strong>Load sheets not syncing in real time</strong> — Paper/manual load sheets do not sync with Compass or IPBS.</li>
+    <li><strong>Hollow core element identification</strong> — Underscore numbers repeat across levels, meaning there is no reliable way to distinguish which specific piece is being grabbed when multiples of the same underscore exist in the yard.</li>
+    <li><strong>No audit trail</strong> — A panel may be picked but it's not necessarily the one tied to the load sheet, and there is no tracking in place.</li>
+  </ul>
+</div>
+
+<!-- SECTION 2: YARD LOCATION STRUCTURE -->
+<div class="section">
+  <div class="section-title">
+    <div class="section-num">2</div>
+    <h2>Yard Location Structure</h2>
+  </div>
+  <p style="margin-bottom:12px; color:#555; font-size:12px;">The following hierarchy defines how yard locations are organized in the app. Terminology to be standardized and physical markings updated accordingly.</p>
+  <div class="hierarchy">
+    <!-- Root -->
+    <div class="h-row"><div class="h-node root">Yard</div></div>
+    <div style="display:flex;justify-content:center;"><div style="width:1px;height:16px;background:#9ca3af;"></div></div>
+    <!-- Sections -->
+    <div style="display:flex;justify-content:center;align-items:flex-start;gap:40px;">
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="h-node">Section A</div>
+        <div style="width:1px;height:16px;background:#9ca3af;"></div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div class="h-node" style="font-size:11px;">Row A1</div>
+            <div style="width:1px;height:14px;background:#9ca3af;"></div>
+            <div style="display:flex;gap:6px;">
+              <div class="h-node leaf">Sub-section A1-1<br/><span style="font-weight:400;">0–50 ft</span></div>
+              <div class="h-node leaf">Sub-section A1-2<br/><span style="font-weight:400;">50–100 ft</span></div>
+            </div>
+            <div style="width:1px;height:12px;background:#9ca3af;"></div>
+            <div class="h-node leaf" style="background:#bbf7d0;">Piece Stack<br/><span style="font-weight:400;font-size:10px;">Element ID + Location</span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;margin-top:0;">
+            <div class="h-node" style="font-size:11px;">Row A2</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="h-node">Section B</div>
+        <div style="width:1px;height:16px;background:#9ca3af;"></div>
+        <div style="display:flex;gap:12px;">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div class="h-node" style="font-size:11px;">Row B1</div>
+            <div style="width:1px;height:12px;background:#9ca3af;"></div>
+            <div class="h-node leaf" style="background:#bbf7d0;">Piece Stack<br/><span style="font-weight:400;font-size:10px;">Element ID + Location</span></div>
+          </div>
+          <div class="h-node" style="font-size:11px;align-self:flex-start;">Row B2 …</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="h-node">Section C …</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: DESIRED STATE -->
+<div class="section">
+  <div class="section-title">
+    <div class="section-num">3</div>
+    <h2>Desired State — Key Decisions & Discussion</h2>
+  </div>
+  <ul class="content-list">
+    <li><strong>What counts as a swap</strong> — A swap only occurs when a piece is taken from a physically different row/location than assigned. Same-row picks are standard loading and do not trigger a swap.</li>
+  </ul>
+
+  <p style="margin: 10px 0 6px; font-weight:600;">Swapping flow in the app:</p>
+  <div class="flow-box">
+    <ol>
+      <li>Scan or open a load sheet → see all elements with their assigned row/location</li>
+      <li>Click on an element → app displays a <strong>list of all locations</strong> where an instance of that element exists in the yard</li>
+      <li>Operator selects the instance they are grabbing — if it's from a different location than assigned, the system <strong>automatically records it as a swap</strong></li>
+      <li>Element is marked as loaded and load sheet updates accordingly</li>
+    </ol>
+  </div>
+
+  <ul class="content-list" style="margin-top:10px;">
+    <li><strong>Element selection & filtering</strong> — Location list must be sorted and easy to act on — no long scrolling. This also handles the hollow core underscore problem short-term since operators select by location, not underscore number.</li>
+    <li><strong>Notifications & load sheet updates</strong> — Still to be defined: who gets notified on a swap, and whether the load sheet auto-updates in real time.</li>
+  </ul>
+
+  <div class="two-col" style="margin-top:14px;">
+    <div class="col-box">
+      <h4>Hollow Core — Short Term</h4>
+      <ul>
+        <li>Show elements with locations in the selection list</li>
+        <li>Operators click to confirm which instance they grabbed</li>
+        <li>Works now, sets up traceability for the future</li>
+      </ul>
+    </div>
+    <div class="col-box">
+      <h4>Hollow Core — Long Term</h4>
+      <ul>
+        <li>Make underscore numbers unique across the whole project in IPBS (not resetting per level)</li>
+        <li>Requires IPBS process change — not a blocker for current build</li>
+        <li>New elements only; will not affect pieces already in production</li>
+      </ul>
+    </div>
+  </div>
+
+  <ul class="content-list" style="margin-top:14px;">
+    <li><strong>Edge cases to design for:</strong>
+      <ul style="padding-left:16px; margin-top:4px;">
+        <li>Piece assigned to a load sheet is no longer in the yard → flag and present next available nearby option</li>
+        <li>Swap initiated on an element already assigned to another active load</li>
+        <li>Swap initiated on an element not currently on any load</li>
+      </ul>
+    </li>
+    <li style="margin-top:8px;"><strong>Racks</strong> — Shipping racks and other racks must be defined as distinct rack types. A "Clear Rack" function was discussed with multi-step verification to prevent accidental data loss. The system should also prevent a trailer from being released while it still has active unconfirmed piece assignments.</li>
+  </ul>
+</div>
+
+<!-- SECTION 4: CONNECTIVITY -->
+<div class="section">
+  <div class="section-title">
+    <div class="section-num">4</div>
+    <h2>Wi-Fi & Yard Connectivity — Testing Plan</h2>
+  </div>
+  <ul class="content-list">
+    <li>Connectivity has been a persistent blocker for yard app adoption; concrete pile layout and seasonal conditions disrupt access points frequently.</li>
+    <li><strong>Test 1 — New directional access points</strong> between Plant 3 and the office. Installation pending second crane going live. More consistent coverage but shorter range — not a long-yard solution.</li>
+    <li><strong>Test 2 — Starlink unit</strong>: ordered, expected setup ~2 weeks. To be trialled in a forklift or mounted in the yard. Anecdotal reports from staff using Starlink at home are encouraging.</li>
+    <li><strong>Test 3 — Forklift-mounted 5G antenna</strong>: antenna positioned above the concrete piles to overcome signal blocking. Evaluated alongside Starlink.</li>
+    <li>Longer-term ideal: <strong>negotiate private tower access</strong> (Rogers Tower) for a dedicated network — by far the most reliable solution but complex to arrange.</li>
+    <li>Offline mode is being built into the app with a <strong>forced sync trigger</strong> after ~15 minutes before further actions are permitted.</li>
+    <li>Connectivity must be resolved before full yard app rollout — poor Wi-Fi was the primary reason initial yard app adoption failed.</li>
+  </ul>
+</div>
+
+<!-- SECTION 5: ACTION ITEMS -->
+<div class="section">
+  <div class="section-title">
+    <div class="section-num">5</div>
+    <h2>Action Items</h2>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:32px;">#</th>
+        <th>Action</th>
+        <th style="width:120px;">Owner</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Confirm swapping logic limited to physically different row/location and document the rule for development</td>
+        <td><span class="badge badge-ben">Ben K.</span></td>
+        <td>Core constraint for Yard App swapping feature</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Share screenshots and wireframes of revised load sheet UI and swapping flow with all stakeholders</td>
+        <td><span class="badge badge-ben">Ben K.</span></td>
+        <td>Distribute via email following this meeting ✅</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Review load sheet process and incorporate into mockups for next summary</td>
+        <td><span class="badge badge-ben">Ben K.</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Test new directional access points between Plant 3 and office; report on coverage improvement</td>
+        <td><span class="badge badge-it">IT / Network</span></td>
+        <td>Crane expected ready within 2 weeks. Note: not a long-yard solution.</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Set up and trial Starlink unit in the yard (forklift or fixed mount)</td>
+        <td><span class="badge badge-it">IT / Network</span></td>
+        <td>Unit ordered; target setup ~2 weeks</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Evaluate forklift-mounted 5G antenna performance and report results</td>
+        <td><span class="badge badge-it">IT / Network</span></td>
+        <td>Antenna raises device above concrete piles to improve signal</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>Schedule follow-up meeting to review all three connectivity test outcomes and decide on final yard network solution</td>
+        <td><span class="badge badge-it">IT / Ben K.</span></td>
+        <td>Target: 2–4 weeks from March 10</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Perform one-time sync of existing piece row/location data into the Yard App system</td>
+        <td><span class="badge badge-dev">IT & Dev</span></td>
+        <td>Required before app go-live; not a recurring Yard Ops task</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Develop and implement offline mode with forced sync trigger (~15 min threshold)</td>
+        <td><span class="badge badge-dev">IT & Dev</span></td>
+        <td>Essential fallback for poor-connectivity zones</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>Spec and implement load sheet swapping logic (element dropdown + auto location swap)</td>
+        <td><span class="badge badge-dev">IT & Dev</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td>Standardize yard location terminology (Section / Row / Sub-section) and update physical markings</td>
+        <td><span class="badge badge-ops">Yard Ops</span></td>
+        <td>Coordinate with Isaak T. and Martin R.</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>Differentiate shipping racks and other racks as distinct entity types in the Yard App system</td>
+        <td><span class="badge badge-dev">IT & Dev</span></td>
+        <td>Prevents rack clearance confusion on return from site</td>
+      </tr>
+      <tr>
+        <td>13</td>
+        <td>Investigate IPBS underscore numbering changes required for future unique-piece traceability</td>
+        <td><span class="badge badge-ben">Ben K.</span></td>
+        <td>Long-term prerequisite; new elements only — will not affect pieces already in production</td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td>Provide update on Rogers Tower status</td>
+        <td><span class="badge badge-it">Max + Marcel</span></td>
+        <td>Target: within 1 month</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 6: DECISIONS MADE -->
+<div class="section">
+  <div class="section-title">
+    <div class="section-num">6</div>
+    <h2>Decisions Made</h2>
+  </div>
+  <div class="decision-item"><span class="check">✓</span><p>Swapping in the Yard App will <strong>only be triggered when a piece is selected from a physically different row</strong> than originally assigned — swapping within the same row is not required.</p></div>
+  <div class="decision-item"><span class="check">✓</span><p>The load sheet UI will display all elements with their row/location and allow the loader to <strong>select from a location-sorted dropdown</strong> rather than requiring a manual swap screen.</p></div>
+  <div class="decision-item"><span class="check">✓</span><p>Full per-piece NCR traceability is <strong>deferred</strong> — it requires IPBS-level underscore numbering changes not feasible in the current iteration.</p></div>
+  <div class="decision-item"><span class="check">✓</span><p>Three connectivity tests (directional APs, Starlink, 5G antenna) will run <strong>concurrently over 2–4 weeks</strong>, with results reviewed before committing to an infrastructure path.</p></div>
+  <div class="decision-item"><span class="check">✓</span><p>Offline mode with a forced re-sync timer will be <strong>built into the Yard App</strong> as a resilience measure regardless of which connectivity solution is selected.</p></div>
+  <div class="decision-item"><span class="check">✓</span><p>Shipping racks and other racks will be treated as <strong>distinct rack types</strong> in the system.</p></div>
+</div>
+
+<!-- SECTION 7: NEXT STEPS -->
+<div class="section">
+  <div class="section-title">
+    <div class="section-num">7</div>
+    <h2>Next Steps</h2>
+  </div>
+  <div class="next-item"><span class="arrow">→</span><p>Ben K. to circulate wireframes/screenshots of revised load sheet and swapping UI for stakeholder review</p></div>
+  <div class="next-item"><span class="arrow">→</span><p>IT/Network team to begin all three connectivity tests immediately; Starlink setup targeted within 2 weeks</p></div>
+  <div class="next-item"><span class="arrow">→</span><p>Development team to perform a one-time sync of existing piece row/location data into the Yard App system</p></div>
+  <div class="next-item"><span class="arrow">→</span><p>Development team to spec and implement load sheet swapping logic (element dropdown + auto location swap) and offline sync feature</p></div>
+  <div class="next-item"><span class="arrow">→</span><p>IT/Ben to schedule follow-up connectivity review meeting in 2–4 weeks</p></div>
+  <div class="next-item"><span class="arrow">→</span><p>Ben K. and development team to scope IPBS underscore numbering changes as a separate, longer-term workstream</p></div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>Prepared from meeting notes & Fireflies recording — March 10, 2026 | Stubbes</span>
+  <span>Fireflies.ai ID: 01KKCJRVFTV5G96WBHJ7RRWWCA</span>
+</div>
+
+</body>
+</html>

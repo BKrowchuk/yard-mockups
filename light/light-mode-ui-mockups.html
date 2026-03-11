@@ -155,45 +155,6 @@
       cursor:not-allowed;
     }
 
-    /* HOME action cards */
-    .homeStack{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      margin-top: 8px;
-    }
-    .actionCard{
-      background: rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 10px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-      cursor:pointer;
-    }
-    .actionCard.primary{
-      border-color: rgba(47,143,87,.55);
-      background: rgba(47,143,87,.12);
-    }
-    .actionText{
-      min-width:0;
-      flex: 1 1 auto;
-    }
-    .actionTitle{
-      font-weight:900;
-      letter-spacing:.2px;
-      font-size:14px;
-      margin:0;
-    }
-    .actionSub{
-      margin-top:4px;
-      font-size:12px;
-      color: var(--muted);
-      line-height:1.35;
-    }
     .goBtn{
       flex: 0 0 auto;
       border:1px solid rgba(47,143,87,.65);
@@ -213,17 +174,6 @@
       color: rgba(21,56,42,.9);
       font-weight:700;
     }
-
-    .queueBox{
-      margin-top: 10px;
-      background: rgba(214,166,58,.10);
-      border:1px solid rgba(214,166,58,.55);
-      border-radius: var(--radius);
-      padding: 10px 12px;
-    }
-    .queueTitle{ font-weight:900; font-size:13px; margin:0 0 6px 0; }
-    .queueMeta{ font-family: var(--mono); font-size:12px; margin:0; color: rgba(21,56,42,.92); }
-    .queueSub{ font-size:12px; color: var(--muted); margin:6px 0 0 0; }
 
     /* SEARCH PAGE */
     .segTabs{
@@ -822,58 +772,18 @@
     </header>
 
     <main>
-      <!-- ===================== HOME ===================== -->
-      <section class="screen active" id="home">
-        <div class="pageTitle">What do you want to do?</div>
-        <div class="pageSub">Fast actions - designed for forklifts - works offline (queues changes)</div>
-
-        <div class="homeStack">
-          <div class="actionCard primary" data-nav="search">
-            <div class="actionText">
-              <p class="actionTitle">Search Inventory</p>
-              <div class="actionSub">Elements + racks - scan barcode/QR - filter by project/location</div>
-            </div>
-            <button class="goBtn" type="button">GO</button>
-          </div>
-
-          <div class="actionCard" data-nav="moves">
-            <div class="actionText">
-              <p class="actionTitle">Move / Rebook</p>
-              <div class="actionSub">Update element location (batch supported) - show success message</div>
-            </div>
-            <button class="goBtn secondary" type="button">GO</button>
-          </div>
-
-          <div class="actionCard" data-nav="locations">
-            <div class="actionText">
-              <p class="actionTitle">Locations</p>
-              <div class="actionSub">Browse areas -> rows -> lanes -> racks/pre-stacks - phone-friendly</div>
-            </div>
-            <button class="goBtn secondary" type="button">GO</button>
-          </div>
-        </div>
-
-        <div class="queueBox">
-          <p class="queueTitle">Queued (offline-safe)</p>
-          <p class="queueMeta">2 ops queued</p>
-          <p class="queueSub">Will sync automatically when the device reconnects.</p>
-        </div>
-
-        <div class="hint">
-          <b>Layout rule:</b> every action card is a flex row with the text block on the left and the GO button on the right, so nothing can overlap.
-        </div>
-      </section>
-
-      <!-- ===================== SEARCH ===================== -->
-      <section class="screen" id="search">
+      <!-- ===================== SEARCH (Home) ===================== -->
+      <section class="screen active" id="search">
         <div class="pageTitle">Search inventory</div>
-        <div class="pageSub">Search elements or racks - scan barcodes - batch via loadsheet</div>
+        <div class="pageSub">Elements, stacks, racks, loadsheets, locations - scan barcodes - filter by project/area</div>
 
         <!-- Tabs -->
         <div class="segTabs" role="tablist" aria-label="Search mode">
-          <div class="seg active" id="tabElements" role="tab" aria-selected="true">Elements</div>
-          <div class="seg" id="tabRacks" role="tab" aria-selected="false">Racks</div>
+          <div class="seg active" id="tabElements" role="tab" aria-selected="true">Element</div>
+          <div class="seg" id="tabStacks" role="tab" aria-selected="false">Stack</div>
+          <div class="seg" id="tabRacks" role="tab" aria-selected="false">Rack</div>
           <div class="seg" id="tabLoadSheet" role="tab" aria-selected="false">Loadsheet</div>
+          <div class="seg" id="tabLocation" role="tab" aria-selected="false">Location</div>
         </div>
 
         <div class="stack" id="searchClassicUI">
@@ -1287,8 +1197,7 @@
 
     <footer>
       <div class="bottomnav">
-        <div class="navbtn active" id="navHome">Home</div>
-        <div class="navbtn" id="navSearch">Search</div>
+        <div class="navbtn active" id="navSearch">Search</div>
         <div class="navbtn" id="navLocations">Locations</div>
         <div class="navbtn" id="navMoves">Moves</div>
       </div>
@@ -1311,18 +1220,17 @@
   /* ============================================================
      MAIN NAV
      ============================================================ */
-  const mainScreens = ["home","search","locations","moves"];
+  const mainScreens = ["search","locations","moves"];
   const headerTitle = document.getElementById("headerTitle");
   const headerSub = document.getElementById("headerSub");
 
   function showScreen(id){
     mainScreens.forEach(s => document.getElementById(s).classList.toggle("active", s === id));
 
-    const titles = { home:"Yard App", search:"Search", locations:"Locations", moves:"Move / Rebook" };
+    const titles = { search:"Yard App", locations:"Locations", moves:"Move / Rebook" };
     headerTitle.textContent = titles[id] || id;
-    headerSub.textContent = (id === "home") ? "Home" : "Page: /" + id;
+    headerSub.textContent = (id === "search") ? "Search" : "Page: /" + id;
 
-    document.getElementById("navHome").classList.toggle("active", id === "home");
     document.getElementById("navSearch").classList.toggle("active", id === "search");
     document.getElementById("navLocations").classList.toggle("active", id === "locations");
     document.getElementById("navMoves").classList.toggle("active", id === "moves");
@@ -1339,26 +1247,18 @@
     }
   }
 
-  document.getElementById("navHome").addEventListener("click", ()=>showScreen("home"));
   document.getElementById("navSearch").addEventListener("click", ()=>showScreen("search"));
   document.getElementById("navLocations").addEventListener("click", ()=>showScreen("locations"));
   document.getElementById("navMoves").addEventListener("click", ()=>showScreen("moves"));
-
-  // Home action cards
-  document.querySelectorAll(".actionCard").forEach(card=>{
-    card.addEventListener("click", ()=>{
-      const target = card.getAttribute("data-nav");
-      if (target) showScreen(target);
-    });
-  });
-  document.querySelectorAll(".goBtn").forEach(b=>b.addEventListener("click",(e)=>e.stopPropagation()));
 
   /* ============================================================
      SEARCH MODULE
      ============================================================ */
   const tabElements = document.getElementById("tabElements");
+  const tabStacks = document.getElementById("tabStacks");
   const tabRacks = document.getElementById("tabRacks");
   const tabLoadSheet = document.getElementById("tabLoadSheet");
+  const tabLocation = document.getElementById("tabLocation");
   const queryLabel = document.getElementById("queryLabel");
   const query = document.getElementById("query");
   const searchClassicUI = document.getElementById("searchClassicUI");
@@ -1373,26 +1273,40 @@
   const filterBadge = document.getElementById("filterBadge");
   const filterSummary = document.getElementById("filterSummary");
 
+  const allTabs = [tabElements, tabStacks, tabRacks, tabLoadSheet, tabLocation];
   let mode = "elements";
   function setMode(m){
     mode = m;
-    const isEl = mode === "elements";
-    const isRack = mode === "racks";
     const isLoadsheet = mode === "loadsheet";
-    tabElements.classList.toggle("active", isEl);
-    tabElements.setAttribute("aria-selected", String(isEl));
-    tabRacks.classList.toggle("active", isRack);
-    tabRacks.setAttribute("aria-selected", String(isRack));
-    tabLoadSheet.classList.toggle("active", isLoadsheet);
-    tabLoadSheet.setAttribute("aria-selected", String(isLoadsheet));
+
+    // Update tab active states
+    allTabs.forEach(tab => {
+      const tabMode = tab.id.replace("tab","").toLowerCase();
+      // map tab ids to mode names
+      const modeMap = { elements:"elements", stacks:"stacks", racks:"racks", loadsheet:"loadsheet", location:"location" };
+      const isActive = modeMap[tabMode] === mode;
+      tab.classList.toggle("active", isActive);
+      tab.setAttribute("aria-selected", String(isActive));
+    });
 
     searchClassicUI.style.display = isLoadsheet ? "none" : "flex";
     loadsheetUI.style.display = isLoadsheet ? "flex" : "none";
 
-    queryLabel.textContent = isEl
-      ? "Search by element ID / barcode / description"
-      : "Search by rack ID / barcode";
-    query.placeholder = isEl ? "e.g. 24-10345-001" : "e.g. R-12";
+    const labels = {
+      elements: "Search by element ID / barcode / description",
+      stacks: "Search by stack ID / name",
+      racks: "Search by rack ID / barcode",
+      location: "Search by location name / area / row",
+    };
+    const placeholders = {
+      elements: "e.g. 24-10345-001",
+      stacks: "e.g. Pre-stack P2",
+      racks: "e.g. R-12",
+      location: "e.g. Yard West, Row B",
+    };
+    queryLabel.textContent = labels[mode] || labels.elements;
+    query.placeholder = placeholders[mode] || placeholders.elements;
+
     if (isLoadsheet){
       closeFilters();
       return;
@@ -1402,8 +1316,10 @@
     else renderResults([]);
   }
   tabElements.addEventListener("click", ()=>setMode("elements"));
+  tabStacks.addEventListener("click", ()=>setMode("stacks"));
   tabRacks.addEventListener("click", ()=>setMode("racks"));
   tabLoadSheet.addEventListener("click", ()=>setMode("loadsheet"));
+  tabLocation.addEventListener("click", ()=>setMode("location"));
 
   const resultsCount = document.getElementById("resultsCount");
   const resultsList = document.getElementById("resultsList");
@@ -1432,6 +1348,14 @@
       { id:"24-10345-011", barcode:"ELM-011-D0", desc:"Storefront transom", project:"Summit Plaza", area:"Yard West", loc:"Yard West - Row B - Lane 1 - Rack R-B1-02" },
       { id:"24-10345-012", barcode:"ELM-012-R4", desc:"Parapet return panel", project:"Summit Plaza", area:"Staging West", loc:"Staging West - Slot 01" },
     ],
+    stacks: [
+      { id:"Pre-stack P1", barcode:"STK-P1-YW", desc:"Pre-stack - Lane 1", project:"ABC Tower", area:"Yard West", loc:"Yard West - Row C - Lane 1", elements:4, capacity:12 },
+      { id:"Pre-stack P2", barcode:"STK-P2-YW", desc:"Pre-stack - Lane 2", project:"Harbor Point", area:"Yard West", loc:"Yard West - Row C - Lane 2", elements:7, capacity:12 },
+      { id:"Pre-stack P3", barcode:"STK-P3-YE", desc:"Pre-stack - Lane 3", project:"Summit Plaza", area:"Yard East", loc:"Yard East - Row C - Lane 3", elements:3, capacity:12 },
+      { id:"Pre-stack P4", barcode:"STK-P4-YW", desc:"Pre-stack - Lane 4", project:"River Medical", area:"Yard West", loc:"Yard West - Row D - Lane 4", elements:9, capacity:12 },
+      { id:"Pre-stack P1-E", barcode:"STK-P1E-YE", desc:"Pre-stack - Lane 1 East", project:"Northline Labs", area:"Yard East", loc:"Yard East - Row A - Lane 1", elements:2, capacity:12 },
+      { id:"Pre-stack P2-E", barcode:"STK-P2E-YE", desc:"Pre-stack - Lane 2 East", project:"ABC Tower", area:"Yard East", loc:"Yard East - Row B - Lane 2", elements:6, capacity:12 },
+    ],
     racks: [
       { id:"R-A4-03", barcode:"RACK-A403", project:"Harbor Point", area:"Yard West", leaves:"2026-03-04", loc:"Yard West - Row A - Lane 4 - Slot 3" },
       { id:"R-B3-12", barcode:"RACK-B312", project:"ABC Tower", area:"Yard West", leaves:"2026-03-03", loc:"Yard West - Row B - Lane 3 - Slot 12" },
@@ -1444,11 +1368,25 @@
       { id:"R-A2-09", barcode:"RACK-A209", project:"ABC Tower", area:"Yard East", leaves:"2026-03-11", loc:"Yard East - Row A - Lane 2 - Slot 9" },
       { id:"R-D2-06", barcode:"RACK-D206", project:"Summit Plaza", area:"Yard West", leaves:"2026-03-12", loc:"Yard West - Row D - Lane 2 - Slot 6" },
     ],
+    locations: [
+      { id:"yard-west", desc:"Main production yard", project:"Multiple", area:"Yard West", loc:"Yard West", rows:4, lanes:16 },
+      { id:"yard-east", desc:"Overflow yard", project:"Multiple", area:"Yard East", loc:"Yard East", rows:3, lanes:9 },
+      { id:"staging-west", desc:"Staging area for outbound loads", project:"Multiple", area:"Staging West", loc:"Staging West", rows:1, lanes:1 },
+      { id:"yard-west-a", desc:"Row A - 4 lanes", project:"Harbor Point", area:"Yard West", loc:"Yard West - Row A" },
+      { id:"yard-west-b", desc:"Row B - 4 lanes", project:"ABC Tower", area:"Yard West", loc:"Yard West - Row B" },
+      { id:"yard-west-c", desc:"Row C - 4 lanes", project:"Northline Labs", area:"Yard West", loc:"Yard West - Row C" },
+      { id:"yard-west-d", desc:"Row D - 4 lanes", project:"River Medical", area:"Yard West", loc:"Yard West - Row D" },
+      { id:"yard-east-a", desc:"Row A - 3 lanes", project:"Northline Labs", area:"Yard East", loc:"Yard East - Row A" },
+      { id:"yard-east-b", desc:"Row B - 3 lanes", project:"Harbor Point", area:"Yard East", loc:"Yard East - Row B" },
+      { id:"yard-east-c", desc:"Row C - 3 lanes", project:"Summit Plaza", area:"Yard East", loc:"Yard East - Row C" },
+    ],
   };
 
   function getSourceData(){
     if (mode === "elements") return MOCK_DATA.elements;
+    if (mode === "stacks") return MOCK_DATA.stacks;
     if (mode === "racks") return MOCK_DATA.racks;
+    if (mode === "location") return MOCK_DATA.locations;
     return [];
   }
 
@@ -1517,7 +1455,7 @@
           <div class="loc">${escapeHtml(it.loc)}</div>
         </div>
         <div class="pill ${selectedElementIds.has(it.id) ? "selected" : ""}">
-          ${mode === "elements"
+          ${mode === "elements" || mode === "stacks"
             ? (selectedElementIds.has(it.id) ? "SELECTED" : "SELECT")
             : "DETAILS"}
         </div>
@@ -1546,9 +1484,11 @@
       const areaMatch = !activeFilters.area || item.area === activeFilters.area;
       if (!projectMatch || !areaMatch) return false;
       if (!searchText) return true;
-      const haystack = mode === "elements"
-        ? `${item.id} ${item.barcode} ${item.desc} ${item.project} ${item.area} ${item.loc}`.toLowerCase()
-        : `${item.id} ${item.barcode} ${item.project} ${item.area} ${item.loc} ${item.leaves}`.toLowerCase();
+      let haystack;
+      if (mode === "elements") haystack = `${item.id} ${item.barcode} ${item.desc} ${item.project} ${item.area} ${item.loc}`.toLowerCase();
+      else if (mode === "stacks") haystack = `${item.id} ${item.barcode} ${item.desc} ${item.project} ${item.area} ${item.loc}`.toLowerCase();
+      else if (mode === "location") haystack = `${item.id} ${item.desc} ${item.area} ${item.loc}`.toLowerCase();
+      else haystack = `${item.id} ${item.barcode} ${item.project} ${item.area} ${item.loc} ${item.leaves}`.toLowerCase();
       return haystack.includes(searchText);
     }).slice(0, MAX_RESULTS);
 
@@ -1556,7 +1496,8 @@
   }
 
   document.getElementById("scanBtn").addEventListener("click", ()=>{
-    alert(`Wireframe: open camera scan for ${mode === "elements" ? "element" : "rack"} barcode.`);
+    const names = { elements:"element", stacks:"stack", racks:"rack", location:"location" };
+    alert(`Wireframe: open camera scan for ${names[mode] || mode} barcode.`);
   });
 
   document.getElementById("searchBtn").addEventListener("click", ()=>{ runSearch(); });
