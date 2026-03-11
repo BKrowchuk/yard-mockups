@@ -1,0 +1,2272 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Yard App — Light Mode UI Mockups (Combined)</title>
+  <style>
+    :root{
+      --bg: #F6F5F0;
+      --ink: #15382A;
+      --muted: #5D7D6A;
+      --accent:#2F8F57;
+      --ok:#2F8F57;
+      --warn:#D6A63A;
+      --bad:#A46F2A;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background: var(--bg);
+      color:var(--ink);
+      font-family:var(--sans);
+    }
+
+    /* Phone-friendly app frame */
+    .app{
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(10px);
+      background: rgba(214,166,58,.7);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .topbar{
+      padding: 12px 12px 8px 12px;
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+    }
+    .left{
+      display:flex; gap:10px; align-items:center;
+      min-width: 0;
+    }
+    .badge{
+      width:34px; height:34px; border-radius:10px;
+      background: rgba(47,143,87,.18);
+      box-shadow: var(--shadow);
+      flex: 0 0 auto;
+    }
+    .titles{ min-width:0; }
+    .h1{
+      font-weight:900;
+      letter-spacing:.2px;
+      font-size:14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .crumb{
+      margin-top:2px;
+      color: var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .status{
+      font-family: var(--mono);
+      font-size:11px;
+      color: rgba(47,143,87,.9);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      padding:6px 8px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    main{
+      flex:1;
+      padding: 10px;
+      display:block;
+    }
+    .screen{ display:none; }
+    .screen.active{ display:block; }
+
+    /* Shared blocks */
+    .pageTitle{
+      font-weight: 950;
+      letter-spacing: .2px;
+      font-size: 16px;
+      margin: 6px 2px 4px 2px;
+    }
+    .pageSub{
+      color: var(--muted);
+      font-size: 12px;
+      margin: 0 2px 8px 2px;
+      line-height: 1.35;
+    }
+    .hint{
+      margin-top:8px;
+      padding: 10px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
+    .hint b{ color: rgba(21,56,42,.9); }
+
+    .card{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      padding: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    /* Buttons */
+    .btn{
+      border:1px solid rgba(47,143,87,.65);
+      background: rgba(47,143,87,.20);
+      color: var(--ink);
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn.secondary{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      color: rgba(21,56,42,.9);
+      font-weight:700;
+    }
+    .btn.danger{
+      border:1px solid rgba(255,92,122,.65);
+      background: rgba(255,92,122,.14);
+      color: rgba(21,56,42,.95);
+      font-weight:800;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    /* HOME action cards */
+    .homeStack{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top: 8px;
+    }
+    .actionCard{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      cursor:pointer;
+    }
+    .actionCard.primary{
+      border-color: rgba(47,143,87,.55);
+      background: rgba(47,143,87,.12);
+    }
+    .actionText{
+      min-width:0;
+      flex: 1 1 auto;
+    }
+    .actionTitle{
+      font-weight:900;
+      letter-spacing:.2px;
+      font-size:14px;
+      margin:0;
+    }
+    .actionSub{
+      margin-top:4px;
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.35;
+    }
+    .goBtn{
+      flex: 0 0 auto;
+      border:1px solid rgba(47,143,87,.65);
+      background: rgba(47,143,87,.22);
+      color: var(--ink);
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .goBtn.secondary{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      color: rgba(21,56,42,.9);
+      font-weight:700;
+    }
+
+    .queueBox{
+      margin-top: 10px;
+      background: rgba(214,166,58,.10);
+      border:1px solid rgba(214,166,58,.55);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+    }
+    .queueTitle{ font-weight:900; font-size:13px; margin:0 0 6px 0; }
+    .queueMeta{ font-family: var(--mono); font-size:12px; margin:0; color: rgba(21,56,42,.92); }
+    .queueSub{ font-size:12px; color: var(--muted); margin:6px 0 0 0; }
+
+    /* SEARCH PAGE */
+    .segTabs{
+      display:flex;
+      gap:8px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+    .seg{
+      flex:1;
+      text-align:center;
+      padding: 8px 7px;
+      border-radius: 14px;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: rgba(47,143,87,.95);
+    }
+    .seg.active{
+      border-color: rgba(47,143,87,.55);
+      background: rgba(47,143,87,.12);
+      color: rgba(21,56,42,.95);
+    }
+
+    .lsScanArea{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+    }
+    .lsCameraFrame{
+      width:100%;
+      max-width:340px;
+      height:180px;
+      border-radius:16px;
+      background: rgba(47,143,87,.18);
+      border:2px solid rgba(47,143,87,.35);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .lsCameraInner{
+      width:82%;
+      height:64%;
+      border-radius:10px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .lsBtnRow{
+      display:flex;
+      gap:8px;
+      width:100%;
+      justify-content:center;
+      margin-top:4px;
+      max-width:360px;
+    }
+    .lsCard{
+      width:100%;
+      max-width:360px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+    .lsId{
+      font-family:var(--mono);
+      font-size:13px;
+      font-weight:800;
+    }
+    .lsMeta{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+    .lsActions{
+      display:flex;
+      gap:8px;
+      margin-top:6px;
+    }
+    .lsActionBtn{
+      flex:1;
+      padding:8px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      color:var(--ink);
+      font-weight:800;
+      cursor:pointer;
+    }
+    .lsActionBtn.primary{
+      background:rgba(47,143,87,.12);
+      border-color:rgba(47,143,87,.45);
+    }
+    .lsActionBtn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+    .lsReviewCard{
+      display:none;
+    }
+    .lsCollapsed{
+      display:none;
+      justify-content:center;
+      align-items:center;
+      padding: 8px 0 2px 0;
+    }
+    .lsScannerIcon{
+      font-family:var(--mono);
+      font-weight:900;
+      letter-spacing:1px;
+    }
+    .lsReviewTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      margin-bottom:4px;
+    }
+    .lsReviewActions{
+      display:flex;
+      gap:8px;
+    }
+    .lsResults{
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.12);
+      padding:6px;
+    }
+    .lsRow{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      padding:8px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.06);
+      background:rgba(255,255,255,.02);
+      margin-top:6px;
+      cursor:pointer;
+    }
+    .lsRowId{
+      font-family:var(--mono);
+      font-weight:900;
+      font-size:12px;
+    }
+    .lsRowSub{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+    .lsPill{
+      font-family:var(--mono);
+      font-size:11px;
+      padding:6px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      white-space:nowrap;
+    }
+    .lsPill.ok{ border-color:rgba(47,143,87,.6); background:rgba(47,143,87,.08); }
+    .lsPill.warn{ border-color:rgba(214,166,58,.75); background:rgba(214,166,58,.08); }
+    .lsPill.bad{ border-color:rgba(255,92,122,.75); background:rgba(255,92,122,.08); }
+
+    .stack{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .fieldLabel{
+      font-size:12px;
+      color: var(--muted);
+      margin: 2px 0 4px 2px;
+    }
+    .inputRow{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .input{
+      flex:1;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      min-width: 0;
+    }
+    .input input{
+      width:100%;
+      background:transparent;
+      border:none;
+      outline:none;
+      color: var(--ink);
+      font-size:13px;
+    }
+
+    .select{
+      width:100%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      cursor:pointer;
+      user-select:none;
+    }
+    .select .leftText{
+      min-width:0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      font-size:13px;
+      color: rgba(21,56,42,.92);
+    }
+    .select .rightText{
+      font-family: var(--mono);
+      font-size:11px;
+      color: rgba(47,143,87,.9);
+      border:1px solid rgba(255,255,255,.14);
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      white-space:nowrap;
+    }
+    .filterDock{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
+    .filterToggle{
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .filterSummary{
+      min-width:0;
+      text-align:right;
+      color: var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .filterPanel[hidden]{ display:none; }
+    .nativeSelect{
+      width:100%;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      color: var(--ink);
+      font-size:13px;
+      outline:none;
+    }
+    .filterActions{
+      display:flex;
+      gap:8px;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+
+    .inlineActionCard{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .inlineActionCard.primary{
+      border-color: rgba(47,143,87,.55);
+      background: rgba(47,143,87,.10);
+    }
+    .inlineActionText{ flex:1; min-width:0; }
+    .inlineActionTitle{ margin:0; font-weight:900; font-size:13px; }
+    .inlineActionSub{ margin-top:4px; font-size:12px; color: var(--muted); line-height:1.35; }
+
+    .results{
+      margin-top: 4px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+      padding: 8px;
+    }
+    .resultsTop{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:6px;
+    }
+    .resultsTop .t{ font-weight:950; font-size:13px; }
+    .resultsTop .n{ font-family: var(--mono); font-size:11px; color: rgba(47,143,87,.95); }
+    .resultsActions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:6px;
+      flex-wrap:wrap;
+    }
+    .resultsList{
+      display:flex;
+      flex-direction:column;
+    }
+    .resultsEmpty{
+      padding: 10px;
+      border-radius: 12px;
+      border:1px dashed rgba(255,255,255,.16);
+      color: var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+
+    .rowItem{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      padding: 8px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      margin-top:6px;
+      cursor:pointer;
+    }
+    .rowItem.selected{
+      border-color: rgba(47,143,87,.60);
+      background: rgba(47,143,87,.12);
+    }
+    .rowItem .meta{ min-width:0; }
+    .rowItem .id{
+      font-family: var(--mono);
+      font-size:12px;
+      font-weight:900;
+      color: rgba(21,56,42,.95);
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .rowItem .loc{
+      margin-top:4px;
+      font-size:12px;
+      color: var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .pill{
+      font-family: var(--mono);
+      font-size:11px;
+      color: rgba(21,56,42,.9);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      padding:5px 7px;
+      border-radius: 999px;
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+    .pill.selected{
+      border-color: rgba(47,143,87,.60);
+      color: rgba(47,143,87,.98);
+      background: rgba(47,143,87,.15);
+    }
+    .pill.ok{ border-color: rgba(47,143,87,.65); background: rgba(47,143,87,.12); }
+    .pill.warn{ border-color: rgba(214,166,58,.75); background: rgba(214,166,58,.12); }
+    .pill.bad{ border-color: rgba(255,92,122,.75); background: rgba(255,92,122,.12); }
+
+    .checkbox{
+      width:18px; height:18px;
+      border-radius: 6px;
+      border:1px solid rgba(47,143,87,.65);
+      background: rgba(47,143,87,.18);
+      flex:0 0 auto;
+    }
+
+    /* ===== LOCATIONS BROWSER ===== */
+    .loc-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .loc-item{
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      padding: 12px 12px;
+      box-shadow: var(--shadow);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      cursor:pointer;
+    }
+    .loc-item .meta{ min-width:0; }
+    .loc-item .title{
+      font-weight:900;
+      letter-spacing:.2px;
+      font-size:14px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .loc-chip{
+      font-family: var(--mono);
+      font-size:11px;
+      color: rgba(21,56,42,.9);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      padding:4px 8px;
+      border-radius: 999px;
+    }
+    .loc-sub{
+      margin-top:4px;
+      font-size:12px;
+      color: var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .loc-row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:6px;
+    }
+    .loc-kpi{
+      font-size:11px;
+      color: rgba(93,125,106,.95);
+      border: 1px dashed rgba(255,255,255,.18);
+      padding: 6px 8px;
+      border-radius: 12px;
+    }
+    .loc-arrow{
+      width:28px; height:28px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      color: rgba(21,56,42,.9);
+      font-weight:900;
+    }
+    .loc-sectionTitle{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      margin: 4px 2px 10px 2px;
+    }
+    .loc-sectionTitle h2{
+      margin:0;
+      font-size:14px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .loc-sectionTitle span{
+      font-size:12px;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+    .loc-toolbar{
+      padding: 0 0 10px 0;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .loc-search{
+      flex:1;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      min-width: 0;
+    }
+    .loc-search input{
+      width:100%;
+      background:transparent;
+      border:none;
+      outline:none;
+      color: var(--ink);
+      font-size:13px;
+    }
+
+    /* ===== REBOOK / MOVE FLOW ===== */
+    .rb-stepper{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin: 10px 0 12px 0;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+    }
+    .rb-dot{
+      width:10px; height:10px; border-radius:50%;
+      border:1px solid rgba(255,255,255,.20);
+      background: rgba(255,255,255,.06);
+    }
+    .rb-dot.on{ border-color: rgba(47,143,87,.75); background: rgba(47,143,87,.35); }
+    .rb-stepLabel{
+      font-family: var(--mono);
+      font-size:11px;
+      color: rgba(47,143,87,.95);
+      margin-left:auto;
+    }
+
+    .notice{
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.12);
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
+    .notice.ok{ border-color: rgba(47,143,87,.65); background: rgba(47,143,87,.10); }
+    .notice.warn{ border-color: rgba(214,166,58,.75); background: rgba(214,166,58,.10); }
+    .notice.bad{ border-color: rgba(255,92,122,.75); background: rgba(255,92,122,.10); }
+    .notice b{ color: rgba(21,56,42,.92); }
+
+    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+    /* Bottom nav */
+    footer{
+      position:sticky; bottom:0;
+      background: rgba(214,166,58,.72);
+      border-top:1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(10px);
+    }
+    .bottomnav{
+      display:flex;
+      justify-content:space-around;
+      padding: 8px 6px;
+      gap:6px;
+    }
+    .navbtn{
+      flex:1;
+      text-align:center;
+      padding: 8px 6px;
+      border-radius: 12px;
+      font-size:12px;
+      color: rgba(47,143,87,.95);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      cursor:pointer;
+      user-select:none;
+    }
+    .navbtn.active{
+      color: rgba(21,56,42,.95);
+      border-color: rgba(47,143,87,.55);
+      background: rgba(47,143,87,.12);
+    }
+
+    .spacer{ height: 10px; }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <div class="topbar">
+        <div class="left">
+          <div class="badge" aria-hidden="true"></div>
+          <div class="titles">
+            <div class="h1" id="headerTitle">Yard App</div>
+            <div class="crumb" id="headerSub">Home</div>
+          </div>
+        </div>
+        <div class="status" id="statusPill">ONLINE</div>
+      </div>
+    </header>
+
+    <main>
+      <!-- ===================== HOME ===================== -->
+      <section class="screen active" id="home">
+        <div class="pageTitle">What do you want to do?</div>
+        <div class="pageSub">Fast actions - designed for forklifts - works offline (queues changes)</div>
+
+        <div class="homeStack">
+          <div class="actionCard primary" data-nav="search">
+            <div class="actionText">
+              <p class="actionTitle">Search Inventory</p>
+              <div class="actionSub">Elements + racks - scan barcode/QR - filter by project/location</div>
+            </div>
+            <button class="goBtn" type="button">GO</button>
+          </div>
+
+          <div class="actionCard" data-nav="moves">
+            <div class="actionText">
+              <p class="actionTitle">Move / Rebook</p>
+              <div class="actionSub">Update element location (batch supported) - show success message</div>
+            </div>
+            <button class="goBtn secondary" type="button">GO</button>
+          </div>
+
+          <div class="actionCard" data-nav="locations">
+            <div class="actionText">
+              <p class="actionTitle">Locations</p>
+              <div class="actionSub">Browse areas -> rows -> lanes -> racks/pre-stacks - phone-friendly</div>
+            </div>
+            <button class="goBtn secondary" type="button">GO</button>
+          </div>
+        </div>
+
+        <div class="queueBox">
+          <p class="queueTitle">Queued (offline-safe)</p>
+          <p class="queueMeta">2 ops queued</p>
+          <p class="queueSub">Will sync automatically when the device reconnects.</p>
+        </div>
+
+        <div class="hint">
+          <b>Layout rule:</b> every action card is a flex row with the text block on the left and the GO button on the right, so nothing can overlap.
+        </div>
+      </section>
+
+      <!-- ===================== SEARCH ===================== -->
+      <section class="screen" id="search">
+        <div class="pageTitle">Search inventory</div>
+        <div class="pageSub">Search elements or racks - scan barcodes - batch via loadsheet</div>
+
+        <!-- Tabs -->
+        <div class="segTabs" role="tablist" aria-label="Search mode">
+          <div class="seg active" id="tabElements" role="tab" aria-selected="true">Elements</div>
+          <div class="seg" id="tabRacks" role="tab" aria-selected="false">Racks</div>
+          <div class="seg" id="tabLoadSheet" role="tab" aria-selected="false">Loadsheet</div>
+        </div>
+
+        <div class="stack" id="searchClassicUI">
+          <div class="card">
+            <div class="filterDock">
+              <button class="btn secondary filterToggle" id="toggleFiltersBtn" type="button" aria-label="Open filters">
+                <span>&#x26B2;</span>
+                <span class="pill" id="filterBadge">none</span>
+              </button>
+              <div class="filterSummary" id="filterSummary">No filters applied</div>
+            </div>
+          </div>
+
+          <div class="card filterPanel" id="filterPanel" hidden>
+            <div class="fieldLabel">Filter results</div>
+            <div class="stack" style="gap:10px;">
+              <div>
+                <div class="fieldLabel">Project</div>
+                <select class="nativeSelect" id="filterProject"></select>
+              </div>
+              <div>
+                <div class="fieldLabel">Location area</div>
+                <select class="nativeSelect" id="filterArea"></select>
+              </div>
+            </div>
+            <div class="filterActions">
+              <button class="btn" id="applyFiltersBtn" type="button">Apply filters</button>
+              <button class="btn secondary" id="clearFiltersBtn" type="button">Clear</button>
+              <button class="btn secondary" id="cancelFiltersBtn" type="button">Cancel</button>
+            </div>
+          </div>
+
+          <!-- Query + Scan -->
+          <div class="card">
+            <div class="fieldLabel" id="queryLabel">Search by element ID / barcode / description</div>
+            <div class="inputRow">
+              <div class="input">
+                <span style="opacity:.8;font-family:var(--mono);font-size:12px;">&#x2315;</span>
+                <input id="query" type="text" placeholder="e.g. 24-10345-001" />
+              </div>
+              <button class="btn" id="scanBtn" type="button">SCAN</button>
+              <button class="goBtn" id="searchBtn" type="button">&#x2315;</button>
+            </div>
+            <div style="height:10px"></div>
+          </div>
+
+          <!-- Results -->
+          <div class="results" id="resultsBox">
+            <div class="resultsTop">
+              <div class="t">Results</div>
+              <div class="n" id="resultsCount">0 found</div>
+            </div>
+            <div class="resultsActions" id="selectionActions">
+              <div class="pill" id="selectedCount">0 selected</div>
+              <button class="btn secondary" id="clearSelectedBtn" type="button">Clear</button>
+              <button class="btn" id="rebookBtn" type="button" disabled>Rebook selected</button>
+            </div>
+            <div class="resultsList" id="resultsList">
+              <div class="resultsEmpty">Run a search to view matching results.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stack" id="loadsheetUI" style="display:none;">
+          <article class="card" id="lsScanCard" aria-labelledby="lsScanTitle">
+            <div id="lsScanHeader">
+              <div class="fieldLabel" id="lsScanTitle">Multi-Scan (Loadsheet Barcode)</div>
+              <div class="pageSub" style="margin:0 0 8px 0;">Scan a loadsheet barcode to fetch multiple elements; then review + select actions.</div>
+            </div>
+
+            <div class="lsScanArea" id="lsScanArea">
+              <div class="lsCameraFrame">
+                <div class="lsCameraInner">Camera view (placeholder)</div>
+              </div>
+
+              <div class="lsBtnRow">
+                <button id="lsSimulateScan" class="btn" type="button">Scan barcode</button>
+                <button id="lsPasteCode" class="btn secondary" type="button">Enter code</button>
+              </div>
+
+              <div class="lsCard">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                  <div>
+                    <div class="lsId" id="lsId">-</div>
+                    <div class="lsMeta" id="lsMeta">No loadsheet scanned</div>
+                  </div>
+                  <button id="lsReviewBtn" class="lsActionBtn" type="button" disabled>Review elements</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="lsCollapsed" id="lsCollapsed">
+              <button id="lsExpandBtn" class="btn secondary" type="button" aria-label="Expand multi-scan card">
+                <span class="lsScannerIcon">||||||||||||</span>
+              </button>
+            </div>
+          </article>
+
+          <article class="card lsReviewCard" id="lsReviewCard">
+            <div class="lsReviewTop">
+              <div>
+                <div class="inlineActionTitle">Elements referenced by loadsheet</div>
+                <div class="n" id="lsFoundCount">0 found</div>
+              </div>
+              <div class="lsReviewActions">
+                <button id="lsSelectAll" class="btn secondary" type="button">Select all</button>
+                <button id="lsClearSel" class="btn secondary" type="button">Clear</button>
+              </div>
+            </div>
+
+            <div class="lsResults" id="lsFoundList"></div>
+
+            <div style="display:flex;gap:10px;margin-top:12px;">
+              <button id="lsBackToScan" class="btn secondary" type="button">Back</button>
+              <button id="lsNextAction" class="btn" type="button" disabled>Move selected</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===================== LOCATIONS ===================== -->
+      <section class="screen" id="locations">
+        <div class="loc-toolbar">
+          <div class="loc-search" title="Search within current scope">
+            <span style="opacity:.8;font-family:var(--mono);font-size:12px;">&#x2315;</span>
+            <input id="locQuery" type="text" placeholder="Search locations..." />
+          </div>
+          <button class="btn secondary" id="locBackBtn">Back</button>
+          <button class="btn" id="locScanBtn">SCAN</button>
+        </div>
+
+        <div class="loc-sectionTitle">
+          <h2 id="locSectionTitle">Locations</h2>
+          <span id="locCount"></span>
+        </div>
+        <div class="loc-list" id="locList"></div>
+        <div class="hint" id="locHint">
+          <b>Hierarchical browser:</b> tap a card to drill into Area -> Row -> Lane -> Container -> Elements.
+          <div class="spacer"></div>
+          <b>Tip:</b> search is scoped to the current level. Use Back to go up.
+        </div>
+      </section>
+
+      <!-- ===================== MOVES / REBOOK ===================== -->
+      <section class="screen" id="moves">
+
+        <!-- Step 1: Select items -->
+        <div id="rbStep1">
+          <div class="pageTitle">Select items to move</div>
+          <div class="pageSub">Scan or type IDs. Batch supported (multi-element).</div>
+
+          <div class="rb-stepper">
+            <div class="rb-dot on"></div><div class="rb-dot"></div><div class="rb-dot"></div><div class="rb-dot"></div>
+            <div class="rb-stepLabel">MOVE - STEP 1/4</div>
+          </div>
+
+          <div class="stack">
+            <div class="card">
+              <div class="fieldLabel">Add element</div>
+              <div class="inputRow">
+                <div class="input">
+                  <span style="opacity:.8;font-family:var(--mono);font-size:12px;">&#x2315;</span>
+                  <input id="rbAddInput" type="text" placeholder="e.g. 24-10345-001" />
+                </div>
+                <button class="btn" id="rbScanElement" type="button">SCAN</button>
+              </div>
+
+              <div style="height:10px"></div>
+
+              <div class="inlineActionCard primary">
+                <div class="inlineActionText">
+                  <p class="inlineActionTitle">Selected: <span id="rbSelCount">0</span></p>
+                  <div class="inlineActionSub">Tap items below to toggle selection (wireframe).</div>
+                </div>
+                <button class="btn secondary" id="rbClearAll" type="button">Clear</button>
+              </div>
+            </div>
+
+            <div class="results">
+              <div class="resultsTop">
+                <div class="t">Selected items</div>
+                <div class="n" id="rbSelMeta">0 items</div>
+              </div>
+              <div id="rbSelList"></div>
+            </div>
+
+            <div class="card">
+              <div class="fieldLabel">Move type</div>
+              <div class="segTabs" role="tablist" aria-label="Move type">
+                <div class="seg active" id="rbTypeRebook" role="tab" aria-selected="true">Rebook</div>
+                <div class="seg" id="rbTypeStore" role="tab" aria-selected="false">Store</div>
+              </div>
+            </div>
+
+            <div class="inlineActionCard primary">
+              <div class="inlineActionText">
+                <p class="inlineActionTitle">Next</p>
+                <div class="inlineActionSub">Verify initial location before updating.</div>
+              </div>
+              <button class="btn" id="rbToStep2" type="button">GO</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Verify initial -->
+        <div id="rbStep2" style="display:none;">
+          <div class="pageTitle">Verify initial location</div>
+          <div class="pageSub">Prevents conflicts if items were moved by someone else.</div>
+
+          <div class="rb-stepper">
+            <div class="rb-dot on"></div><div class="rb-dot on"></div><div class="rb-dot"></div><div class="rb-dot"></div>
+            <div class="rb-stepLabel">MOVE - STEP 2/4</div>
+          </div>
+
+          <div class="stack">
+            <div class="card">
+              <div class="fieldLabel">Expected location</div>
+              <div class="notice">
+                <b id="rbExpectedLoc">Row B -> Lane 3 -> Rack R-12</b><br/>
+                <span id="rbExpectedCount">0 items selected</span>
+              </div>
+
+              <div style="height:10px"></div>
+
+              <div class="fieldLabel">Scan current location tag (optional)</div>
+              <div class="inputRow">
+                <div class="input">
+                  <span style="opacity:.8;font-family:var(--mono);font-size:12px;">&#x2315;</span>
+                  <input id="rbScanLocInput" type="text" placeholder="location code (from scan)" />
+                </div>
+                <button class="btn" id="rbScanLoc" type="button">SCAN</button>
+              </div>
+            </div>
+
+            <div class="notice bad" id="rbMismatchBox" style="display:none;">
+              <b>Mismatch detected</b><br/>
+              1 item is at a different location (wireframe).<br/>
+              Action: split move or refresh.
+              <div class="row" style="margin-top:10px;">
+                <button class="btn secondary" id="rbSplitBtn" type="button">Split</button>
+                <button class="btn" id="rbRefreshBtn" type="button">Refresh</button>
+              </div>
+            </div>
+
+            <div class="inlineActionCard primary">
+              <div class="inlineActionText">
+                <p class="inlineActionTitle">Next</p>
+                <div class="inlineActionSub">Choose the new destination.</div>
+              </div>
+              <button class="btn" id="rbToStep3" type="button">GO</button>
+            </div>
+
+            <div class="inlineActionCard">
+              <div class="inlineActionText">
+                <p class="inlineActionTitle">Back</p>
+                <div class="inlineActionSub">Return to selected items.</div>
+              </div>
+              <button class="btn secondary" id="rbBackTo1" type="button">Back</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: New location -->
+        <div id="rbStep3" style="display:none;">
+          <div class="pageTitle">Choose new location</div>
+          <div class="pageSub">Scan destination tag or pick hierarchy (Area -> Row -> Lane -> Container).</div>
+
+          <div class="rb-stepper">
+            <div class="rb-dot on"></div><div class="rb-dot on"></div><div class="rb-dot on"></div><div class="rb-dot"></div>
+            <div class="rb-stepLabel">MOVE - STEP 3/4</div>
+          </div>
+
+          <div class="stack">
+            <div class="card">
+              <div class="fieldLabel">Scan destination tag (optional)</div>
+              <div class="inputRow">
+                <div class="input">
+                  <span style="opacity:.8;font-family:var(--mono);font-size:12px;">&#x2315;</span>
+                  <input id="rbDestScanInput" type="text" placeholder="destination code (from scan)" />
+                </div>
+                <button class="btn" id="rbScanDest" type="button">SCAN</button>
+              </div>
+
+              <div style="height:10px"></div>
+
+              <div class="fieldLabel">Or select manually</div>
+              <div class="stack" style="gap:10px;">
+                <div class="input"><span style="opacity:.8;font-family:var(--mono);font-size:12px;">&#x25BE;</span><input value="Area: Yard West" readonly></div>
+                <div class="input"><span style="opacity:.8;font-family:var(--mono);font-size:12px;">&#x25BE;</span><input value="Row: C" readonly></div>
+                <div class="input"><span style="opacity:.8;font-family:var(--mono);font-size:12px;">&#x25BE;</span><input value="Lane: 1" readonly></div>
+                <div class="input" style="border-color: rgba(47,143,87,.55); background: rgba(47,143,87,.08);">
+                  <span style="opacity:.9;font-family:var(--mono);font-size:12px;">&#x25BE;</span><input value="Container: Pre-stack P2" readonly>
+                </div>
+              </div>
+            </div>
+
+            <div class="notice">
+              <b>Destination details</b><br/>
+              Capacity: 12 - Occupied: 7<br/>
+              Last updated: 08:55
+            </div>
+
+            <div class="inlineActionCard primary">
+              <div class="inlineActionText">
+                <p class="inlineActionTitle">Next</p>
+                <div class="inlineActionSub">Review before submitting.</div>
+              </div>
+              <button class="btn" id="rbToStep4" type="button">GO</button>
+            </div>
+
+            <div class="inlineActionCard">
+              <div class="inlineActionText">
+                <p class="inlineActionTitle">Back</p>
+                <div class="inlineActionSub">Return to initial verification.</div>
+              </div>
+              <button class="btn secondary" id="rbBackTo2" type="button">Back</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Review -->
+        <div id="rbStep4" style="display:none;">
+          <div class="pageTitle">Review changes</div>
+          <div class="pageSub">Confirm before submitting. Offline-safe queues operations.</div>
+
+          <div class="rb-stepper">
+            <div class="rb-dot on"></div><div class="rb-dot on"></div><div class="rb-dot on"></div><div class="rb-dot on"></div>
+            <div class="rb-stepLabel">MOVE - STEP 4/4</div>
+          </div>
+
+          <div class="stack">
+            <div class="card">
+              <div class="fieldLabel">Summary</div>
+              <div class="notice">
+                <b>From:</b> <span id="rbFromSummary">Row B -> Lane 3 -> Rack R-12</span><br/>
+                <b>To:</b> <span id="rbToSummary">Row C -> Lane 1 -> Pre-stack P2</span><br/>
+                <b>Type:</b> <span id="rbTypeSummary">Rebook</span><br/>
+                <b>Items:</b> <span id="rbItemsSummary">0</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="fieldLabel">Items</div>
+              <div class="results" id="rbReviewList"></div>
+            </div>
+
+            <div class="notice warn">
+              <b>Offline-safe</b><br/>
+              If there is no connection, this change will be queued and synced later.
+            </div>
+
+            <div class="inlineActionCard primary">
+              <div class="inlineActionText">
+                <p class="inlineActionTitle">Submit move</p>
+                <div class="inlineActionSub">Shows success message (or queued/offline state).</div>
+              </div>
+              <button class="btn" id="rbSubmitBtn" type="button">SUBMIT</button>
+            </div>
+
+            <div class="inlineActionCard">
+              <div class="inlineActionText">
+                <p class="inlineActionTitle">Back</p>
+                <div class="inlineActionSub">Adjust destination or selection.</div>
+              </div>
+              <button class="btn secondary" id="rbBackTo3" type="button">Back</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Result states -->
+        <div id="rbResult" style="display:none;">
+          <div class="pageTitle">Result</div>
+          <div class="pageSub">Success + offline queued + conflict patterns.</div>
+
+          <div class="stack">
+            <div class="notice ok">
+              <b>Success</b><br/>
+              <span id="rbSuccessMsg">3 items moved to Row C / Lane 1 / Pre-stack P2</span>
+              <div class="row" style="margin-top:10px;">
+                <button class="btn secondary" id="rbViewItems" type="button">View updated items</button>
+                <button class="btn" id="rbNewMove" type="button">New move</button>
+              </div>
+            </div>
+
+            <div class="notice warn">
+              <b>Queued (offline)</b><br/>
+              No connection. Move saved and will sync automatically.
+              <div class="row" style="margin-top:10px;">
+                <button class="btn secondary" id="rbSeeQueue" type="button">See queue</button>
+                <button class="btn" id="rbDoneBtn" type="button">Done</button>
+              </div>
+            </div>
+
+            <div class="notice bad">
+              <b>Couldn't submit</b><br/>
+              Conflict: 1 item moved by someone else.
+              <div class="row" style="margin-top:10px;">
+                <button class="btn secondary" id="rbRefreshAfter" type="button">Refresh</button>
+                <button class="btn danger" id="rbRetryAfter" type="button">Retry</button>
+              </div>
+            </div>
+
+            <div class="notice">
+              <b>Note</b><br/>
+              In the real app, only one of these result cards would show based on connectivity + API response.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="bottomnav">
+        <div class="navbtn active" id="navHome">Home</div>
+        <div class="navbtn" id="navSearch">Search</div>
+        <div class="navbtn" id="navLocations">Locations</div>
+        <div class="navbtn" id="navMoves">Moves</div>
+      </div>
+    </footer>
+  </div>
+
+<script>
+  /* ============================================================
+     SHARED UTILITIES
+     ============================================================ */
+  function escapeHtml(text){
+    return String(text)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  /* ============================================================
+     MAIN NAV
+     ============================================================ */
+  const mainScreens = ["home","search","locations","moves"];
+  const headerTitle = document.getElementById("headerTitle");
+  const headerSub = document.getElementById("headerSub");
+
+  function showScreen(id){
+    mainScreens.forEach(s => document.getElementById(s).classList.toggle("active", s === id));
+
+    const titles = { home:"Yard App", search:"Search", locations:"Locations", moves:"Move / Rebook" };
+    headerTitle.textContent = titles[id] || id;
+    headerSub.textContent = (id === "home") ? "Home" : "Page: /" + id;
+
+    document.getElementById("navHome").classList.toggle("active", id === "home");
+    document.getElementById("navSearch").classList.toggle("active", id === "search");
+    document.getElementById("navLocations").classList.toggle("active", id === "locations");
+    document.getElementById("navMoves").classList.toggle("active", id === "moves");
+
+    // Reset location browser when navigating to locations
+    if (id === "locations"){
+      headerTitle.textContent = "Locations";
+      headerSub.textContent = loc_state.filterKey ? loc_state.filterPath : "Area";
+    }
+
+    // Update header for moves
+    if (id === "moves"){
+      rb_updateHeader();
+    }
+  }
+
+  document.getElementById("navHome").addEventListener("click", ()=>showScreen("home"));
+  document.getElementById("navSearch").addEventListener("click", ()=>showScreen("search"));
+  document.getElementById("navLocations").addEventListener("click", ()=>showScreen("locations"));
+  document.getElementById("navMoves").addEventListener("click", ()=>showScreen("moves"));
+
+  // Home action cards
+  document.querySelectorAll(".actionCard").forEach(card=>{
+    card.addEventListener("click", ()=>{
+      const target = card.getAttribute("data-nav");
+      if (target) showScreen(target);
+    });
+  });
+  document.querySelectorAll(".goBtn").forEach(b=>b.addEventListener("click",(e)=>e.stopPropagation()));
+
+  /* ============================================================
+     SEARCH MODULE
+     ============================================================ */
+  const tabElements = document.getElementById("tabElements");
+  const tabRacks = document.getElementById("tabRacks");
+  const tabLoadSheet = document.getElementById("tabLoadSheet");
+  const queryLabel = document.getElementById("queryLabel");
+  const query = document.getElementById("query");
+  const searchClassicUI = document.getElementById("searchClassicUI");
+  const loadsheetUI = document.getElementById("loadsheetUI");
+  const toggleFiltersBtn = document.getElementById("toggleFiltersBtn");
+  const filterPanel = document.getElementById("filterPanel");
+  const filterProject = document.getElementById("filterProject");
+  const filterArea = document.getElementById("filterArea");
+  const applyFiltersBtn = document.getElementById("applyFiltersBtn");
+  const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+  const cancelFiltersBtn = document.getElementById("cancelFiltersBtn");
+  const filterBadge = document.getElementById("filterBadge");
+  const filterSummary = document.getElementById("filterSummary");
+
+  let mode = "elements";
+  function setMode(m){
+    mode = m;
+    const isEl = mode === "elements";
+    const isRack = mode === "racks";
+    const isLoadsheet = mode === "loadsheet";
+    tabElements.classList.toggle("active", isEl);
+    tabElements.setAttribute("aria-selected", String(isEl));
+    tabRacks.classList.toggle("active", isRack);
+    tabRacks.setAttribute("aria-selected", String(isRack));
+    tabLoadSheet.classList.toggle("active", isLoadsheet);
+    tabLoadSheet.setAttribute("aria-selected", String(isLoadsheet));
+
+    searchClassicUI.style.display = isLoadsheet ? "none" : "flex";
+    loadsheetUI.style.display = isLoadsheet ? "flex" : "none";
+
+    queryLabel.textContent = isEl
+      ? "Search by element ID / barcode / description"
+      : "Search by rack ID / barcode";
+    query.placeholder = isEl ? "e.g. 24-10345-001" : "e.g. R-12";
+    if (isLoadsheet){
+      closeFilters();
+      return;
+    }
+    populateFilterOptions();
+    if (query.value.trim() || activeFilters.project || activeFilters.area) runSearch();
+    else renderResults([]);
+  }
+  tabElements.addEventListener("click", ()=>setMode("elements"));
+  tabRacks.addEventListener("click", ()=>setMode("racks"));
+  tabLoadSheet.addEventListener("click", ()=>setMode("loadsheet"));
+
+  const resultsCount = document.getElementById("resultsCount");
+  const resultsList = document.getElementById("resultsList");
+  const selectedCount = document.getElementById("selectedCount");
+  const selectionActions = document.getElementById("selectionActions");
+  const clearSelectedBtn = document.getElementById("clearSelectedBtn");
+  const rebookBtn = document.getElementById("rebookBtn");
+  const MAX_RESULTS = 24;
+  const activeFilters = { project:"", area:"" };
+  const draftFilters = { project:"", area:"" };
+  const selectedElementIds = new Set();
+  let currentSearchResults = [];
+
+  const MOCK_DATA = {
+    elements: [
+      { id:"24-10345-001", barcode:"ELM-001-A7", desc:"Wall panel - north core", project:"ABC Tower", area:"Yard West", loc:"Yard West - Row B - Lane 3 - Rack R-B3-12" },
+      { id:"24-10345-002", barcode:"ELM-002-F1", desc:"Spandrel panel - bronze", project:"ABC Tower", area:"Staging West", loc:"Staging West - Slot 08" },
+      { id:"24-10345-003", barcode:"ELM-003-C4", desc:"Column cover - east face", project:"ABC Tower", area:"Yard East", loc:"Yard East - Row C - Lane 1 - Pre-stack P1" },
+      { id:"24-10345-004", barcode:"ELM-004-K2", desc:"Canopy beam section", project:"Harbor Point", area:"Yard West", loc:"Yard West - Row A - Lane 4 - Rack R-A4-03" },
+      { id:"24-10345-005", barcode:"ELM-005-M9", desc:"Curtain wall unit - corner", project:"Harbor Point", area:"Yard East", loc:"Yard East - Row B - Lane 2 - Rack R-B2-05" },
+      { id:"24-10345-006", barcode:"ELM-006-P6", desc:"Podium mullion set", project:"River Medical", area:"Staging West", loc:"Staging West - Slot 12" },
+      { id:"24-10345-007", barcode:"ELM-007-T3", desc:"GFRC coping panel", project:"River Medical", area:"Yard West", loc:"Yard West - Row D - Lane 1 - Pre-stack P1" },
+      { id:"24-10345-008", barcode:"ELM-008-H8", desc:"Mechanical screen frame", project:"Northline Labs", area:"Yard East", loc:"Yard East - Row A - Lane 3 - Rack R-A3-07" },
+      { id:"24-10345-009", barcode:"ELM-009-Q5", desc:"Sunshade blade set", project:"Northline Labs", area:"Yard West", loc:"Yard West - Row C - Lane 2 - Rack R-C2-10" },
+      { id:"24-10345-010", barcode:"ELM-010-W2", desc:"Entry canopy rib", project:"Summit Plaza", area:"Yard East", loc:"Yard East - Row C - Lane 3 - Pre-stack P3" },
+      { id:"24-10345-011", barcode:"ELM-011-D0", desc:"Storefront transom", project:"Summit Plaza", area:"Yard West", loc:"Yard West - Row B - Lane 1 - Rack R-B1-02" },
+      { id:"24-10345-012", barcode:"ELM-012-R4", desc:"Parapet return panel", project:"Summit Plaza", area:"Staging West", loc:"Staging West - Slot 01" },
+    ],
+    racks: [
+      { id:"R-A4-03", barcode:"RACK-A403", project:"Harbor Point", area:"Yard West", leaves:"2026-03-04", loc:"Yard West - Row A - Lane 4 - Slot 3" },
+      { id:"R-B3-12", barcode:"RACK-B312", project:"ABC Tower", area:"Yard West", leaves:"2026-03-03", loc:"Yard West - Row B - Lane 3 - Slot 12" },
+      { id:"R-B2-05", barcode:"RACK-B205", project:"Harbor Point", area:"Yard East", leaves:"2026-03-06", loc:"Yard East - Row B - Lane 2 - Slot 5" },
+      { id:"R-C2-10", barcode:"RACK-C210", project:"Northline Labs", area:"Yard West", leaves:"2026-03-07", loc:"Yard West - Row C - Lane 2 - Slot 10" },
+      { id:"R-A3-07", barcode:"RACK-A307", project:"Northline Labs", area:"Yard East", leaves:"2026-03-05", loc:"Yard East - Row A - Lane 3 - Slot 7" },
+      { id:"R-B1-02", barcode:"RACK-B102", project:"Summit Plaza", area:"Yard West", leaves:"2026-03-08", loc:"Yard West - Row B - Lane 1 - Slot 2" },
+      { id:"R-D4-11", barcode:"RACK-D411", project:"River Medical", area:"Yard West", leaves:"2026-03-09", loc:"Yard West - Row D - Lane 4 - Slot 11" },
+      { id:"R-C1-04", barcode:"RACK-C104", project:"River Medical", area:"Yard East", leaves:"2026-03-10", loc:"Yard East - Row C - Lane 1 - Slot 4" },
+      { id:"R-A2-09", barcode:"RACK-A209", project:"ABC Tower", area:"Yard East", leaves:"2026-03-11", loc:"Yard East - Row A - Lane 2 - Slot 9" },
+      { id:"R-D2-06", barcode:"RACK-D206", project:"Summit Plaza", area:"Yard West", leaves:"2026-03-12", loc:"Yard West - Row D - Lane 2 - Slot 6" },
+    ],
+  };
+
+  function getSourceData(){
+    if (mode === "elements") return MOCK_DATA.elements;
+    if (mode === "racks") return MOCK_DATA.racks;
+    return [];
+  }
+
+  function toOptions(values){
+    return [`<option value="">Any</option>`].concat(
+      values.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`)
+    ).join("");
+  }
+
+  function populateFilterOptions(){
+    const source = getSourceData();
+    const projects = [...new Set(source.map(item => item.project))].sort();
+    const areas = [...new Set(source.map(item => item.area))].sort();
+    filterProject.innerHTML = toOptions(projects);
+    filterArea.innerHTML = toOptions(areas);
+    if (!projects.includes(activeFilters.project)) activeFilters.project = "";
+    if (!areas.includes(activeFilters.area)) activeFilters.area = "";
+    draftFilters.project = activeFilters.project;
+    draftFilters.area = activeFilters.area;
+    filterProject.value = draftFilters.project;
+    filterArea.value = draftFilters.area;
+    updateFilterSummary();
+  }
+
+  function getFilterCount(){
+    return Number(Boolean(activeFilters.project)) + Number(Boolean(activeFilters.area));
+  }
+
+  function updateFilterSummary(){
+    const parts = [];
+    if (activeFilters.project) parts.push(`Project: ${activeFilters.project}`);
+    if (activeFilters.area) parts.push(`Area: ${activeFilters.area}`);
+    filterSummary.textContent = parts.length ? parts.join(" | ") : "No filters applied";
+    const count = getFilterCount();
+    filterBadge.textContent = count ? `${count}` : "none";
+  }
+
+  function openFilters(){
+    draftFilters.project = activeFilters.project;
+    draftFilters.area = activeFilters.area;
+    filterProject.value = draftFilters.project;
+    filterArea.value = draftFilters.area;
+    filterPanel.hidden = false;
+  }
+
+  function closeFilters(){
+    filterPanel.hidden = true;
+  }
+
+  function renderResults(items){
+    currentSearchResults = items;
+    resultsCount.textContent = `${items.length} found`;
+    updateSelectionControls();
+    if (!items.length){
+      const qText = query.value.trim();
+      resultsList.innerHTML = qText
+        ? `<div class="resultsEmpty">No matches for "${escapeHtml(qText)}".</div>`
+        : `<div class="resultsEmpty">Run a search to view matching results.</div>`;
+      return;
+    }
+
+    resultsList.innerHTML = items.map(it => `
+      <div class="rowItem ${selectedElementIds.has(it.id) ? "selected" : ""}" data-id="${escapeHtml(it.id)}">
+        <div class="meta">
+          <div class="id">${escapeHtml(it.id)}</div>
+          <div class="loc">${escapeHtml(it.loc)}</div>
+        </div>
+        <div class="pill ${selectedElementIds.has(it.id) ? "selected" : ""}">
+          ${mode === "elements"
+            ? (selectedElementIds.has(it.id) ? "SELECTED" : "SELECT")
+            : "DETAILS"}
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function updateSelectionControls(){
+    const isElementMode = mode === "elements";
+    const totalSelected = selectedElementIds.size;
+    selectedCount.textContent = `${totalSelected} selected`;
+    rebookBtn.disabled = !totalSelected || !isElementMode;
+    clearSelectedBtn.disabled = !totalSelected || !isElementMode;
+    selectionActions.style.display = isElementMode ? "flex" : "none";
+    if (!isElementMode && totalSelected){
+      selectedElementIds.clear();
+    }
+  }
+
+  function runSearch(){
+    if (mode === "loadsheet") return;
+    const searchText = query.value.trim().toLowerCase();
+    const source = getSourceData();
+    const results = source.filter(item => {
+      const projectMatch = !activeFilters.project || item.project === activeFilters.project;
+      const areaMatch = !activeFilters.area || item.area === activeFilters.area;
+      if (!projectMatch || !areaMatch) return false;
+      if (!searchText) return true;
+      const haystack = mode === "elements"
+        ? `${item.id} ${item.barcode} ${item.desc} ${item.project} ${item.area} ${item.loc}`.toLowerCase()
+        : `${item.id} ${item.barcode} ${item.project} ${item.area} ${item.loc} ${item.leaves}`.toLowerCase();
+      return haystack.includes(searchText);
+    }).slice(0, MAX_RESULTS);
+
+    renderResults(results);
+  }
+
+  document.getElementById("scanBtn").addEventListener("click", ()=>{
+    alert(`Wireframe: open camera scan for ${mode === "elements" ? "element" : "rack"} barcode.`);
+  });
+
+  document.getElementById("searchBtn").addEventListener("click", ()=>{ runSearch(); });
+
+  toggleFiltersBtn.addEventListener("click", ()=>{
+    if (filterPanel.hidden) openFilters();
+    else closeFilters();
+  });
+
+  applyFiltersBtn.addEventListener("click", ()=>{
+    activeFilters.project = filterProject.value;
+    activeFilters.area = filterArea.value;
+    updateFilterSummary();
+    closeFilters();
+    runSearch();
+  });
+
+  clearFiltersBtn.addEventListener("click", ()=>{
+    activeFilters.project = "";
+    activeFilters.area = "";
+    filterProject.value = "";
+    filterArea.value = "";
+    updateFilterSummary();
+    closeFilters();
+    runSearch();
+  });
+
+  cancelFiltersBtn.addEventListener("click", ()=>{
+    filterProject.value = activeFilters.project;
+    filterArea.value = activeFilters.area;
+    closeFilters();
+  });
+
+  query.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter"){ e.preventDefault(); runSearch(); }
+  });
+  query.addEventListener("input", runSearch);
+
+  resultsList.addEventListener("click", (e)=>{
+    const row = e.target.closest(".rowItem");
+    if (!row) return;
+    const idText = row.getAttribute("data-id") || "";
+    if (!idText) return;
+    if (mode === "elements"){
+      if (selectedElementIds.has(idText)) selectedElementIds.delete(idText);
+      else selectedElementIds.add(idText);
+      renderResults(currentSearchResults);
+      return;
+    }
+    alert(`Wireframe: open Rack Detail for ${idText}`);
+  });
+
+  clearSelectedBtn.addEventListener("click", ()=>{
+    selectedElementIds.clear();
+    renderResults(currentSearchResults);
+  });
+
+  // "Rebook selected" from search -> goes to Moves screen with items
+  rebookBtn.addEventListener("click", ()=>{
+    if (!selectedElementIds.size) return;
+    // Populate rebook selection from search selection
+    rb_sel = MOCK_DATA.elements
+      .filter(item => selectedElementIds.has(item.id))
+      .map(item => ({ id: item.id, loc: item.loc, status: "Confirmed" }));
+    rb_selected = new Set(rb_sel.map(s => s.id));
+    rb_moveType = "Rebook";
+    rb_renderSelection();
+    rb_showStep("rbStep1");
+    showScreen("moves");
+  });
+
+  /* ============================================================
+     LOADSHEET TAB
+     ============================================================ */
+  const lsSimulateScan = document.getElementById("lsSimulateScan");
+  const lsPasteCode = document.getElementById("lsPasteCode");
+  const lsScanHeader = document.getElementById("lsScanHeader");
+  const lsScanAreaEl = document.getElementById("lsScanArea");
+  const lsCollapsed = document.getElementById("lsCollapsed");
+  const lsExpandBtn = document.getElementById("lsExpandBtn");
+  const lsId = document.getElementById("lsId");
+  const lsMetaEl = document.getElementById("lsMeta");
+  const lsReviewBtn = document.getElementById("lsReviewBtn");
+  const lsReviewCard = document.getElementById("lsReviewCard");
+  const lsFoundList = document.getElementById("lsFoundList");
+  const lsFoundCount = document.getElementById("lsFoundCount");
+  const lsSelectAll = document.getElementById("lsSelectAll");
+  const lsClearSel = document.getElementById("lsClearSel");
+  const lsBackToScan = document.getElementById("lsBackToScan");
+  const lsNextAction = document.getElementById("lsNextAction");
+
+  const lsSampleElements = [
+    { id: "24-10345-001", loc: "Row B - Lane 3 - Rack R-B3-12", status: "OK" },
+    { id: "24-10345-002", loc: "Staging West - Slot 08", status: "OK" },
+    { id: "24-10345-003", loc: "Row C - Lane 1 - Pre-stack P1", status: "MISSING" },
+    { id: "24-10345-004", loc: "Yard West - Row A - Lane 4 - Rack R-A4-03", status: "OK" },
+    { id: "24-10345-005", loc: "Yard East - Row B - Lane 2 - Rack R-B2-05", status: "OK" },
+    { id: "24-10345-006", loc: "Not in yard", status: "NOT IN YARD" },
+  ];
+
+  let lsFound = [];
+  let lsSelected = new Set();
+
+  function lsSetCollapsed(collapse){
+    lsScanHeader.style.display = collapse ? "none" : "block";
+    lsScanAreaEl.style.display = collapse ? "none" : "flex";
+    lsCollapsed.style.display = collapse ? "flex" : "none";
+  }
+
+  function lsEnableControls(enable){
+    lsReviewBtn.disabled = !enable;
+  }
+
+  function lsUpdateActionState(){
+    lsNextAction.disabled = lsSelected.size === 0;
+  }
+
+  function lsToggleSelect(id){
+    if (lsSelected.has(id)) lsSelected.delete(id);
+    else lsSelected.add(id);
+    lsRenderFound();
+  }
+
+  function lsRenderFound(){
+    lsFoundList.innerHTML = "";
+    lsFound.forEach(item => {
+      const isOn = lsSelected.has(item.id);
+      const row = document.createElement("div");
+      row.className = "lsRow";
+      row.innerHTML = `
+        <div style="min-width:0;">
+          <div class="lsRowId">${escapeHtml(item.id)}</div>
+          <div class="lsRowSub">${escapeHtml(item.loc)}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="lsPill ${item.status === "OK" ? "ok" : (item.status === "MISSING" ? "warn" : "bad")}">${escapeHtml(item.status)}</div>
+          <button class="btn ${isOn ? "" : "secondary"}" type="button">${isOn ? "Selected" : "Select"}</button>
+        </div>
+      `;
+      row.addEventListener("click", (e)=>{
+        if (e.target && e.target.tagName === "BUTTON") return;
+        lsToggleSelect(item.id);
+      });
+      row.querySelector("button").addEventListener("click", (e)=>{
+        e.stopPropagation();
+        lsToggleSelect(item.id);
+      });
+      lsFoundList.appendChild(row);
+    });
+    lsFoundCount.textContent = `${lsFound.length} found`;
+    lsUpdateActionState();
+  }
+
+  function lsLoadSample(sheetCode){
+    lsId.textContent = sheetCode;
+    lsMetaEl.textContent = `${lsSampleElements.length} elements found - parsed from loadsheet`;
+    lsFound = [...lsSampleElements];
+    lsSelected = new Set(lsFound.slice(0, 3).map(x => x.id));
+    lsEnableControls(true);
+    lsRenderFound();
+  }
+
+  lsSimulateScan.addEventListener("click", ()=>{ lsLoadSample("LS-2026-0301-014"); });
+  lsPasteCode.addEventListener("click", ()=>{
+    const code = prompt("Enter loadsheet code (wireframe):", "LS-2026-000184");
+    if (!code) return;
+    lsLoadSample(code.trim());
+  });
+
+  lsReviewBtn.addEventListener("click", ()=>{
+    lsSetCollapsed(true);
+    lsReviewCard.style.display = "block";
+    lsReviewCard.scrollIntoView({ behavior:"smooth", block:"center" });
+  });
+
+  lsSelectAll.addEventListener("click", ()=>{
+    lsSelected = new Set(lsFound.map(x => x.id));
+    lsRenderFound();
+  });
+
+  lsClearSel.addEventListener("click", ()=>{
+    lsSelected.clear();
+    lsRenderFound();
+  });
+
+  lsBackToScan.addEventListener("click", ()=>{
+    lsSetCollapsed(false);
+    lsReviewCard.style.display = "none";
+  });
+
+  lsExpandBtn.addEventListener("click", ()=>{
+    lsSetCollapsed(false);
+    lsReviewCard.style.display = "none";
+  });
+
+  lsNextAction.addEventListener("click", ()=>{
+    if (!lsSelected.size){
+      alert("Select at least one element to continue.");
+      return;
+    }
+    // Populate rebook from loadsheet selection
+    rb_sel = MOCK_DATA.elements
+      .filter(item => lsSelected.has(item.id))
+      .map(item => ({ id: item.id, loc: item.loc, status: "Confirmed" }));
+    rb_selected = new Set(rb_sel.map(s => s.id));
+    rb_renderSelection();
+    rb_showStep("rbStep1");
+    showScreen("moves");
+  });
+
+  /* ============================================================
+     LOCATIONS MODULE (loc_ prefix)
+     ============================================================ */
+
+  // Hierarchy data
+  function loc_laneSet(rowId, fewer){
+    const lanes = fewer ? ["1","2","3"] : ["1","2","3","4"];
+    return lanes.map(l => ({
+      id: l,
+      containers: [
+        loc_container(`Rack R-${rowId}${l}`,"Rack", 12, loc_randInt(0,12)),
+        loc_container(`Pre-stack P${l}`,"Pre-stack", 12, loc_randInt(0,12)),
+      ]
+    }));
+  }
+
+  function loc_container(name, type, cap, occ){
+    return {
+      id: `${type}-${name}`.toLowerCase().replace(/\s+/g,"-"),
+      name,
+      type,
+      capacity: cap,
+      occupied: occ,
+      lastUpdated: "09:12",
+      elements: Array.from({length: Math.max(1, Math.min(occ, 8))}, (_,i)=> ({
+        id: `24-10345-${String(i+1).padStart(3,"0")}`,
+        project: "ABC Tower",
+        status: i % 3 === 0 ? "Confirmed" : (i % 3 === 1 ? "Queued" : "Conflict"),
+      }))
+    };
+  }
+
+  function loc_randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+  const LOC_DATA = [
+    {
+      id: "yard-west",
+      name: "Yard West",
+      type: "Area",
+      kpis: { rows: 4, lanes: 4 },
+      rows: [
+        { id:"A", lanes: loc_laneSet("A") },
+        { id:"B", lanes: loc_laneSet("B") },
+        { id:"C", lanes: loc_laneSet("C") },
+        { id:"D", lanes: loc_laneSet("D") },
+      ]
+    },
+    {
+      id: "yard-east",
+      name: "Yard East",
+      type: "Area",
+      kpis: { rows: 3, lanes: 4 },
+      rows: [
+        { id:"A", lanes: loc_laneSet("A", true) },
+        { id:"B", lanes: loc_laneSet("B", true) },
+        { id:"C", lanes: loc_laneSet("C", true) },
+      ]
+    },
+    {
+      id: "staging-west",
+      name: "Staging West",
+      type: "Area",
+      kpis: { rows: 1, lanes: 1 },
+      rows: [
+        {
+          id:"Staging",
+          lanes: [
+            {
+              id:"Main",
+              containers: [
+                loc_container("Slot 01","Staging Slot", 6, 2),
+                loc_container("Slot 08","Staging Slot", 6, 5),
+                loc_container("Slot 12","Staging Slot", 6, 6),
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ];
+
+  const locQuery = document.getElementById("locQuery");
+  const locBackBtn = document.getElementById("locBackBtn");
+  const locList = document.getElementById("locList");
+  const locCount = document.getElementById("locCount");
+  const locSectionTitle = document.getElementById("locSectionTitle");
+  const locHint = document.getElementById("locHint");
+
+  const loc_state = {
+    filterKey: null,
+    filterPath: "Area",
+  };
+
+  function loc_searchBlob(parts){
+    return parts.filter(Boolean).join(" ").toLowerCase();
+  }
+
+  function loc_buildTree(){
+    return LOC_DATA.map(area => {
+      const areaPath = area.name;
+      const areaNode = {
+        key: `area:${area.id}`,
+        title: area.name,
+        chip: "Area",
+        sub: `${area.kpis.rows} rows - up to ${area.kpis.lanes} lanes`,
+        kpis: [`Rows: ${area.kpis.rows}`, `Lanes: ${area.kpis.lanes}`],
+        path: areaPath,
+        parentKey: null,
+        searchable: loc_searchBlob([area.name, "Area", area.kpis.rows, area.kpis.lanes]),
+        children: []
+      };
+
+      areaNode.children = area.rows.map(row => {
+        const rowPath = `${areaPath} > Row ${row.id}`;
+        const rowNode = {
+          key: `row:${area.id}:${row.id}`,
+          title: `Row ${row.id}`,
+          chip: "Row",
+          sub: `${row.lanes.length} lanes`,
+          kpis: [`Lanes: ${row.lanes.length}`],
+          path: rowPath,
+          parentKey: areaNode.key,
+          searchable: loc_searchBlob([row.id, "Row", rowPath]),
+          children: []
+        };
+
+        rowNode.children = row.lanes.map(lane => {
+          const lanePath = `${rowPath} > Lane ${lane.id}`;
+          const laneNode = {
+            key: `lane:${area.id}:${row.id}:${lane.id}`,
+            title: `Lane ${lane.id}`,
+            chip: "Lane",
+            sub: `${lane.containers.length} containers`,
+            kpis: [`Containers: ${lane.containers.length}`],
+            path: lanePath,
+            parentKey: rowNode.key,
+            searchable: loc_searchBlob([lane.id, "Lane", lanePath]),
+            children: []
+          };
+
+          laneNode.children = lane.containers.map(container => {
+            const ratio = `${container.occupied}/${container.capacity}`;
+            const containerPath = `${lanePath} > ${container.name}`;
+            const containerNode = {
+              key: `container:${area.id}:${row.id}:${lane.id}:${container.id}`,
+              title: container.name,
+              chip: container.type,
+              sub: `Occupancy ${ratio} - updated ${container.lastUpdated}`,
+              kpis: [`Occ: ${ratio}`, `Updated: ${container.lastUpdated}`],
+              path: containerPath,
+              parentKey: laneNode.key,
+              searchable: loc_searchBlob([container.name, container.type, ratio, containerPath]),
+              children: []
+            };
+
+            containerNode.children = container.elements.map(element => ({
+              key: `element:${area.id}:${row.id}:${lane.id}:${container.id}:${element.id}`,
+              title: element.id,
+              chip: element.status,
+              sub: `Project: ${element.project} - Tap for details`,
+              kpis: [element.status],
+              path: `${containerPath} > ${element.id}`,
+              parentKey: containerNode.key,
+              searchable: loc_searchBlob([element.id, element.status, element.project, containerPath]),
+              children: [],
+              onLeafClick: () => alert(`Wireframe: open Element Detail for ${element.id}`),
+            }));
+
+            return containerNode;
+          });
+
+          return laneNode;
+        });
+
+        return rowNode;
+      });
+
+      return areaNode;
+    });
+  }
+
+  function loc_flatten(node, out){
+    out.push(node);
+    node.children.forEach(ch => loc_flatten(ch, out));
+  }
+
+  function loc_buildIndex(tree){
+    const nodes = new Map();
+    const children = new Map();
+    const parent = new Map();
+
+    tree.forEach(root => {
+      const all = [];
+      loc_flatten(root, all);
+      all.forEach(n => {
+        nodes.set(n.key, n);
+        children.set(n.key, n.children.map(c => c.key));
+        parent.set(n.key, n.parentKey ?? null);
+      });
+    });
+
+    const rootKeys = tree.map(t => t.key);
+    return { nodes, children, parent, rootKeys };
+  }
+
+  function loc_collectSubtreeKeys(index, startKey){
+    const out = [];
+    const stack = [startKey];
+    while (stack.length){
+      const k = stack.pop();
+      out.push(k);
+      const kids = index.children.get(k) || [];
+      for (let i = kids.length - 1; i >= 0; i--) stack.push(kids[i]);
+    }
+    return out;
+  }
+
+  function loc_renderCard(node){
+    const hasChildren = node.children.length > 0;
+    const card = document.createElement("div");
+    card.className = "loc-item";
+    card.innerHTML = `
+      <div class="meta">
+        <div class="title">
+          <span>${escapeHtml(node.title)}</span>
+          <span class="loc-chip">${escapeHtml(node.chip)}</span>
+        </div>
+        <div class="loc-sub">${escapeHtml(node.sub)}</div>
+        ${node.kpis?.length ? `<div class="loc-row">${node.kpis.map(k => `<span class="loc-kpi">${escapeHtml(k)}</span>`).join("")}</div>` : ""}
+      </div>
+      <div class="loc-arrow">${hasChildren ? ">" : "*"}</div>
+    `;
+
+    card.addEventListener("click", () => {
+      if (hasChildren){
+        loc_state.filterKey = node.key;
+        loc_state.filterPath = node.path;
+        locQuery.value = "";
+        loc_render();
+        return;
+      }
+      if (typeof node.onLeafClick === "function") node.onLeafClick();
+    });
+
+    return card;
+  }
+
+  function loc_render(){
+    const tree = loc_buildTree();
+    const index = loc_buildIndex(tree);
+
+    const queryText = locQuery.value.trim().toLowerCase();
+
+    locList.innerHTML = "";
+
+    const scopeRootKeys = loc_state.filterKey ? [loc_state.filterKey] : index.rootKeys;
+
+    let itemsToShow = [];
+
+    if (!queryText){
+      if (!loc_state.filterKey){
+        itemsToShow = scopeRootKeys.map(k => index.nodes.get(k)).filter(Boolean);
+        loc_state.filterPath = "Area";
+      } else {
+        const childKeys = index.children.get(loc_state.filterKey) || [];
+        itemsToShow = childKeys.map(k => index.nodes.get(k)).filter(Boolean);
+      }
+
+      locSectionTitle.textContent = loc_state.filterKey ? loc_state.filterPath : "Locations";
+      locCount.textContent = `${itemsToShow.length} items`;
+      headerSub.textContent = loc_state.filterKey ? loc_state.filterPath : "Area";
+
+    } else {
+      const searchableKeys = [];
+      scopeRootKeys.forEach(rootKey => {
+        searchableKeys.push(...loc_collectSubtreeKeys(index, rootKey));
+      });
+
+      const seen = new Set();
+      const candidates = [];
+      for (const k of searchableKeys){
+        if (seen.has(k)) continue;
+        seen.add(k);
+        const node = index.nodes.get(k);
+        if (!node) continue;
+        if (node.searchable.includes(queryText)) candidates.push(node);
+      }
+
+      itemsToShow = candidates;
+
+      const scopeLabel = loc_state.filterKey ? ` in ${loc_state.filterPath}` : "";
+      locSectionTitle.textContent = `Search: ${locQuery.value}${scopeLabel}`;
+      locCount.textContent = `${itemsToShow.length} matches`;
+      headerSub.textContent = `Search: ${locQuery.value}${scopeLabel}`;
+    }
+
+    if (!itemsToShow.length){
+      locList.innerHTML = `
+        <div class="hint">
+          No matches for <b>${escapeHtml(locQuery.value || "(no items)")}</b>.
+        </div>
+      `;
+      return;
+    }
+
+    // Hide the initial hint once navigating
+    locHint.style.display = loc_state.filterKey ? "none" : "block";
+
+    itemsToShow.forEach(node => {
+      locList.appendChild(loc_renderCard(node));
+    });
+  }
+
+  locBackBtn.addEventListener("click", () => {
+    const tree = loc_buildTree();
+    const index = loc_buildIndex(tree);
+
+    if (loc_state.filterKey){
+      const parentKey = index.parent.get(loc_state.filterKey);
+      if (parentKey){
+        const parentNode = index.nodes.get(parentKey);
+        loc_state.filterKey = parentKey;
+        loc_state.filterPath = parentNode ? parentNode.path : "Area";
+      } else {
+        loc_state.filterKey = null;
+        loc_state.filterPath = "Area";
+      }
+      locQuery.value = "";
+      loc_render();
+      return;
+    }
+
+    locQuery.value = "";
+    loc_state.filterKey = null;
+    loc_state.filterPath = "Area";
+    loc_render();
+  });
+
+  locQuery.addEventListener("input", loc_render);
+
+  document.getElementById("locScanBtn").addEventListener("click", () => {
+    alert("Wireframe: scan a location tag to jump to a specific Area/Row/Lane/Container.");
+  });
+
+  // Initial render
+  loc_render();
+
+  /* ============================================================
+     REBOOK / MOVE MODULE (rb_ prefix)
+     ============================================================ */
+  const rbSteps = ["rbStep1","rbStep2","rbStep3","rbStep4","rbResult"];
+
+  let rb_sel = [
+    { id:"24-10345-001", loc:"Row B - Lane 3 - Rack R-12", status:"Confirmed" },
+    { id:"24-10345-002", loc:"Staging West - Slot 08", status:"Queued" },
+    { id:"24-10345-003", loc:"Row C - Lane 1 - Pre-stack P2", status:"Conflict" },
+  ];
+  let rb_selected = new Set(rb_sel.map(s => s.id));
+  let rb_moveType = "Rebook";
+
+  function rb_showStep(id){
+    rbSteps.forEach(s => {
+      document.getElementById(s).style.display = (s === id) ? "block" : "none";
+    });
+    rb_updateHeader();
+  }
+
+  function rb_updateHeader(){
+    const step1 = document.getElementById("rbStep1");
+    if (step1.style.display !== "none") headerSub.textContent = "Step 1 of 4";
+    else if (document.getElementById("rbStep2").style.display !== "none") headerSub.textContent = "Step 2 of 4";
+    else if (document.getElementById("rbStep3").style.display !== "none") headerSub.textContent = "Step 3 of 4";
+    else if (document.getElementById("rbStep4").style.display !== "none") headerSub.textContent = "Step 4 of 4";
+    else headerSub.textContent = "Result";
+  }
+
+  function rb_pillClass(status){
+    if (status === "Confirmed") return "ok";
+    if (status === "Queued") return "warn";
+    if (status === "Conflict") return "bad";
+    return "";
+  }
+
+  function rb_renderSelection(){
+    const ids = Array.from(rb_selected);
+    document.getElementById("rbSelCount").textContent = String(ids.length);
+    document.getElementById("rbSelMeta").textContent = `${ids.length} items`;
+
+    const selList = document.getElementById("rbSelList");
+    selList.innerHTML = "";
+    rb_sel.forEach(item=>{
+      const on = rb_selected.has(item.id);
+      const row = document.createElement("div");
+      row.className = "rowItem";
+      row.innerHTML = `
+        <div class="meta">
+          <div class="id">
+            <span class="checkbox" style="background:${on ? "rgba(47,143,87,.22)" : "rgba(0,0,0,.14)"}; border-color:${on ? "rgba(47,143,87,.75)" : "rgba(255,255,255,.18)"};"></span>
+            <span>${item.id}</span>
+            <span class="pill ${rb_pillClass(item.status)}">${item.status}</span>
+          </div>
+          <div class="loc">${item.loc}</div>
+        </div>
+        <div class="pill">TOGGLE</div>
+      `;
+      row.addEventListener("click", ()=>{
+        if (rb_selected.has(item.id)) rb_selected.delete(item.id);
+        else rb_selected.add(item.id);
+        rb_renderSelection();
+      });
+      selList.appendChild(row);
+    });
+  }
+  rb_renderSelection();
+
+  document.getElementById("rbScanElement").addEventListener("click", ()=>alert("Wireframe: scan element barcode to add to selection."));
+  document.getElementById("rbClearAll").addEventListener("click", ()=>{
+    rb_selected.clear();
+    rb_renderSelection();
+  });
+
+  // Move type tabs
+  const rbTypeRebook = document.getElementById("rbTypeRebook");
+  const rbTypeStore = document.getElementById("rbTypeStore");
+  function rb_setType(t){
+    rb_moveType = t;
+    const isR = t === "Rebook";
+    rbTypeRebook.classList.toggle("active", isR);
+    rbTypeRebook.setAttribute("aria-selected", String(isR));
+    rbTypeStore.classList.toggle("active", !isR);
+    rbTypeStore.setAttribute("aria-selected", String(!isR));
+  }
+  rbTypeRebook.addEventListener("click", ()=>rb_setType("Rebook"));
+  rbTypeStore.addEventListener("click", ()=>rb_setType("Store"));
+
+  // Step navigation
+  document.getElementById("rbToStep2").addEventListener("click", ()=>{
+    document.getElementById("rbExpectedCount").textContent = `${rb_selected.size} items selected`;
+    rb_showStep("rbStep2");
+  });
+
+  document.getElementById("rbBackTo1").addEventListener("click", ()=>rb_showStep("rbStep1"));
+
+  const rbMismatchBox = document.getElementById("rbMismatchBox");
+  document.getElementById("rbScanLoc").addEventListener("click", ()=>{
+    rbMismatchBox.style.display = "block";
+    alert("Wireframe: scanned location tag. Showing mismatch example.");
+  });
+  document.getElementById("rbSplitBtn").addEventListener("click", ()=>alert("Wireframe: split selection into matching vs non-matching groups."));
+  document.getElementById("rbRefreshBtn").addEventListener("click", ()=>alert("Wireframe: refresh latest locations from server."));
+
+  document.getElementById("rbToStep3").addEventListener("click", ()=>rb_showStep("rbStep3"));
+  document.getElementById("rbBackTo2").addEventListener("click", ()=>rb_showStep("rbStep2"));
+
+  document.getElementById("rbScanDest").addEventListener("click", ()=>alert("Wireframe: scan destination location tag (auto-fill hierarchy)."));
+  document.getElementById("rbToStep4").addEventListener("click", ()=>{
+    document.getElementById("rbTypeSummary").textContent = rb_moveType;
+    document.getElementById("rbItemsSummary").textContent = String(rb_selected.size);
+
+    const reviewList = document.getElementById("rbReviewList");
+    reviewList.innerHTML = "";
+    rb_sel.filter(s => rb_selected.has(s.id)).forEach(s=>{
+      const row = document.createElement("div");
+      row.className = "rowItem";
+      row.innerHTML = `
+        <div class="meta">
+          <div class="id">${s.id}</div>
+          <div class="loc">${s.loc}</div>
+        </div>
+        <div class="pill">DETAILS</div>
+      `;
+      reviewList.appendChild(row);
+    });
+
+    rb_showStep("rbStep4");
+  });
+  document.getElementById("rbBackTo3").addEventListener("click", ()=>rb_showStep("rbStep3"));
+
+  document.getElementById("rbSubmitBtn").addEventListener("click", ()=>{
+    document.getElementById("rbSuccessMsg").textContent =
+      `${rb_selected.size} items moved to Row C / Lane 1 / Pre-stack P2`;
+    rb_showStep("rbResult");
+  });
+
+  // Result buttons
+  document.getElementById("rbViewItems").addEventListener("click", ()=>alert("Wireframe: open updated items list."));
+  document.getElementById("rbNewMove").addEventListener("click", ()=>rb_showStep("rbStep1"));
+  document.getElementById("rbSeeQueue").addEventListener("click", ()=>alert("Wireframe: open queued operations page."));
+  document.getElementById("rbDoneBtn").addEventListener("click", ()=>rb_showStep("rbStep1"));
+  document.getElementById("rbRefreshAfter").addEventListener("click", ()=>alert("Wireframe: refresh + re-verify initial locations."));
+  document.getElementById("rbRetryAfter").addEventListener("click", ()=>alert("Wireframe: retry submit."));
+
+  /* ============================================================
+     INIT
+     ============================================================ */
+  populateFilterOptions();
+  lsEnableControls(false);
+  lsSetCollapsed(false);
+  updateSelectionControls();
+  rb_showStep("rbStep1");
+</script>
+</body>
+</html>
