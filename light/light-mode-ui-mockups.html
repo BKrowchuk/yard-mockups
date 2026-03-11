@@ -569,17 +569,33 @@
       flex:0 0 auto;
     }
 
-    /* ===== LOCATIONS BROWSER ===== */
-    .loc-list{
+    /* ===== LOCATION DRILL-DOWN ===== */
+    .locDrillBar{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .locBreadcrumb{
+      flex:1;
+      min-width:0;
+      font-size:13px;
+      font-weight:800;
+      color:var(--ink);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .locDrillList{
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:8px;
     }
-    .loc-item{
+    .locDrillItem{
       background: rgba(255,255,255,.04);
       border:1px solid rgba(255,255,255,.10);
       border-radius: var(--radius);
-      padding: 12px 12px;
+      padding: 12px;
       box-shadow: var(--shadow);
       display:flex;
       justify-content:space-between;
@@ -587,25 +603,16 @@
       align-items:center;
       cursor:pointer;
     }
-    .loc-item .meta{ min-width:0; }
-    .loc-item .title{
+    .locDrillItem:active{ transform:translateY(1px); }
+    .locDrillItem .locMeta{ min-width:0; }
+    .locDrillItem .locName{
       font-weight:900;
-      letter-spacing:.2px;
       font-size:14px;
       display:flex;
       gap:8px;
       align-items:center;
     }
-    .loc-chip{
-      font-family: var(--mono);
-      font-size:11px;
-      color: rgba(21,56,42,.9);
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.16);
-      padding:4px 8px;
-      border-radius: 999px;
-    }
-    .loc-sub{
+    .locDrillItem .locSub{
       margin-top:4px;
       font-size:12px;
       color: var(--muted);
@@ -613,72 +620,27 @@
       overflow:hidden;
       text-overflow:ellipsis;
     }
-    .loc-row{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      margin-top:6px;
-    }
-    .loc-kpi{
+    .locDrillChip{
+      font-family: var(--mono);
       font-size:11px;
-      color: rgba(93,125,106,.95);
-      border: 1px dashed rgba(255,255,255,.18);
-      padding: 6px 8px;
-      border-radius: 12px;
+      color: rgba(21,56,42,.9);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      padding:4px 8px;
+      border-radius: 999px;
+      white-space:nowrap;
     }
-    .loc-arrow{
+    .locDrillArrow{
       width:28px; height:28px;
       border-radius: 12px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.14);
+      border:1px solid rgba(47,143,87,.45);
+      background: rgba(47,143,87,.08);
       display:grid;
       place-items:center;
       flex:0 0 auto;
-      color: rgba(21,56,42,.9);
-      font-weight:900;
-    }
-    .loc-sectionTitle{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-end;
-      margin: 4px 2px 10px 2px;
-    }
-    .loc-sectionTitle h2{
-      margin:0;
-      font-size:14px;
-      font-weight:900;
-      letter-spacing:.2px;
-    }
-    .loc-sectionTitle span{
-      font-size:12px;
-      color: var(--muted);
-      font-family: var(--mono);
-    }
-    .loc-toolbar{
-      padding: 0 0 10px 0;
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    .loc-search{
-      flex:1;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.14);
-      min-width: 0;
-    }
-    .loc-search input{
-      width:100%;
-      background:transparent;
-      border:none;
-      outline:none;
       color: var(--ink);
-      font-size:13px;
+      font-weight:900;
+      font-size:14px;
     }
 
     /* ===== REBOOK / MOVE FLOW ===== */
@@ -902,28 +864,15 @@
             </div>
           </article>
         </div>
-      </section>
 
-      <!-- ===================== LOCATIONS ===================== -->
-      <section class="screen" id="locations">
-        <div class="loc-toolbar">
-          <div class="loc-search" title="Search within current scope">
-            <span style="opacity:.8;font-family:var(--mono);font-size:12px;">&#x2315;</span>
-            <input id="locQuery" type="text" placeholder="Search locations..." />
+        <!-- Location drill-down (shown when Location tab active) -->
+        <div class="stack" id="locationUI" style="display:none;">
+          <div class="locDrillBar">
+            <button class="btn secondary" id="locBackBtn" type="button">Back</button>
+            <div class="locBreadcrumb" id="locBreadcrumb">Area</div>
+            <div class="pill" id="locItemCount">0 items</div>
           </div>
-          <button class="btn secondary" id="locBackBtn">Back</button>
-          <button class="btn" id="locScanBtn">SCAN</button>
-        </div>
-
-        <div class="loc-sectionTitle">
-          <h2 id="locSectionTitle">Locations</h2>
-          <span id="locCount"></span>
-        </div>
-        <div class="loc-list" id="locList"></div>
-        <div class="hint" id="locHint">
-          <b>Hierarchical browser:</b> tap a card to drill into Area -> Row -> Lane -> Container -> Elements.
-          <div class="spacer"></div>
-          <b>Tip:</b> search is scoped to the current level. Use Back to go up.
+          <div class="locDrillList" id="locDrillList"></div>
         </div>
       </section>
 
@@ -1198,7 +1147,6 @@
     <footer>
       <div class="bottomnav">
         <div class="navbtn active" id="navSearch">Search</div>
-        <div class="navbtn" id="navLocations">Locations</div>
         <div class="navbtn" id="navMoves">Moves</div>
       </div>
     </footer>
@@ -1220,26 +1168,19 @@
   /* ============================================================
      MAIN NAV
      ============================================================ */
-  const mainScreens = ["search","locations","moves"];
+  const mainScreens = ["search","moves"];
   const headerTitle = document.getElementById("headerTitle");
   const headerSub = document.getElementById("headerSub");
 
   function showScreen(id){
     mainScreens.forEach(s => document.getElementById(s).classList.toggle("active", s === id));
 
-    const titles = { search:"Yard App", locations:"Locations", moves:"Move / Rebook" };
+    const titles = { search:"Yard App", moves:"Move / Rebook" };
     headerTitle.textContent = titles[id] || id;
     headerSub.textContent = (id === "search") ? "Search" : "Page: /" + id;
 
     document.getElementById("navSearch").classList.toggle("active", id === "search");
-    document.getElementById("navLocations").classList.toggle("active", id === "locations");
     document.getElementById("navMoves").classList.toggle("active", id === "moves");
-
-    // Reset location browser when navigating to locations
-    if (id === "locations"){
-      headerTitle.textContent = "Locations";
-      headerSub.textContent = loc_state.filterKey ? loc_state.filterPath : "Area";
-    }
 
     // Update header for moves
     if (id === "moves"){
@@ -1248,7 +1189,6 @@
   }
 
   document.getElementById("navSearch").addEventListener("click", ()=>showScreen("search"));
-  document.getElementById("navLocations").addEventListener("click", ()=>showScreen("locations"));
   document.getElementById("navMoves").addEventListener("click", ()=>showScreen("moves"));
 
   /* ============================================================
@@ -1263,6 +1203,7 @@
   const query = document.getElementById("query");
   const searchClassicUI = document.getElementById("searchClassicUI");
   const loadsheetUI = document.getElementById("loadsheetUI");
+  const locationUI = document.getElementById("locationUI");
   const toggleFiltersBtn = document.getElementById("toggleFiltersBtn");
   const filterPanel = document.getElementById("filterPanel");
   const filterProject = document.getElementById("filterProject");
@@ -1278,31 +1219,37 @@
   function setMode(m){
     mode = m;
     const isLoadsheet = mode === "loadsheet";
+    const isLocation = mode === "location";
 
     // Update tab active states
     allTabs.forEach(tab => {
       const tabMode = tab.id.replace("tab","").toLowerCase();
-      // map tab ids to mode names
       const modeMap = { elements:"elements", stacks:"stacks", racks:"racks", loadsheet:"loadsheet", location:"location" };
       const isActive = modeMap[tabMode] === mode;
       tab.classList.toggle("active", isActive);
       tab.setAttribute("aria-selected", String(isActive));
     });
 
-    searchClassicUI.style.display = isLoadsheet ? "none" : "flex";
+    // Show/hide the three content panels
+    searchClassicUI.style.display = (!isLoadsheet && !isLocation) ? "flex" : "none";
     loadsheetUI.style.display = isLoadsheet ? "flex" : "none";
+    locationUI.style.display = isLocation ? "flex" : "none";
+
+    if (isLocation){
+      closeFilters();
+      loc_render();
+      return;
+    }
 
     const labels = {
       elements: "Search by element ID / barcode / description",
       stacks: "Search by stack ID / name",
       racks: "Search by rack ID / barcode",
-      location: "Search by location name / area / row",
     };
     const placeholders = {
       elements: "e.g. 24-10345-001",
       stacks: "e.g. Pre-stack P2",
       racks: "e.g. R-12",
-      location: "e.g. Yard West, Row B",
     };
     queryLabel.textContent = labels[mode] || labels.elements;
     query.placeholder = placeholders[mode] || placeholders.elements;
@@ -1368,25 +1315,12 @@
       { id:"R-A2-09", barcode:"RACK-A209", project:"ABC Tower", area:"Yard East", leaves:"2026-03-11", loc:"Yard East - Row A - Lane 2 - Slot 9" },
       { id:"R-D2-06", barcode:"RACK-D206", project:"Summit Plaza", area:"Yard West", leaves:"2026-03-12", loc:"Yard West - Row D - Lane 2 - Slot 6" },
     ],
-    locations: [
-      { id:"yard-west", desc:"Main production yard", project:"Multiple", area:"Yard West", loc:"Yard West", rows:4, lanes:16 },
-      { id:"yard-east", desc:"Overflow yard", project:"Multiple", area:"Yard East", loc:"Yard East", rows:3, lanes:9 },
-      { id:"staging-west", desc:"Staging area for outbound loads", project:"Multiple", area:"Staging West", loc:"Staging West", rows:1, lanes:1 },
-      { id:"yard-west-a", desc:"Row A - 4 lanes", project:"Harbor Point", area:"Yard West", loc:"Yard West - Row A" },
-      { id:"yard-west-b", desc:"Row B - 4 lanes", project:"ABC Tower", area:"Yard West", loc:"Yard West - Row B" },
-      { id:"yard-west-c", desc:"Row C - 4 lanes", project:"Northline Labs", area:"Yard West", loc:"Yard West - Row C" },
-      { id:"yard-west-d", desc:"Row D - 4 lanes", project:"River Medical", area:"Yard West", loc:"Yard West - Row D" },
-      { id:"yard-east-a", desc:"Row A - 3 lanes", project:"Northline Labs", area:"Yard East", loc:"Yard East - Row A" },
-      { id:"yard-east-b", desc:"Row B - 3 lanes", project:"Harbor Point", area:"Yard East", loc:"Yard East - Row B" },
-      { id:"yard-east-c", desc:"Row C - 3 lanes", project:"Summit Plaza", area:"Yard East", loc:"Yard East - Row C" },
-    ],
   };
 
   function getSourceData(){
     if (mode === "elements") return MOCK_DATA.elements;
     if (mode === "stacks") return MOCK_DATA.stacks;
     if (mode === "racks") return MOCK_DATA.racks;
-    if (mode === "location") return MOCK_DATA.locations;
     return [];
   }
 
@@ -1487,7 +1421,6 @@
       let haystack;
       if (mode === "elements") haystack = `${item.id} ${item.barcode} ${item.desc} ${item.project} ${item.area} ${item.loc}`.toLowerCase();
       else if (mode === "stacks") haystack = `${item.id} ${item.barcode} ${item.desc} ${item.project} ${item.area} ${item.loc}`.toLowerCase();
-      else if (mode === "location") haystack = `${item.id} ${item.desc} ${item.area} ${item.loc}`.toLowerCase();
       else haystack = `${item.id} ${item.barcode} ${item.project} ${item.area} ${item.loc} ${item.leaves}`.toLowerCase();
       return haystack.includes(searchText);
     }).slice(0, MAX_RESULTS);
@@ -1709,351 +1642,177 @@
   });
 
   /* ============================================================
-     LOCATIONS MODULE (loc_ prefix)
+     LOCATION DRILL-DOWN MODULE (loc_ prefix)
      ============================================================ */
-
-  // Hierarchy data
-  function loc_laneSet(rowId, fewer){
-    const lanes = fewer ? ["1","2","3"] : ["1","2","3","4"];
-    return lanes.map(l => ({
-      id: l,
-      containers: [
-        loc_container(`Rack R-${rowId}${l}`,"Rack", 12, loc_randInt(0,12)),
-        loc_container(`Pre-stack P${l}`,"Pre-stack", 12, loc_randInt(0,12)),
-      ]
-    }));
-  }
-
-  function loc_container(name, type, cap, occ){
-    return {
-      id: `${type}-${name}`.toLowerCase().replace(/\s+/g,"-"),
-      name,
-      type,
-      capacity: cap,
-      occupied: occ,
-      lastUpdated: "09:12",
-      elements: Array.from({length: Math.max(1, Math.min(occ, 8))}, (_,i)=> ({
-        id: `24-10345-${String(i+1).padStart(3,"0")}`,
-        project: "ABC Tower",
-        status: i % 3 === 0 ? "Confirmed" : (i % 3 === 1 ? "Queued" : "Conflict"),
-      }))
-    };
-  }
-
-  function loc_randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
-
-  const LOC_DATA = [
-    {
-      id: "yard-west",
-      name: "Yard West",
-      type: "Area",
-      kpis: { rows: 4, lanes: 4 },
-      rows: [
-        { id:"A", lanes: loc_laneSet("A") },
-        { id:"B", lanes: loc_laneSet("B") },
-        { id:"C", lanes: loc_laneSet("C") },
-        { id:"D", lanes: loc_laneSet("D") },
-      ]
-    },
-    {
-      id: "yard-east",
-      name: "Yard East",
-      type: "Area",
-      kpis: { rows: 3, lanes: 4 },
-      rows: [
-        { id:"A", lanes: loc_laneSet("A", true) },
-        { id:"B", lanes: loc_laneSet("B", true) },
-        { id:"C", lanes: loc_laneSet("C", true) },
-      ]
-    },
-    {
-      id: "staging-west",
-      name: "Staging West",
-      type: "Area",
-      kpis: { rows: 1, lanes: 1 },
-      rows: [
-        {
-          id:"Staging",
-          lanes: [
-            {
-              id:"Main",
-              containers: [
-                loc_container("Slot 01","Staging Slot", 6, 2),
-                loc_container("Slot 08","Staging Slot", 6, 5),
-                loc_container("Slot 12","Staging Slot", 6, 6),
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ];
-
-  const locQuery = document.getElementById("locQuery");
-  const locBackBtn = document.getElementById("locBackBtn");
-  const locList = document.getElementById("locList");
-  const locCount = document.getElementById("locCount");
-  const locSectionTitle = document.getElementById("locSectionTitle");
-  const locHint = document.getElementById("locHint");
-
-  const loc_state = {
-    filterKey: null,
-    filterPath: "Area",
+  const LOC_TREE = {
+    name: "All Areas",
+    children: [
+      { name: "Yard West", type: "Area", children: [
+        { name: "Row A", type: "Row", children: [
+          { name: "Lane 1", type: "Lane", children: [
+            { name: "Rack R-A1", type: "Rack", sub: "Capacity 12 - Occupied 5", children: [] },
+            { name: "Pre-stack P1", type: "Pre-stack", sub: "Capacity 12 - Occupied 4", children: [] },
+          ]},
+          { name: "Lane 2", type: "Lane", children: [
+            { name: "Rack R-A2", type: "Rack", sub: "Capacity 12 - Occupied 9", children: [] },
+            { name: "Pre-stack P2", type: "Pre-stack", sub: "Capacity 12 - Occupied 7", children: [] },
+          ]},
+          { name: "Lane 3", type: "Lane", children: [
+            { name: "Rack R-A3", type: "Rack", sub: "Capacity 12 - Occupied 3", children: [] },
+            { name: "Pre-stack P3", type: "Pre-stack", sub: "Capacity 12 - Occupied 2", children: [] },
+          ]},
+          { name: "Lane 4", type: "Lane", children: [
+            { name: "Rack R-A4", type: "Rack", sub: "Capacity 12 - Occupied 8", children: [] },
+            { name: "Pre-stack P4", type: "Pre-stack", sub: "Capacity 12 - Occupied 6", children: [] },
+          ]},
+        ]},
+        { name: "Row B", type: "Row", children: [
+          { name: "Lane 1", type: "Lane", children: [
+            { name: "Rack R-B1", type: "Rack", sub: "Capacity 12 - Occupied 2", children: [] },
+            { name: "Pre-stack P1", type: "Pre-stack", sub: "Capacity 12 - Occupied 11", children: [] },
+          ]},
+          { name: "Lane 2", type: "Lane", children: [
+            { name: "Rack R-B2", type: "Rack", sub: "Capacity 12 - Occupied 7", children: [] },
+            { name: "Pre-stack P2", type: "Pre-stack", sub: "Capacity 12 - Occupied 3", children: [] },
+          ]},
+          { name: "Lane 3", type: "Lane", children: [
+            { name: "Rack R-B3", type: "Rack", sub: "Capacity 12 - Occupied 8", children: [] },
+            { name: "Pre-stack P3", type: "Pre-stack", sub: "Capacity 12 - Occupied 5", children: [] },
+          ]},
+        ]},
+        { name: "Row C", type: "Row", children: [
+          { name: "Lane 1", type: "Lane", children: [
+            { name: "Rack R-C1", type: "Rack", sub: "Capacity 12 - Occupied 10", children: [] },
+            { name: "Pre-stack P1", type: "Pre-stack", sub: "Capacity 12 - Occupied 4", children: [] },
+          ]},
+          { name: "Lane 2", type: "Lane", children: [
+            { name: "Rack R-C2", type: "Rack", sub: "Capacity 12 - Occupied 6", children: [] },
+            { name: "Pre-stack P2", type: "Pre-stack", sub: "Capacity 12 - Occupied 9", children: [] },
+          ]},
+        ]},
+        { name: "Row D", type: "Row", children: [
+          { name: "Lane 1", type: "Lane", children: [
+            { name: "Rack R-D1", type: "Rack", sub: "Capacity 12 - Occupied 1", children: [] },
+            { name: "Pre-stack P1", type: "Pre-stack", sub: "Capacity 12 - Occupied 7", children: [] },
+          ]},
+          { name: "Lane 2", type: "Lane", children: [
+            { name: "Rack R-D2", type: "Rack", sub: "Capacity 12 - Occupied 6", children: [] },
+            { name: "Pre-stack P2", type: "Pre-stack", sub: "Capacity 12 - Occupied 3", children: [] },
+          ]},
+        ]},
+      ]},
+      { name: "Yard East", type: "Area", children: [
+        { name: "Row A", type: "Row", children: [
+          { name: "Lane 1", type: "Lane", children: [
+            { name: "Rack R-A1", type: "Rack", sub: "Capacity 12 - Occupied 4", children: [] },
+            { name: "Pre-stack P1", type: "Pre-stack", sub: "Capacity 12 - Occupied 6", children: [] },
+          ]},
+          { name: "Lane 2", type: "Lane", children: [
+            { name: "Rack R-A2", type: "Rack", sub: "Capacity 12 - Occupied 9", children: [] },
+          ]},
+          { name: "Lane 3", type: "Lane", children: [
+            { name: "Rack R-A3", type: "Rack", sub: "Capacity 12 - Occupied 7", children: [] },
+          ]},
+        ]},
+        { name: "Row B", type: "Row", children: [
+          { name: "Lane 1", type: "Lane", children: [
+            { name: "Rack R-B1", type: "Rack", sub: "Capacity 12 - Occupied 5", children: [] },
+          ]},
+          { name: "Lane 2", type: "Lane", children: [
+            { name: "Rack R-B2", type: "Rack", sub: "Capacity 12 - Occupied 8", children: [] },
+          ]},
+        ]},
+        { name: "Row C", type: "Row", children: [
+          { name: "Lane 1", type: "Lane", children: [
+            { name: "Rack R-C1", type: "Rack", sub: "Capacity 12 - Occupied 4", children: [] },
+            { name: "Pre-stack P3", type: "Pre-stack", sub: "Capacity 12 - Occupied 3", children: [] },
+          ]},
+          { name: "Lane 3", type: "Lane", children: [
+            { name: "Pre-stack P3", type: "Pre-stack", sub: "Capacity 12 - Occupied 10", children: [] },
+          ]},
+        ]},
+      ]},
+      { name: "Staging West", type: "Area", children: [
+        { name: "Main", type: "Row", children: [
+          { name: "Slot 01", type: "Staging Slot", sub: "Capacity 6 - Occupied 2", children: [] },
+          { name: "Slot 08", type: "Staging Slot", sub: "Capacity 6 - Occupied 5", children: [] },
+          { name: "Slot 12", type: "Staging Slot", sub: "Capacity 6 - Occupied 6", children: [] },
+        ]},
+      ]},
+    ],
   };
 
-  function loc_searchBlob(parts){
-    return parts.filter(Boolean).join(" ").toLowerCase();
+  // Navigation stack: each entry is a node reference
+  const loc_navStack = [LOC_TREE];
+  const locDrillList = document.getElementById("locDrillList");
+  const locBreadcrumb = document.getElementById("locBreadcrumb");
+  const locItemCount = document.getElementById("locItemCount");
+  const locBackBtn = document.getElementById("locBackBtn");
+
+  function loc_currentNode(){
+    return loc_navStack[loc_navStack.length - 1];
   }
 
-  function loc_buildTree(){
-    return LOC_DATA.map(area => {
-      const areaPath = area.name;
-      const areaNode = {
-        key: `area:${area.id}`,
-        title: area.name,
-        chip: "Area",
-        sub: `${area.kpis.rows} rows - up to ${area.kpis.lanes} lanes`,
-        kpis: [`Rows: ${area.kpis.rows}`, `Lanes: ${area.kpis.lanes}`],
-        path: areaPath,
-        parentKey: null,
-        searchable: loc_searchBlob([area.name, "Area", area.kpis.rows, area.kpis.lanes]),
-        children: []
-      };
-
-      areaNode.children = area.rows.map(row => {
-        const rowPath = `${areaPath} > Row ${row.id}`;
-        const rowNode = {
-          key: `row:${area.id}:${row.id}`,
-          title: `Row ${row.id}`,
-          chip: "Row",
-          sub: `${row.lanes.length} lanes`,
-          kpis: [`Lanes: ${row.lanes.length}`],
-          path: rowPath,
-          parentKey: areaNode.key,
-          searchable: loc_searchBlob([row.id, "Row", rowPath]),
-          children: []
-        };
-
-        rowNode.children = row.lanes.map(lane => {
-          const lanePath = `${rowPath} > Lane ${lane.id}`;
-          const laneNode = {
-            key: `lane:${area.id}:${row.id}:${lane.id}`,
-            title: `Lane ${lane.id}`,
-            chip: "Lane",
-            sub: `${lane.containers.length} containers`,
-            kpis: [`Containers: ${lane.containers.length}`],
-            path: lanePath,
-            parentKey: rowNode.key,
-            searchable: loc_searchBlob([lane.id, "Lane", lanePath]),
-            children: []
-          };
-
-          laneNode.children = lane.containers.map(container => {
-            const ratio = `${container.occupied}/${container.capacity}`;
-            const containerPath = `${lanePath} > ${container.name}`;
-            const containerNode = {
-              key: `container:${area.id}:${row.id}:${lane.id}:${container.id}`,
-              title: container.name,
-              chip: container.type,
-              sub: `Occupancy ${ratio} - updated ${container.lastUpdated}`,
-              kpis: [`Occ: ${ratio}`, `Updated: ${container.lastUpdated}`],
-              path: containerPath,
-              parentKey: laneNode.key,
-              searchable: loc_searchBlob([container.name, container.type, ratio, containerPath]),
-              children: []
-            };
-
-            containerNode.children = container.elements.map(element => ({
-              key: `element:${area.id}:${row.id}:${lane.id}:${container.id}:${element.id}`,
-              title: element.id,
-              chip: element.status,
-              sub: `Project: ${element.project} - Tap for details`,
-              kpis: [element.status],
-              path: `${containerPath} > ${element.id}`,
-              parentKey: containerNode.key,
-              searchable: loc_searchBlob([element.id, element.status, element.project, containerPath]),
-              children: [],
-              onLeafClick: () => alert(`Wireframe: open Element Detail for ${element.id}`),
-            }));
-
-            return containerNode;
-          });
-
-          return laneNode;
-        });
-
-        return rowNode;
-      });
-
-      return areaNode;
-    });
+  function loc_breadcrumbText(){
+    if (loc_navStack.length <= 1) return "Area";
+    return loc_navStack.slice(1).map(n => n.name).join(" > ");
   }
 
-  function loc_flatten(node, out){
-    out.push(node);
-    node.children.forEach(ch => loc_flatten(ch, out));
-  }
-
-  function loc_buildIndex(tree){
-    const nodes = new Map();
-    const children = new Map();
-    const parent = new Map();
-
-    tree.forEach(root => {
-      const all = [];
-      loc_flatten(root, all);
-      all.forEach(n => {
-        nodes.set(n.key, n);
-        children.set(n.key, n.children.map(c => c.key));
-        parent.set(n.key, n.parentKey ?? null);
-      });
-    });
-
-    const rootKeys = tree.map(t => t.key);
-    return { nodes, children, parent, rootKeys };
-  }
-
-  function loc_collectSubtreeKeys(index, startKey){
-    const out = [];
-    const stack = [startKey];
-    while (stack.length){
-      const k = stack.pop();
-      out.push(k);
-      const kids = index.children.get(k) || [];
-      for (let i = kids.length - 1; i >= 0; i--) stack.push(kids[i]);
-    }
-    return out;
-  }
-
-  function loc_renderCard(node){
-    const hasChildren = node.children.length > 0;
-    const card = document.createElement("div");
-    card.className = "loc-item";
-    card.innerHTML = `
-      <div class="meta">
-        <div class="title">
-          <span>${escapeHtml(node.title)}</span>
-          <span class="loc-chip">${escapeHtml(node.chip)}</span>
-        </div>
-        <div class="loc-sub">${escapeHtml(node.sub)}</div>
-        ${node.kpis?.length ? `<div class="loc-row">${node.kpis.map(k => `<span class="loc-kpi">${escapeHtml(k)}</span>`).join("")}</div>` : ""}
-      </div>
-      <div class="loc-arrow">${hasChildren ? ">" : "*"}</div>
-    `;
-
-    card.addEventListener("click", () => {
-      if (hasChildren){
-        loc_state.filterKey = node.key;
-        loc_state.filterPath = node.path;
-        locQuery.value = "";
-        loc_render();
-        return;
-      }
-      if (typeof node.onLeafClick === "function") node.onLeafClick();
-    });
-
-    return card;
+  function loc_childSummary(node){
+    if (node.sub) return node.sub;
+    const c = node.children.length;
+    if (!c) return "Empty";
+    const types = {};
+    node.children.forEach(ch => { types[ch.type || "item"] = (types[ch.type || "item"] || 0) + 1; });
+    return Object.entries(types).map(([t,n]) => `${n} ${t}${n > 1 ? "s" : ""}`).join(" - ");
   }
 
   function loc_render(){
-    const tree = loc_buildTree();
-    const index = loc_buildIndex(tree);
+    const current = loc_currentNode();
+    const items = current.children;
 
-    const queryText = locQuery.value.trim().toLowerCase();
+    locBreadcrumb.textContent = loc_breadcrumbText();
+    locItemCount.textContent = `${items.length} items`;
+    locBackBtn.disabled = loc_navStack.length <= 1;
+    locDrillList.innerHTML = "";
 
-    locList.innerHTML = "";
-
-    const scopeRootKeys = loc_state.filterKey ? [loc_state.filterKey] : index.rootKeys;
-
-    let itemsToShow = [];
-
-    if (!queryText){
-      if (!loc_state.filterKey){
-        itemsToShow = scopeRootKeys.map(k => index.nodes.get(k)).filter(Boolean);
-        loc_state.filterPath = "Area";
-      } else {
-        const childKeys = index.children.get(loc_state.filterKey) || [];
-        itemsToShow = childKeys.map(k => index.nodes.get(k)).filter(Boolean);
-      }
-
-      locSectionTitle.textContent = loc_state.filterKey ? loc_state.filterPath : "Locations";
-      locCount.textContent = `${itemsToShow.length} items`;
-      headerSub.textContent = loc_state.filterKey ? loc_state.filterPath : "Area";
-
-    } else {
-      const searchableKeys = [];
-      scopeRootKeys.forEach(rootKey => {
-        searchableKeys.push(...loc_collectSubtreeKeys(index, rootKey));
-      });
-
-      const seen = new Set();
-      const candidates = [];
-      for (const k of searchableKeys){
-        if (seen.has(k)) continue;
-        seen.add(k);
-        const node = index.nodes.get(k);
-        if (!node) continue;
-        if (node.searchable.includes(queryText)) candidates.push(node);
-      }
-
-      itemsToShow = candidates;
-
-      const scopeLabel = loc_state.filterKey ? ` in ${loc_state.filterPath}` : "";
-      locSectionTitle.textContent = `Search: ${locQuery.value}${scopeLabel}`;
-      locCount.textContent = `${itemsToShow.length} matches`;
-      headerSub.textContent = `Search: ${locQuery.value}${scopeLabel}`;
-    }
-
-    if (!itemsToShow.length){
-      locList.innerHTML = `
-        <div class="hint">
-          No matches for <b>${escapeHtml(locQuery.value || "(no items)")}</b>.
-        </div>
-      `;
+    if (!items.length){
+      locDrillList.innerHTML = `<div class="hint">No child locations here.</div>`;
       return;
     }
 
-    // Hide the initial hint once navigating
-    locHint.style.display = loc_state.filterKey ? "none" : "block";
-
-    itemsToShow.forEach(node => {
-      locList.appendChild(loc_renderCard(node));
+    items.forEach(node => {
+      const hasChildren = node.children && node.children.length > 0;
+      const div = document.createElement("div");
+      div.className = "locDrillItem";
+      div.innerHTML = `
+        <div class="locMeta">
+          <div class="locName">
+            <span>${escapeHtml(node.name)}</span>
+            <span class="locDrillChip">${escapeHtml(node.type || "")}</span>
+          </div>
+          <div class="locSub">${escapeHtml(loc_childSummary(node))}</div>
+        </div>
+        <div class="locDrillArrow">${hasChildren ? ">" : "-"}</div>
+      `;
+      div.addEventListener("click", () => {
+        if (hasChildren){
+          loc_navStack.push(node);
+          loc_render();
+        } else {
+          alert(`Wireframe: open detail for ${node.name}`);
+        }
+      });
+      locDrillList.appendChild(div);
     });
   }
 
   locBackBtn.addEventListener("click", () => {
-    const tree = loc_buildTree();
-    const index = loc_buildIndex(tree);
-
-    if (loc_state.filterKey){
-      const parentKey = index.parent.get(loc_state.filterKey);
-      if (parentKey){
-        const parentNode = index.nodes.get(parentKey);
-        loc_state.filterKey = parentKey;
-        loc_state.filterPath = parentNode ? parentNode.path : "Area";
-      } else {
-        loc_state.filterKey = null;
-        loc_state.filterPath = "Area";
-      }
-      locQuery.value = "";
+    if (loc_navStack.length > 1){
+      loc_navStack.pop();
       loc_render();
-      return;
     }
-
-    locQuery.value = "";
-    loc_state.filterKey = null;
-    loc_state.filterPath = "Area";
-    loc_render();
   });
-
-  locQuery.addEventListener("input", loc_render);
-
-  document.getElementById("locScanBtn").addEventListener("click", () => {
-    alert("Wireframe: scan a location tag to jump to a specific Area/Row/Lane/Container.");
-  });
-
-  // Initial render
-  loc_render();
 
   /* ============================================================
      REBOOK / MOVE MODULE (rb_ prefix)
