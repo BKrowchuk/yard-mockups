@@ -1734,12 +1734,12 @@
   const lsNextAction = document.getElementById("lsNextAction");
 
   const lsSampleElements = [
-    { id: "24-10345-001", loc: "Section A - Row 1 - Rack R-A1-01", status: "OK" },
-    { id: "24-10345-002", loc: "Staging - Inbound - Trailer T-IN-01", status: "OK" },
-    { id: "24-10345-003", loc: "Section A - Row 1 - Rack R-A1-02", status: "MISSING" },
-    { id: "24-10345-004", loc: "Section A - Row 2 - Rack R-A2-01", status: "OK" },
-    { id: "24-10345-005", loc: "Section B - Row 1 - Rack R-B1-01", status: "OK" },
-    { id: "24-10345-006", loc: "Not in yard", status: "NOT IN YARD" },
+    { id: "24-10345-001", loc: "Section A - Row 1 - Rack R-A1-01" },
+    { id: "24-10345-002", loc: "Staging - Inbound - Trailer T-IN-01" },
+    { id: "24-10345-003", loc: "Section A - Row 1 - Rack R-A1-02" },
+    { id: "24-10345-004", loc: "Section A - Row 2 - Rack R-A2-01" },
+    { id: "24-10345-005", loc: "Section B - Row 1 - Rack R-B1-01" },
+    { id: "24-10345-006", loc: "Not in yard" },
   ];
 
   let lsFound = [];
@@ -1775,16 +1775,16 @@
     lsFoundList.innerHTML = "";
     lsFound.forEach(item => {
       const isOn = lsSelected.has(item.id);
+      const notInYard = item.loc === "Not in yard";
       const row = document.createElement("div");
       row.className = "lsRow";
       row.innerHTML = `
         <div style="min-width:0;">
           <div class="lsRowId">${escapeHtml(item.id)}</div>
-          <div class="lsRowSub">${escapeHtml(item.loc)}</div>
+          <div class="lsRowSub" style="${notInYard ? 'color:var(--bad);font-style:italic;' : ''}">${escapeHtml(item.loc)}</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
-          <div class="lsPill ${item.status === "OK" ? "ok" : (item.status === "MISSING" ? "warn" : "bad")}">${escapeHtml(item.status)}</div>
-          <button class="btn ${isOn ? "" : "secondary"}" type="button">${isOn ? "Selected" : "Select"}</button>
+          <button class="btn ${isOn ? "" : "secondary"}" type="button" style="padding:6px 10px;font-size:11px;">${isOn ? "Selected" : "Select"}</button>
         </div>
       `;
       row.addEventListener("click", (e)=>{
@@ -1805,10 +1805,10 @@
     lsId.textContent = sheetCode;
     lsMetaEl.textContent = `${lsSampleElements.length} elements found - parsed from loadsheet`;
     lsFound = [...lsSampleElements];
-    lsSelected = new Set(lsFound.slice(0, 3).map(x => x.id));
-    lsSelected.forEach(id => selectedElementIds.add(id));
+    lsSelected = new Set();
     lsEnableControls(true);
     lsRenderFound();
+    updateSelectionControls();
   }
 
   lsSimulateScan.addEventListener("click", ()=>{ lsLoadSample("LS-2026-0301-014"); });
