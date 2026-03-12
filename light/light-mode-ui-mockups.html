@@ -636,6 +636,10 @@
       cursor:pointer;
     }
     .locDrillItem:active{ transform:translateY(1px); }
+    .locDrillItem.selected{
+      border-color: rgba(47,143,87,.60);
+      background: rgba(47,143,87,.12);
+    }
     .locDrillItem .locMeta{ min-width:0; }
     .locDrillItem .locName{
       font-weight:900;
@@ -663,16 +667,14 @@
       white-space:nowrap;
     }
     .locDrillArrow{
-      width:28px; height:28px;
-      border-radius: 12px;
-      border:1px solid rgba(47,143,87,.45);
-      background: rgba(47,143,87,.08);
+      width:20px; height:20px;
+      flex:0 0 auto;
+      color: var(--muted);
       display:grid;
       place-items:center;
-      flex:0 0 auto;
-      color: var(--ink);
-      font-weight:900;
-      font-size:14px;
+    }
+    .locDrillArrow svg{
+      width:16px; height:16px;
     }
 
     /* ===== REBOOK / MOVE FLOW ===== */
@@ -722,28 +724,22 @@
       border-top:1px solid rgba(255,255,255,.08);
       backdrop-filter: blur(10px);
     }
-    .bottomnav{
+    .selectionBar{
       display:flex;
-      justify-content:space-around;
-      padding: 8px 6px;
-      gap:6px;
+      align-items:center;
+      justify-content:space-between;
+      padding: 10px 12px;
+      gap:10px;
     }
-    .navbtn{
-      flex:1;
-      text-align:center;
-      padding: 8px 6px;
-      border-radius: 12px;
-      font-size:12px;
-      color: rgba(47,143,87,.95);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      cursor:pointer;
-      user-select:none;
+    .selectionBar .selLeft{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
     }
-    .navbtn.active{
-      color: rgba(21,56,42,.95);
-      border-color: rgba(47,143,87,.55);
-      background: rgba(47,143,87,.12);
+    .selectionBar .selCount{
+      font-weight:800;
+      font-size:13px;
     }
 
     .spacer{ height: 10px; }
@@ -778,12 +774,6 @@
           <div class="seg" id="tabLocation" role="tab" aria-selected="false">Location</div>
         </div>
 
-        <!-- Selection bar (persistent across all tabs) -->
-        <div class="resultsActions" id="selectionActions" style="display:none;">
-          <div class="pill" id="selectedCount">0 selected</div>
-          <button class="btn secondary" id="clearSelectedBtn" type="button">Clear</button>
-          <button class="btn" id="rebookBtn" type="button" disabled>Rebook selected</button>
-        </div>
 
         <div class="stack" id="searchClassicUI">
           <div class="card">
@@ -902,7 +892,6 @@
           <div class="locDrillBar">
             <button class="btn secondary" id="locBackBtn" type="button">Back</button>
             <div class="locBreadcrumb" id="locBreadcrumb">Area</div>
-            <div class="pill" id="locItemCount">0 items</div>
           </div>
           <div class="locDrillList" id="locDrillList"></div>
         </div>
@@ -1001,6 +990,8 @@
 
         <!-- Step 1: Select items -->
         <div id="rbStep1">
+
+          <button class="btn secondary" id="rbBackToSearch" type="button" style="margin-bottom:8px;">&larr; Back to search</button>
 
           <div class="rb-stepper">
             <div class="rb-dot on"></div><div class="rb-dot"></div><div class="rb-dot"></div><div class="rb-dot"></div>
@@ -1254,10 +1245,13 @@
       </section>
     </main>
 
-    <footer>
-      <div class="bottomnav">
-        <div class="navbtn active" id="navSearch">Search</div>
-        <div class="navbtn" id="navMoves">Rebook</div>
+    <footer id="footerBar" style="display:none;">
+      <div class="selectionBar">
+        <div class="selLeft">
+          <div class="selCount" id="selectedCount">0 selected</div>
+          <button class="btn secondary" id="clearSelectedBtn" type="button" style="padding:6px 10px;font-size:11px;">Clear</button>
+        </div>
+        <button class="btn" id="rebookBtn" type="button">Rebook selected</button>
       </div>
     </footer>
   </div>
@@ -1283,6 +1277,8 @@
   const headerSub = document.getElementById("headerSub");
   const cogBtn = document.getElementById("cogBtn");
 
+  const footerBar = document.getElementById("footerBar");
+
   function showScreen(id){
     mainScreens.forEach(s => document.getElementById(s).classList.toggle("active", s === id));
 
@@ -1298,12 +1294,10 @@
     }
 
     cogBtn.classList.toggle("active", id === "settings");
-    document.getElementById("navSearch").classList.toggle("active", id === "search");
-    document.getElementById("navMoves").classList.toggle("active", id === "moves");
+    // Hide footer selection bar when in rebook flow or settings
+    updateSelectionControls();
   }
 
-  document.getElementById("navSearch").addEventListener("click", ()=>showScreen("search"));
-  document.getElementById("navMoves").addEventListener("click", ()=>showScreen("moves"));
   cogBtn.addEventListener("click", ()=>{
     showScreen(document.getElementById("settings").classList.contains("active") ? "search" : "settings");
   });
@@ -1391,7 +1385,6 @@
   const resultsCount = document.getElementById("resultsCount");
   const resultsList = document.getElementById("resultsList");
   const selectedCount = document.getElementById("selectedCount");
-  const selectionActions = document.getElementById("selectionActions");
   const clearSelectedBtn = document.getElementById("clearSelectedBtn");
   const rebookBtn = document.getElementById("rebookBtn");
   const MAX_RESULTS = 24;
@@ -1518,9 +1511,8 @@
   function updateSelectionControls(){
     const totalSelected = selectedElementIds.size;
     selectedCount.textContent = `${totalSelected} selected`;
-    rebookBtn.disabled = !totalSelected;
-    clearSelectedBtn.disabled = !totalSelected;
-    selectionActions.style.display = totalSelected ? "flex" : "none";
+    const onSearch = document.getElementById("search").classList.contains("active");
+    footerBar.style.display = (totalSelected && onSearch) ? "block" : "none";
   }
 
   function runSearch(){
@@ -1591,20 +1583,30 @@
     if (selectedElementIds.has(idText)) selectedElementIds.delete(idText);
     else selectedElementIds.add(idText);
     renderResults(currentSearchResults);
+    updateSelectionControls();
   });
 
   clearSelectedBtn.addEventListener("click", ()=>{
     selectedElementIds.clear();
     renderResults(currentSearchResults);
+    loc_render();
+    updateSelectionControls();
   });
 
   // "Rebook selected" from search -> goes to Moves screen with items
   rebookBtn.addEventListener("click", ()=>{
     if (!selectedElementIds.size) return;
-    // Populate rebook selection from search selection
-    rb_sel = MOCK_DATA.elements
+    // Populate rebook selection from all data sources
+    const allItems = [...MOCK_DATA.elements, ...MOCK_DATA.stacks, ...MOCK_DATA.racks];
+    rb_sel = allItems
       .filter(item => selectedElementIds.has(item.id))
       .map(item => ({ id: item.id, loc: item.loc, status: "Confirmed" }));
+    // Also include any location-tree selections not in mock data
+    selectedElementIds.forEach(id => {
+      if (!rb_sel.find(s => s.id === id)){
+        rb_sel.push({ id, loc: "(from location browse)", status: "Confirmed" });
+      }
+    });
     rb_selected = new Set(rb_sel.map(s => s.id));
     rb_moveType = "Rebook";
     rb_renderSelection();
@@ -1659,9 +1661,15 @@
   }
 
   function lsToggleSelect(id){
-    if (lsSelected.has(id)) lsSelected.delete(id);
-    else lsSelected.add(id);
+    if (lsSelected.has(id)){
+      lsSelected.delete(id);
+      selectedElementIds.delete(id);
+    } else {
+      lsSelected.add(id);
+      selectedElementIds.add(id);
+    }
     lsRenderFound();
+    updateSelectionControls();
   }
 
   function lsRenderFound(){
@@ -1699,6 +1707,7 @@
     lsMetaEl.textContent = `${lsSampleElements.length} elements found - parsed from loadsheet`;
     lsFound = [...lsSampleElements];
     lsSelected = new Set(lsFound.slice(0, 3).map(x => x.id));
+    lsSelected.forEach(id => selectedElementIds.add(id));
     lsEnableControls(true);
     lsRenderFound();
   }
@@ -1718,12 +1727,16 @@
 
   lsSelectAll.addEventListener("click", ()=>{
     lsSelected = new Set(lsFound.map(x => x.id));
+    lsFound.forEach(x => selectedElementIds.add(x.id));
     lsRenderFound();
+    updateSelectionControls();
   });
 
   lsClearSel.addEventListener("click", ()=>{
+    lsSelected.forEach(id => selectedElementIds.delete(id));
     lsSelected.clear();
     lsRenderFound();
+    updateSelectionControls();
   });
 
   lsBackToScan.addEventListener("click", ()=>{
@@ -1837,7 +1850,6 @@
   const loc_navStack = [LOC_TREE];
   const locDrillList = document.getElementById("locDrillList");
   const locBreadcrumb = document.getElementById("locBreadcrumb");
-  const locItemCount = document.getElementById("locItemCount");
   const locBackBtn = document.getElementById("locBackBtn");
 
   function loc_currentNode(){
@@ -1889,7 +1901,6 @@
     const items = current.children;
 
     loc_renderBreadcrumb();
-    locItemCount.textContent = `${items.length} items`;
     locBackBtn.disabled = loc_navStack.length <= 1;
     locDrillList.innerHTML = "";
 
@@ -1898,10 +1909,14 @@
       return;
     }
 
+    const selectableTypes = new Set(["Element","Rack","Trailer"]);
+
     items.forEach(node => {
       const hasChildren = node.children && node.children.length > 0;
+      const isSelectable = selectableTypes.has(node.type);
+      const isSelected = selectedElementIds.has(node.name);
       const div = document.createElement("div");
-      div.className = "locDrillItem";
+      div.className = "locDrillItem" + (isSelected ? " selected" : "");
       div.innerHTML = `
         <div class="locMeta">
           <div class="locName">
@@ -1910,14 +1925,18 @@
           </div>
           <div class="locSub">${escapeHtml(loc_childSummary(node))}</div>
         </div>
-        <div class="locDrillArrow">${hasChildren ? ">" : "-"}</div>
+        ${isSelectable ? '<div class="pill ' + (isSelected ? 'selected' : '') + '" style="flex:0 0 auto;cursor:pointer;">' + (isSelected ? 'SELECTED' : 'SELECT') + '</div>' : ''}
+        ${(!isSelectable && hasChildren) ? '<div class="locDrillArrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>' : ''}
       `;
       div.addEventListener("click", () => {
-        if (hasChildren){
+        if (isSelectable){
+          if (selectedElementIds.has(node.name)) selectedElementIds.delete(node.name);
+          else selectedElementIds.add(node.name);
+          loc_render();
+          updateSelectionControls();
+        } else if (hasChildren){
           loc_navStack.push(node);
           loc_render();
-        } else {
-          alert(`Wireframe: open detail for ${node.name}`);
         }
       });
       locDrillList.appendChild(div);
@@ -2082,7 +2101,15 @@
   document.getElementById("rbViewItems").addEventListener("click", ()=>alert("Wireframe: open updated items list."));
   document.getElementById("rbNewMove").addEventListener("click", ()=>rb_showStep("rbStep1"));
   document.getElementById("rbSeeQueue").addEventListener("click", ()=>alert("Wireframe: open queued operations page."));
-  document.getElementById("rbDoneBtn").addEventListener("click", ()=>rb_showStep("rbStep1"));
+  document.getElementById("rbDoneBtn").addEventListener("click", ()=>{
+    selectedElementIds.clear();
+    rb_showStep("rbStep1");
+    showScreen("search");
+  });
+
+  document.getElementById("rbBackToSearch").addEventListener("click", ()=>{
+    showScreen("search");
+  });
   document.getElementById("rbRefreshAfter").addEventListener("click", ()=>alert("Wireframe: refresh + re-verify initial locations."));
   document.getElementById("rbRetryAfter").addEventListener("click", ()=>alert("Wireframe: retry submit."));
 
