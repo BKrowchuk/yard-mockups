@@ -879,11 +879,6 @@
             </div>
 
             <div class="lsResults" id="lsFoundList"></div>
-
-            <div style="display:flex;gap:10px;margin-top:12px;">
-              <button id="lsBackToScan" class="btn secondary" type="button">Back</button>
-              <button id="lsNextAction" class="btn" type="button" disabled>Rebook selected</button>
-            </div>
           </article>
         </div>
 
@@ -1742,8 +1737,36 @@
     { id: "24-10345-006", loc: "Not in yard" },
   ];
 
+  // Mock alternatives: identical elements at different locations that can be swapped in
+  const lsAlternatives = {
+    "24-10345-001": [
+      { id: "24-10345-001-B", loc: "Section B - Row 2 - Rack R-B2-01" },
+      { id: "24-10345-001-C", loc: "Section C - Lane 2 (loose)" },
+    ],
+    "24-10345-002": [
+      { id: "24-10345-002-B", loc: "Section A - Lane 3 - Rack R-A3-01" },
+    ],
+    "24-10345-003": [
+      { id: "24-10345-003-B", loc: "Section B - Row 1 - Rack R-B1-02" },
+      { id: "24-10345-003-C", loc: "Staging - Outbound - Trailer T-OUT-01" },
+    ],
+    "24-10345-004": [
+      { id: "24-10345-004-B", loc: "Section C - Row 1 - Rack R-C1-01" },
+    ],
+    "24-10345-005": [
+      { id: "24-10345-005-B", loc: "Section A - Row 2 - Trailer T-A2-01" },
+      { id: "24-10345-005-C", loc: "Staging - Inbound - Trailer T-IN-01" },
+    ],
+    "24-10345-006": [
+      { id: "24-10345-006-A", loc: "Section A - Row 1 - Rack R-A1-01" },
+      { id: "24-10345-006-B", loc: "Section B - Lane 3 - Trailer T-B3-01" },
+      { id: "24-10345-006-C", loc: "Staging - Inbound - Trailer T-IN-01" },
+    ],
+  };
+
   let lsFound = [];
   let lsSelected = new Set();
+  let lsExpandedId = null; // which loadsheet row is expanded to show alternatives
 
   function lsSetCollapsed(collapse){
     lsScanHeader.style.display = collapse ? "none" : "block";
@@ -1773,29 +1796,97 @@
 
   function lsRenderFound(){
     lsFoundList.innerHTML = "";
-    lsFound.forEach(item => {
+    lsFound.forEach((item, idx) => {
       const isOn = lsSelected.has(item.id);
       const notInYard = item.loc === "Not in yard";
+      const isExpanded = lsExpandedId === item.id;
+      const alts = lsAlternatives[item.origId || item.id] || [];
+      const hasAlts = alts.length > 0;
+
       const row = document.createElement("div");
       row.className = "lsRow";
+      if (isOn) row.style.borderColor = "rgba(47,143,87,.60)";
+      if (isOn) row.style.background = "rgba(47,143,87,.08)";
       row.innerHTML = `
-        <div style="min-width:0;">
+        <div style="min-width:0;flex:1;">
           <div class="lsRowId">${escapeHtml(item.id)}</div>
           <div class="lsRowSub" style="${notInYard ? 'color:var(--bad);font-style:italic;' : ''}">${escapeHtml(item.loc)}</div>
+          ${item.swapped ? '<div style="font-size:10px;color:var(--accent);margin-top:2px;">swapped from ' + escapeHtml(item.origId) + '</div>' : ''}
         </div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button class="btn ${isOn ? "" : "secondary"}" type="button" style="padding:6px 10px;font-size:11px;">${isOn ? "Selected" : "Select"}</button>
+        <div style="display:flex;gap:6px;align-items:center;flex:0 0 auto;">
+          ${hasAlts ? '<div class="locDrillArrow lsAltBtn" style="cursor:pointer;transform:rotate(' + (isExpanded ? '90' : '0') + 'deg);transition:transform .15s;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>' : ''}
+          <button class="btn ${isOn ? "" : "secondary"} lsSelBtn" type="button" style="padding:6px 10px;font-size:11px;">${isOn ? "Selected" : "Select"}</button>
         </div>
       `;
-      row.addEventListener("click", (e)=>{
-        if (e.target && e.target.tagName === "BUTTON") return;
-        lsToggleSelect(item.id);
+
+      // Expand/collapse alternatives
+      const altBtn = row.querySelector(".lsAltBtn");
+      if (altBtn){
+        altBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          lsExpandedId = isExpanded ? null : item.id;
+          lsRenderFound();
+        });
+      }
+
+      // Row click expands alternatives
+      row.addEventListener("click", (e) => {
+        if (e.target.closest(".lsSelBtn") || e.target.closest(".lsAltBtn")) return;
+        lsExpandedId = isExpanded ? null : item.id;
+        lsRenderFound();
       });
-      row.querySelector("button").addEventListener("click", (e)=>{
+
+      // Select button
+      row.querySelector(".lsSelBtn").addEventListener("click", (e) => {
         e.stopPropagation();
         lsToggleSelect(item.id);
       });
+
       lsFoundList.appendChild(row);
+
+      // Render alternatives panel
+      if (isExpanded && hasAlts){
+        const panel = document.createElement("div");
+        panel.style.cssText = "margin:0 0 4px 16px;";
+
+        const label = document.createElement("div");
+        label.style.cssText = "font-size:11px;color:var(--muted);margin:6px 0 4px 0;";
+        label.textContent = "Identical alternatives — tap to swap";
+        panel.appendChild(label);
+
+        alts.forEach(alt => {
+          const altRow = document.createElement("div");
+          altRow.className = "lsRow";
+          altRow.style.cssText = "margin-top:4px;border-color:rgba(214,166,58,.4);background:rgba(214,166,58,.04);";
+          altRow.innerHTML = `
+            <div style="min-width:0;">
+              <div class="lsRowId">${escapeHtml(alt.id)}</div>
+              <div class="lsRowSub">${escapeHtml(alt.loc)}</div>
+            </div>
+            <div style="flex:0 0 auto;">
+              <button class="btn secondary" type="button" style="padding:6px 10px;font-size:11px;">Use this</button>
+            </div>
+          `;
+          altRow.addEventListener("click", () => {
+            // Swap: replace the current element with this alternative
+            const wasSelected = lsSelected.has(item.id);
+            if (wasSelected){
+              lsSelected.delete(item.id);
+              selectedElementIds.delete(item.id);
+            }
+            lsFound[idx] = { id: alt.id, loc: alt.loc, origId: item.origId || item.id, swapped: true };
+            if (wasSelected){
+              lsSelected.add(alt.id);
+              selectedElementIds.add(alt.id);
+            }
+            lsExpandedId = null;
+            lsRenderFound();
+            updateSelectionControls();
+          });
+          panel.appendChild(altRow);
+        });
+        lsFoundList.appendChild(panel);
+      }
     });
     lsFoundCount.textContent = `${lsFound.length} found`;
     lsUpdateActionState();
@@ -1804,8 +1895,9 @@
   function lsLoadSample(sheetCode){
     lsId.textContent = sheetCode;
     lsMetaEl.textContent = `${lsSampleElements.length} elements found - parsed from loadsheet`;
-    lsFound = [...lsSampleElements];
+    lsFound = lsSampleElements.map(el => ({...el}));
     lsSelected = new Set();
+    lsExpandedId = null;
     lsEnableControls(true);
     lsRenderFound();
     updateSelectionControls();
