@@ -1019,14 +1019,6 @@
               <div id="rbSelList"></div>
             </div>
 
-            <div class="card">
-              <div class="fieldLabel">Move type</div>
-              <div class="segTabs" role="tablist" aria-label="Move type">
-                <div class="seg active" id="rbTypeRebook" role="tab" aria-selected="true">Rebook</div>
-                <div class="seg" id="rbTypeStore" role="tab" aria-selected="false">Store</div>
-              </div>
-            </div>
-
             <div class="inlineActionCard primary">
               <div class="inlineActionText">
                 <p class="inlineActionTitle">Next</p>
@@ -1690,15 +1682,14 @@
     const allItems = [...MOCK_DATA.elements, ...MOCK_DATA.stacks, ...MOCK_DATA.racks];
     rb_sel = allItems
       .filter(item => selectedElementIds.has(item.id))
-      .map(item => ({ id: item.id, loc: item.loc, status: "Confirmed" }));
+      .map(item => ({ id: item.id, loc: item.loc }));
     // Also include any location-tree selections not in mock data
     selectedElementIds.forEach(id => {
       if (!rb_sel.find(s => s.id === id)){
-        rb_sel.push({ id, loc: "(from location browse)", status: "Confirmed" });
+        rb_sel.push({ id, loc: "(from location browse)" });
       }
     });
     rb_selected = new Set(rb_sel.map(s => s.id));
-    rb_moveType = "Rebook";
     rb_renderSelection();
     rb_showStep("rbStep1");
     showScreen("moves");
@@ -2128,12 +2119,11 @@
   const rbSteps = ["rbStep1","rbStep2","rbStep3","rbStep4","rbResult"];
 
   let rb_sel = [
-    { id:"24-10345-001", loc:"Section A - Row 1 - Rack R-A1-01", status:"Confirmed" },
-    { id:"24-10345-002", loc:"Staging - Inbound - Trailer T-IN-01", status:"Queued" },
-    { id:"24-10345-003", loc:"Section B - Row 2 - Rack R-B2-01", status:"Conflict" },
+    { id:"24-10345-001", loc:"Section A - Row 1 - Rack R-A1-01" },
+    { id:"24-10345-002", loc:"Staging - Inbound - Trailer T-IN-01" },
+    { id:"24-10345-003", loc:"Section B - Row 2 - Rack R-B2-01" },
   ];
   let rb_selected = new Set(rb_sel.map(s => s.id));
-  let rb_moveType = "Rebook";
 
   function rb_showStep(id){
     rbSteps.forEach(s => {
@@ -2161,13 +2151,6 @@
     headerSub.textContent = "";
   }
 
-  function rb_pillClass(status){
-    if (status === "Confirmed") return "ok";
-    if (status === "Queued") return "warn";
-    if (status === "Conflict") return "bad";
-    return "";
-  }
-
   function rb_renderSelection(){
     const ids = Array.from(rb_selected);
     document.getElementById("rbSelCount").textContent = String(ids.length);
@@ -2179,16 +2162,15 @@
       const on = rb_selected.has(item.id);
       const row = document.createElement("div");
       row.className = "rowItem";
+      row.style.cursor = "pointer";
       row.innerHTML = `
-        <div class="meta">
-          <div class="id">
-            <span class="checkbox" style="background:${on ? "rgba(47,143,87,.22)" : "rgba(0,0,0,.14)"}; border-color:${on ? "rgba(47,143,87,.75)" : "rgba(255,255,255,.18)"};"></span>
-            <span>${item.id}</span>
-            <span class="pill ${rb_pillClass(item.status)}">${item.status}</span>
+        <div class="meta" style="display:flex;align-items:center;gap:8px;">
+          <span class="checkbox" style="background:${on ? "rgba(47,143,87,.22)" : "rgba(0,0,0,.14)"}; border-color:${on ? "rgba(47,143,87,.75)" : "rgba(255,255,255,.18)"};"></span>
+          <div>
+            <div class="id">${escapeHtml(item.id)}</div>
+            <div class="loc">${escapeHtml(item.loc)}</div>
           </div>
-          <div class="loc">${item.loc}</div>
         </div>
-        <div class="pill">TOGGLE</div>
       `;
       row.addEventListener("click", ()=>{
         if (rb_selected.has(item.id)) rb_selected.delete(item.id);
@@ -2205,20 +2187,6 @@
     rb_selected.clear();
     rb_renderSelection();
   });
-
-  // Move type tabs
-  const rbTypeRebook = document.getElementById("rbTypeRebook");
-  const rbTypeStore = document.getElementById("rbTypeStore");
-  function rb_setType(t){
-    rb_moveType = t;
-    const isR = t === "Rebook";
-    rbTypeRebook.classList.toggle("active", isR);
-    rbTypeRebook.setAttribute("aria-selected", String(isR));
-    rbTypeStore.classList.toggle("active", !isR);
-    rbTypeStore.setAttribute("aria-selected", String(!isR));
-  }
-  rbTypeRebook.addEventListener("click", ()=>rb_setType("Rebook"));
-  rbTypeStore.addEventListener("click", ()=>rb_setType("Store"));
 
   // Step navigation
   document.getElementById("rbToStep2").addEventListener("click", ()=>{
@@ -2241,7 +2209,7 @@
 
   document.getElementById("rbScanDest").addEventListener("click", ()=>alert("Wireframe: scan destination location tag (auto-fill hierarchy)."));
   document.getElementById("rbToStep4").addEventListener("click", ()=>{
-    document.getElementById("rbTypeSummary").textContent = rb_moveType;
+    document.getElementById("rbTypeSummary").textContent = "Rebook";
     document.getElementById("rbItemsSummary").textContent = String(rb_selected.size);
 
     const reviewList = document.getElementById("rbReviewList");
@@ -2251,10 +2219,9 @@
       row.className = "rowItem";
       row.innerHTML = `
         <div class="meta">
-          <div class="id">${s.id}</div>
-          <div class="loc">${s.loc}</div>
+          <div class="id">${escapeHtml(s.id)}</div>
+          <div class="loc">${escapeHtml(s.loc)}</div>
         </div>
-        <div class="pill">DETAILS</div>
       `;
       reviewList.appendChild(row);
     });
