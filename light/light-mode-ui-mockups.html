@@ -55,6 +55,22 @@
       box-shadow: var(--shadow);
       flex: 0 0 auto;
     }
+    .cogBtn{
+      flex: 0 0 auto;
+      width:30px; height:30px;
+      border:none;
+      background: rgba(0,0,0,.08);
+      border-radius: 8px;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      font-size:16px;
+      color: var(--ink);
+      opacity:.7;
+      transition: opacity .15s;
+    }
+    .cogBtn:hover{ opacity:1; }
+    .cogBtn.active{ opacity:1; background: rgba(47,143,87,.18); }
+
     .titles{ min-width:0; }
     .h1{
       font-weight:950;
@@ -739,7 +755,7 @@
     <header>
       <div class="topbar">
         <div class="left">
-          <div class="badge" aria-hidden="true"></div>
+          <button class="cogBtn" id="cogBtn" type="button" aria-label="Settings">&#9881;</button>
           <div class="titles">
             <div class="h1" id="headerTitle">Search inventory</div>
             <div class="headerSub" id="headerSub">Elements, stacks, racks, loadsheets, locations - scan barcodes - filter by project/area</div>
@@ -891,6 +907,90 @@
           <div class="locDrillList" id="locDrillList"></div>
         </div>
       </section>
+
+      <!-- ===================== SETTINGS (Location Management) ===================== -->
+      <section class="screen" id="settings">
+        <!-- CREATE CARD -->
+        <section class="card" aria-labelledby="lmCreateTitle">
+          <div id="lmCreateTitle" class="fieldLabel" style="font-weight:900;font-size:14px;color:var(--ink);margin:0 0 4px 0;">Create new location</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Add an area/row/lane/container. Keep hierarchy consistent.</div>
+
+          <div class="fieldLabel">Hierarchy</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+            <div class="input" style="flex:1;min-width:100px;">
+              <input id="lmAreaInput" placeholder="Area (e.g. Yard West)" />
+            </div>
+            <div class="input" style="flex:0 0 80px;">
+              <input id="lmRowInput" placeholder="Row" />
+            </div>
+            <div class="input" style="flex:0 0 80px;">
+              <input id="lmLaneInput" placeholder="Lane" />
+            </div>
+          </div>
+
+          <div class="fieldLabel">Container</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+            <div class="input" style="flex:2;min-width:120px;">
+              <input id="lmContainerName" placeholder="Container name (e.g. Rack R-12)" />
+            </div>
+            <div class="input" style="flex:1;min-width:80px;">
+              <input id="lmContainerType" placeholder="Type (Rack / Pre-stack)" />
+            </div>
+          </div>
+
+          <div class="fieldLabel">Optional capacity</div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <div class="input" style="flex:0 0 100px;">
+              <input id="lmCapacity" type="number" min="0" placeholder="capacity" />
+            </div>
+            <div style="flex:1"></div>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button id="lmCreateBtn" class="btn" type="button">Create</button>
+            <button id="lmResetCreate" class="btn secondary" type="button">Reset</button>
+          </div>
+
+          <div class="hint">If Area/Row/Lane don't exist yet they will be created. You can deactivate locations below.</div>
+        </section>
+
+        <!-- EXISTING LOCATIONS LIST -->
+        <section class="card" aria-labelledby="lmManageTitle" style="margin-top:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+            <div style="min-width:0;">
+              <div id="lmManageTitle" class="fieldLabel" style="font-weight:900;font-size:14px;color:var(--ink);margin:0;">Manage locations</div>
+              <div style="font-size:12px;color:var(--muted);">Search, edit, activate/deactivate</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <div class="input" style="padding:6px 10px;">
+                <input id="lmFilter" placeholder="Filter locations" />
+              </div>
+              <div style="font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap;" id="lmCountTag">0 locations</div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px;" id="lmLocList" aria-live="polite"></div>
+
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button id="lmExport" class="btn secondary" type="button">Export</button>
+            <button id="lmBulkReactivate" class="btn secondary" type="button">Reactivate all</button>
+          </div>
+
+          <div class="hint">Deactivated locations remain in the system but are excluded from quick-pickers. Reactivate whenever needed.</div>
+        </section>
+      </section>
+
+      <!-- Confirm modal for location management -->
+      <div style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:60;" id="lmConfirmOverlay">
+        <div style="width:min(520px,94%);background:var(--bg);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,.06);box-shadow:var(--shadow);">
+          <h3 style="margin:0 0 8px 0;font-size:16px;" id="lmConfirmTitle">Confirm</h3>
+          <p style="font-size:13px;color:var(--muted);margin:0 0 12px 0;" id="lmConfirmText">Are you sure?</p>
+          <div style="display:flex;gap:8px;justify-content:flex-end;">
+            <button id="lmCancelConfirm" class="btn secondary" type="button">Cancel</button>
+            <button id="lmOkConfirm" class="btn danger" type="button">Confirm</button>
+          </div>
+        </div>
+      </div>
 
       <!-- ===================== MOVES / REBOOK ===================== -->
       <section class="screen" id="moves">
@@ -1174,9 +1274,10 @@
   /* ============================================================
      MAIN NAV
      ============================================================ */
-  const mainScreens = ["search","moves"];
+  const mainScreens = ["search","moves","settings"];
   const headerTitle = document.getElementById("headerTitle");
   const headerSub = document.getElementById("headerSub");
+  const cogBtn = document.getElementById("cogBtn");
 
   function showScreen(id){
     mainScreens.forEach(s => document.getElementById(s).classList.toggle("active", s === id));
@@ -1186,14 +1287,22 @@
       headerSub.textContent = "Elements, stacks, racks, loadsheets, locations - scan barcodes - filter by project/area";
     } else if (id === "moves") {
       rb_updateHeader();
+    } else if (id === "settings") {
+      headerTitle.textContent = "Location management";
+      headerSub.textContent = "Create, edit, deactivate locations";
+      lm_renderList();
     }
 
+    cogBtn.classList.toggle("active", id === "settings");
     document.getElementById("navSearch").classList.toggle("active", id === "search");
     document.getElementById("navMoves").classList.toggle("active", id === "moves");
   }
 
   document.getElementById("navSearch").addEventListener("click", ()=>showScreen("search"));
   document.getElementById("navMoves").addEventListener("click", ()=>showScreen("moves"));
+  cogBtn.addEventListener("click", ()=>{
+    showScreen(document.getElementById("settings").classList.contains("active") ? "search" : "settings");
+  });
 
   /* ============================================================
      SEARCH MODULE
@@ -1978,6 +2087,171 @@
   lsSetCollapsed(false);
   updateSelectionControls();
   rb_showStep("rbStep1");
+
+  /* ============================================================
+     LOCATION MANAGEMENT MODULE (lm_ prefix)
+     ============================================================ */
+  const lm_initialLocations = [
+    { id:"yard-west|A|1|rack-r-a1", area:"Yard West", row:"A", lane:"1", container:"Rack R-A1", type:"Rack", capacity:12, occupied:5, active:true },
+    { id:"yard-west|B|3|rack-r-b3", area:"Yard West", row:"B", lane:"3", container:"Rack R-B3", type:"Rack", capacity:12, occupied:8, active:true },
+    { id:"staging-west|Staging|Main|slot-08", area:"Staging West", row:"Staging", lane:"Main", container:"Slot 08", type:"Staging Slot", capacity:6, occupied:2, active:false },
+  ];
+
+  let lm_locations = structuredClone(lm_initialLocations);
+  const lmLocList = document.getElementById("lmLocList");
+  const lmCountTag = document.getElementById("lmCountTag");
+  const lmFilterInput = document.getElementById("lmFilter");
+
+  const lmAreaInput = document.getElementById("lmAreaInput");
+  const lmRowInput = document.getElementById("lmRowInput");
+  const lmLaneInput = document.getElementById("lmLaneInput");
+  const lmContainerName = document.getElementById("lmContainerName");
+  const lmContainerType = document.getElementById("lmContainerType");
+  const lmCapacity = document.getElementById("lmCapacity");
+  const lmCreateBtn = document.getElementById("lmCreateBtn");
+  const lmResetCreate = document.getElementById("lmResetCreate");
+
+  const lmConfirmOverlay = document.getElementById("lmConfirmOverlay");
+  const lmConfirmTitle = document.getElementById("lmConfirmTitle");
+  const lmConfirmText = document.getElementById("lmConfirmText");
+  const lmCancelConfirm = document.getElementById("lmCancelConfirm");
+  const lmOkConfirm = document.getElementById("lmOkConfirm");
+
+  let lm_pendingConfirm = null;
+
+  function lm_makeId(area,row,lane,container){
+    const slug = s => String(s||"").toLowerCase().replace(/[^\w\-]+/g,"-").replace(/-+/g,"-").replace(/(^-|-$)/g,"");
+    return [slug(area), slug(row), slug(lane), slug(container)].join("|");
+  }
+
+  function lm_renderList(){
+    const q = lmFilterInput.value.trim().toLowerCase();
+    const filtered = lm_locations.filter(loc => {
+      if (!q) return true;
+      return loc.area.toLowerCase().includes(q) || loc.row.toLowerCase().includes(q) ||
+             loc.lane.toLowerCase().includes(q) || loc.container.toLowerCase().includes(q) ||
+             loc.type.toLowerCase().includes(q);
+    });
+
+    lmLocList.innerHTML = "";
+    filtered.forEach(loc => {
+      const div = document.createElement("div");
+      div.style.cssText = "background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:12px;padding:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;";
+      div.innerHTML = `
+        <div style="min-width:0">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${escapeHtml(loc.area)}</span>
+            <span style="font-weight:800;font-size:13px;">${escapeHtml(loc.container)}</span>
+            <span style="font-family:var(--mono);font-size:11px;padding:3px 6px;border-radius:999px;border:1px solid ${loc.active ? 'rgba(47,143,87,.6)' : 'rgba(214,166,58,.7)'};background:${loc.active ? 'rgba(47,143,87,.08)' : 'rgba(214,166,58,.06)'};color:${loc.active ? 'var(--ink)' : 'var(--muted)'}">${loc.active ? 'active' : 'inactive'}</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">${escapeHtml(loc.row)} &bull; Lane ${escapeHtml(loc.lane)} &bull; ${escapeHtml(loc.type)} &bull; ${loc.occupied||0}/${loc.capacity||'-'} occupied</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0;">
+          <button class="btn secondary lmEditBtn" data-id="${loc.id}" style="padding:6px 8px;font-size:11px;">Edit</button>
+          <button class="btn ${loc.active?'secondary':''} lmToggleBtn" data-id="${loc.id}" style="padding:6px 8px;font-size:11px;">${loc.active?'Deactivate':'Reactivate'}</button>
+        </div>`;
+
+      div.querySelector(".lmEditBtn").addEventListener("click", ()=> lm_openEdit(loc.id));
+      div.querySelector(".lmToggleBtn").addEventListener("click", ()=> lm_requestToggle(loc.id));
+      lmLocList.appendChild(div);
+    });
+    lmCountTag.textContent = `${lm_locations.length} locations (${filtered.length} shown)`;
+  }
+
+  function lm_openEdit(id){
+    const loc = lm_locations.find(l=>l.id===id);
+    if (!loc) return;
+    lmAreaInput.value = loc.area;
+    lmRowInput.value = loc.row;
+    lmLaneInput.value = loc.lane;
+    lmContainerName.value = loc.container;
+    lmContainerType.value = loc.type;
+    lmCapacity.value = loc.capacity || "";
+    lmCreateBtn.dataset.editId = id;
+    lmCreateBtn.textContent = "Save changes";
+  }
+
+  function lm_clearForm(){
+    lmAreaInput.value = "";
+    lmRowInput.value = "";
+    lmLaneInput.value = "";
+    lmContainerName.value = "";
+    lmContainerType.value = "";
+    lmCapacity.value = "";
+    lmCreateBtn.textContent = "Create";
+    delete lmCreateBtn.dataset.editId;
+  }
+
+  lmCreateBtn.addEventListener("click", ()=>{
+    const area = lmAreaInput.value.trim();
+    const row = lmRowInput.value.trim();
+    const lane = lmLaneInput.value.trim();
+    const container = lmContainerName.value.trim();
+    const type = lmContainerType.value.trim() || "Rack";
+    const capacity = lmCapacity.value ? Number(lmCapacity.value) : null;
+
+    if (!area || !container || !row || !lane) return alert("Please fill Area, Row, Lane and Container name.");
+
+    const id = lm_makeId(area, row, lane, container);
+    const editId = lmCreateBtn.dataset.editId;
+
+    if (editId){
+      const idx = lm_locations.findIndex(l=>l.id===editId);
+      if (idx >= 0){
+        lm_locations[idx] = { id, area, row, lane, container, type, capacity, occupied: lm_locations[idx].occupied||0, active: lm_locations[idx].active };
+      } else {
+        lm_locations.push({ id, area, row, lane, container, type, capacity, occupied:0, active:true });
+      }
+    } else {
+      if (lm_locations.some(l=>l.id===id)) return alert("Location already exists.");
+      lm_locations.push({ id, area, row, lane, container, type, capacity, occupied:0, active:true });
+    }
+    lm_clearForm();
+    lm_renderList();
+  });
+
+  lmResetCreate.addEventListener("click", lm_clearForm);
+  lmFilterInput.addEventListener("input", lm_renderList);
+
+  function lm_requestToggle(id){
+    const loc = lm_locations.find(l=>l.id===id);
+    if (!loc) return;
+    lm_pendingConfirm = { id, action: loc.active ? "deactivate" : "reactivate" };
+    lmConfirmTitle.textContent = loc.active ? "Deactivate location" : "Reactivate location";
+    lmConfirmText.textContent = loc.active
+      ? `Deactivate ${loc.container} in ${loc.area} \u2022 ${loc.row} \u203A ${loc.lane}? It will be hidden from quick pickers.`
+      : `Reactivate ${loc.container}? It will be available in pickers again.`;
+    lmOkConfirm.textContent = loc.active ? "Deactivate" : "Reactivate";
+    lmOkConfirm.classList.toggle("danger", loc.active);
+    lmConfirmOverlay.style.display = "flex";
+  }
+
+  lmCancelConfirm.addEventListener("click", ()=>{
+    lm_pendingConfirm = null;
+    lmConfirmOverlay.style.display = "none";
+  });
+
+  lmOkConfirm.addEventListener("click", ()=>{
+    if (!lm_pendingConfirm) return;
+    const item = lm_locations.find(l=>l.id===lm_pendingConfirm.id);
+    if (item) item.active = lm_pendingConfirm.action === "reactivate";
+    lm_pendingConfirm = null;
+    lmConfirmOverlay.style.display = "none";
+    lm_renderList();
+  });
+
+  document.getElementById("lmExport").addEventListener("click", ()=>{
+    const csv = lm_locations.map(l=>[l.area,l.row,l.lane,l.container,l.type,l.capacity||"",l.active?"active":"inactive"].join(",")).join("\n");
+    navigator.clipboard?.writeText(csv).then(()=>alert("Locations copied as CSV")).catch(()=>alert("CSV:\n\n"+csv));
+  });
+
+  document.getElementById("lmBulkReactivate").addEventListener("click", ()=>{
+    lm_locations.forEach(l=>l.active=true);
+    lm_renderList();
+  });
+
+  lm_renderList();
+  lm_clearForm();
 </script>
 </body>
 </html>
