@@ -831,7 +831,10 @@
           <div class="results" id="resultsBox">
             <div class="resultsTop">
               <div class="t">Results</div>
-              <div class="n" id="resultsCount">0 found</div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="n" id="resultsCount">0 found</div>
+                <button class="btn secondary" id="selectAllBtn" type="button" style="padding:4px 10px;font-size:11px;display:none;">Select all</button>
+              </div>
             </div>
             <div class="resultsList" id="resultsList">
               <div class="resultsEmpty">Run a search to view matching results.</div>
@@ -1371,6 +1374,7 @@
   const resultsList = document.getElementById("resultsList");
   const selectedCount = document.getElementById("selectedCount");
   const clearSelectedBtn = document.getElementById("clearSelectedBtn");
+  const selectAllBtn = document.getElementById("selectAllBtn");
   const rebookBtn = document.getElementById("rebookBtn");
   const MAX_RESULTS = 24;
   const activeFilters = { project:"", area:"", row:"" };
@@ -1551,9 +1555,20 @@
     }
   }
 
+  function updateSelectAllBtn(){
+    if (!currentSearchResults.length){
+      selectAllBtn.style.display = "none";
+      return;
+    }
+    const allSelected = currentSearchResults.every(it => selectedElementIds.has(it.id));
+    selectAllBtn.style.display = "";
+    selectAllBtn.textContent = allSelected ? "Deselect all" : "Select all";
+  }
+
   function renderResults(items){
     currentSearchResults = items;
     resultsCount.textContent = `${items.length} found`;
+    updateSelectAllBtn();
     updateSelectionControls();
     if (!items.length){
       const qText = query.value.trim();
@@ -1650,6 +1665,7 @@
     selectedCount.textContent = `${totalSelected} selected`;
     const onSearch = document.getElementById("search").classList.contains("active");
     footerBar.style.display = (totalSelected && onSearch) ? "block" : "none";
+    updateSelectAllBtn();
   }
 
   function runSearch(){
@@ -1721,6 +1737,18 @@
 
   clearSelectedBtn.addEventListener("click", ()=>{
     selectedElementIds.clear();
+    renderResults(currentSearchResults);
+    loc_render();
+    updateSelectionControls();
+  });
+
+  selectAllBtn.addEventListener("click", ()=>{
+    const allSelected = currentSearchResults.every(it => selectedElementIds.has(it.id));
+    if (allSelected){
+      currentSearchResults.forEach(it => selectedElementIds.delete(it.id));
+    } else {
+      currentSearchResults.forEach(it => selectedElementIds.add(it.id));
+    }
     renderResults(currentSearchResults);
     loc_render();
     updateSelectionControls();
