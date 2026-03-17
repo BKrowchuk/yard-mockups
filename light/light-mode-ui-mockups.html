@@ -680,6 +680,68 @@
     .locDrillArrow svg{
       width:16px; height:16px;
     }
+    .locFilterBtn{
+      width:28px; height:28px;
+      flex:0 0 auto;
+      border:1px solid var(--border);
+      background:var(--card);
+      border-radius:var(--radius);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      color:var(--muted);
+      padding:0;
+      position:relative;
+      transition:color .15s, border-color .15s;
+    }
+    .locFilterBtn:hover{ color:var(--ink); }
+    .locFilterBtn.active{ color:var(--accent); border-color:var(--accent); }
+    .locFilterBtn svg{ width:14px; height:14px; }
+    .locFilterDot{
+      position:absolute;
+      top:3px; right:3px;
+      width:6px; height:6px;
+      border-radius:50%;
+      background:var(--accent);
+      display:none;
+    }
+    .locFilterBtn.active .locFilterDot{ display:block; }
+    .locFilterPanel{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:10px 12px;
+      margin-bottom:8px;
+      display:none;
+    }
+    .locFilterPanel.open{ display:block; }
+    .locFilterLabel{
+      font-size:11px;
+      font-weight:800;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      margin-bottom:8px;
+    }
+    .locFilterChips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .locFilterChip{
+      font-size:11px;
+      font-family:var(--mono);
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:transparent;
+      cursor:pointer;
+      color:var(--muted);
+      transition:all .15s;
+      user-select:none;
+    }
+    .locFilterChip:hover{ color:var(--ink); border-color:var(--ink); }
+    .locFilterChip.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
 
     /* ===== REBOOK / MOVE FLOW ===== */
     .rb-stepper{
@@ -949,8 +1011,25 @@
         <!-- Location drill-down (shown when Location tab active) -->
         <div class="stack" id="locationUI" style="display:none;">
           <div class="locDrillBar">
+            <button class="locFilterBtn" id="locFilterBtn" type="button" aria-label="Filter locations" title="Filter">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+              <span class="locFilterDot"></span>
+            </button>
             <button class="btn secondary" id="locBackBtn" type="button">Back</button>
             <div class="locBreadcrumb" id="locBreadcrumb">Area</div>
+          </div>
+          <div class="locFilterPanel" id="locFilterPanel">
+            <div class="locFilterLabel">Show type</div>
+            <div class="locFilterChips" id="locFilterChips">
+              <div class="locFilterChip active" data-type="">All</div>
+              <div class="locFilterChip" data-type="Section">Section</div>
+              <div class="locFilterChip" data-type="Row">Row</div>
+              <div class="locFilterChip" data-type="Lane">Lane</div>
+              <div class="locFilterChip" data-type="Rack">Rack</div>
+              <div class="locFilterChip" data-type="Stack">Stack</div>
+              <div class="locFilterChip" data-type="Trailer">Trailer</div>
+              <div class="locFilterChip" data-type="Element">Element</div>
+            </div>
           </div>
           <div class="locDrillList" id="locDrillList"></div>
         </div>
@@ -2287,6 +2366,23 @@
   const locDrillList = document.getElementById("locDrillList");
   const locBreadcrumb = document.getElementById("locBreadcrumb");
   const locBackBtn = document.getElementById("locBackBtn");
+  const locFilterBtn = document.getElementById("locFilterBtn");
+  const locFilterPanel = document.getElementById("locFilterPanel");
+  let loc_typeFilter = "";
+
+  locFilterBtn.addEventListener("click", () => {
+    const open = locFilterPanel.classList.toggle("open");
+    locFilterBtn.classList.toggle("active", open || loc_typeFilter !== "");
+  });
+
+  document.getElementById("locFilterChips").addEventListener("click", e => {
+    const chip = e.target.closest(".locFilterChip");
+    if (!chip) return;
+    loc_typeFilter = chip.dataset.type;
+    document.querySelectorAll(".locFilterChip").forEach(c => c.classList.toggle("active", c === chip));
+    locFilterBtn.classList.toggle("active", loc_typeFilter !== "" || locFilterPanel.classList.contains("open"));
+    loc_render();
+  });
 
   function loc_currentNode(){
     return loc_navStack[loc_navStack.length - 1];
@@ -2334,14 +2430,16 @@
 
   function loc_render(){
     const current = loc_currentNode();
-    const items = current.children;
+    const items = loc_typeFilter
+      ? current.children.filter(n => n.type === loc_typeFilter)
+      : current.children;
 
     loc_renderBreadcrumb();
     locBackBtn.disabled = loc_navStack.length <= 1;
     locDrillList.innerHTML = "";
 
     if (!items.length){
-      locDrillList.innerHTML = `<div class="hint">No child locations here.</div>`;
+      locDrillList.innerHTML = `<div class="hint">${loc_typeFilter ? `No ${loc_typeFilter}s here.` : "No child locations here."}</div>`;
       return;
     }
 
