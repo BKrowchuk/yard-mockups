@@ -955,6 +955,11 @@
                 <button class="btn secondary" id="selectAllBtn" type="button" style="padding:4px 10px;font-size:11px;display:none;">Select all</button>
               </div>
             </div>
+            <div style="display:flex;align-items:center;gap:6px;padding:0 2px 6px 2px;">
+              <label for="sortSelect" style="font-size:11px;color:var(--muted);white-space:nowrap;">Sort by</label>
+              <select class="nativeSelect" id="sortSelect" style="flex:1;padding:5px 8px;font-size:12px;"></select>
+              <button class="btn secondary" id="sortDirBtn" type="button" style="padding:4px 8px;font-size:11px;min-width:28px;" title="Toggle sort direction">&#x25B2;</button>
+            </div>
             <div class="resultsList" id="resultsList">
               <div class="resultsEmpty">Run a search to view matching results.</div>
             </div>
@@ -1508,6 +1513,7 @@
       return;
     }
     populateFilterOptions();
+    populateSortOptions();
     if (query.value.trim() || activeFilters.project || activeFilters.area || activeFilters.row) runSearch();
     else renderResults([]);
   }
@@ -1528,6 +1534,75 @@
   const draftFilters = { project:"", area:"", row:"" };
   const selectedElementIds = new Set();
   let currentSearchResults = [];
+
+  // --- Sort state ---
+  let currentSortKey = "id";
+  let sortAscending = true;
+  const sortSelect = document.getElementById("sortSelect");
+  const sortDirBtn = document.getElementById("sortDirBtn");
+
+  const SORT_OPTIONS = {
+    elements: [
+      { value:"id", label:"Element ID" },
+      { value:"loc", label:"Location" },
+      { value:"project", label:"Project" },
+      { value:"area", label:"Section" },
+      { value:"desc", label:"Description" },
+      { value:"drawingNo", label:"Drawing No." },
+      { value:"stack", label:"Stack" },
+    ],
+    stacks: [
+      { value:"id", label:"Stack ID" },
+      { value:"loc", label:"Location" },
+      { value:"project", label:"Project" },
+      { value:"area", label:"Section" },
+      { value:"desc", label:"Description" },
+      { value:"elements", label:"Element count" },
+    ],
+    racks: [
+      { value:"id", label:"Rack ID" },
+      { value:"loc", label:"Location" },
+      { value:"project", label:"Project" },
+      { value:"area", label:"Section" },
+      { value:"leaves", label:"Leaves date" },
+    ],
+  };
+
+  function populateSortOptions(){
+    const opts = SORT_OPTIONS[mode] || SORT_OPTIONS.elements;
+    sortSelect.innerHTML = opts.map(o => `<option value="${o.value}"${o.value === currentSortKey ? " selected" : ""}>${o.label}</option>`).join("");
+    if (!opts.find(o => o.value === currentSortKey)){
+      currentSortKey = opts[0].value;
+      sortSelect.value = currentSortKey;
+    }
+  }
+
+  function sortResults(items){
+    const key = currentSortKey;
+    const dir = sortAscending ? 1 : -1;
+    return [...items].sort((a, b) => {
+      let va = a[key] ?? "";
+      let vb = b[key] ?? "";
+      if (typeof va === "number" && typeof vb === "number") return (va - vb) * dir;
+      va = String(va).toLowerCase();
+      vb = String(vb).toLowerCase();
+      if (va < vb) return -1 * dir;
+      if (va > vb) return 1 * dir;
+      return 0;
+    });
+  }
+
+  sortSelect.addEventListener("change", () => {
+    currentSortKey = sortSelect.value;
+    if (currentSearchResults.length) renderResults(sortResults(currentSearchResults));
+  });
+
+  sortDirBtn.addEventListener("click", () => {
+    sortAscending = !sortAscending;
+    sortDirBtn.innerHTML = sortAscending ? "&#x25B2;" : "&#x25BC;";
+    sortDirBtn.title = sortAscending ? "Ascending" : "Descending";
+    if (currentSearchResults.length) renderResults(sortResults(currentSearchResults));
+  });
 
   const MOCK_DATA = {
     elements: [
@@ -1883,7 +1958,7 @@
       return haystack.includes(searchText);
     }).slice(0, MAX_RESULTS);
 
-    renderResults(results);
+    renderResults(sortResults(results));
   }
 
   document.getElementById("scanBtn").addEventListener("click", ()=>{
@@ -2740,6 +2815,7 @@
      INIT
      ============================================================ */
   populateFilterOptions();
+  populateSortOptions();
   lsEnableControls(false);
   lsSetCollapsed(false);
   updateSelectionControls();

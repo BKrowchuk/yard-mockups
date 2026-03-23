@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/src/work/wireframes -type f -not -path ./.git/*)",
+      "Bash(ls -la /c/src/work/wireframes/*.md /c/src/work/wireframes/README* /c/src/work/wireframes/readme*)",
+      "Bash(find /c/src/work/wireframes -type d -not -path ./.git/*)",
+      "Bash(wc -l /c/src/work/wireframes/*.html /c/src/work/wireframes/dark/*.html)",
+      "mcp__claude_ai_Fireflies__fireflies_search",
+      "mcp__claude_ai_Fireflies__fireflies_get_summary"
+    ]
+  }
+}
