@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(which gh:*)"
+      "Bash(which gh:*)",
+      "mcp__ide__executeCode",
+      "Read(//c/src/work/wireframes/**)",
+      "Bash(python3 -c \":*)",
+      "Bash(\"/c/Program Files/Python314/Scripts/pip\" install openpyxl -q)",
+      "Bash(python3 -c \"print\\(''hello''\\)\")",
+      "Bash(python3 -u:*)"
     ]
   }
 }
